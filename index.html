@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jacks Used Cars</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jack's Used Cars - Debug</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    body { font-family: Arial; background: #2a5298; color: #fff; padding: 20px; }
+    body { font-family: Arial, sans-serif; background: #2a5298; color: #fff; padding: 20px; }
     .container { max-width: 700px; margin: auto; }
     input, select, textarea, button {
       width: 100%; padding: 10px; margin-bottom: 10px;
-      border-radius: 5px; border: none;
+      border: none; border-radius: 5px;
     }
     input, select, textarea { color: #000; }
-    button { background: #27ae60; color: #fff; font-weight: bold; }
-    .car { background: #fff; color: #000; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+    button { background: #27ae60; color: white; font-weight: bold; }
+    .car { background: white; color: #000; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+    .badge { float: right; background: #333; color: #fff; padding: 3px 10px; border-radius: 5px; }
     img { max-width: 100%; border-radius: 5px; }
-    .badge { float: right; background: #333; color: #fff; padding: 2px 10px; border-radius: 5px; }
   </style>
 </head>
 <body>
@@ -49,64 +49,75 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    async function loadCars() {
-      const list = document.getElementById('carList');
-      list.innerHTML = 'Loading...';
-      const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
-      if (error) {
-        list.innerHTML = 'Error loading cars.';
-        return;
-      }
-      list.innerHTML = '';
-      data.forEach(car => {
-        const div = document.createElement('div');
-        div.className = 'car';
-        div.innerHTML = `
-          <span class="badge">${car.class}</span>
-          <h3>${car.name}</h3>
-          <img src="${car.image}" />
-          <p><strong>Price:</strong> $${car.price}</p>
-          <p>${car.description}</p>
-        `;
-        list.appendChild(div);
-      });
-    }
-
-    async function addCar() {
-      const car = {
-        name: document.getElementById('carName').value,
-        image: document.getElementById('carImage').value,
-        price: parseFloat(document.getElementById('carPrice').value),
-        class: document.getElementById('carClass').value,
-        description: document.getElementById('carDescription').value
-      };
-      const { error } = await supabase.from('cars').insert([car]);
-      if (error) {
-        alert('Error adding car');
-      } else {
-        alert('Car added!');
-        loadCars();
-      }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-      loadCars();
+      console.log('DOM fully loaded.');
+
+      const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      async function loadCars() {
+        const list = document.getElementById('carList');
+        list.innerHTML = 'Loading...';
+        const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+        if (error) {
+          console.error('Error loading cars:', error);
+          list.innerHTML = 'Error loading cars.';
+          return;
+        }
+        list.innerHTML = '';
+        data.forEach(car => {
+          const div = document.createElement('div');
+          div.className = 'car';
+          div.innerHTML = `
+            <span class="badge">${car.class}</span>
+            <h3>${car.name}</h3>
+            <img src="${car.image}" />
+            <p><strong>Price:</strong> $${car.price}</p>
+            <p>${car.description}</p>
+          `;
+          list.appendChild(div);
+        });
+        console.log('Cars loaded successfully.');
+      }
+
+      async function addCar() {
+        const car = {
+          name: document.getElementById('carName').value,
+          image: document.getElementById('carImage').value,
+          price: parseFloat(document.getElementById('carPrice').value),
+          class: document.getElementById('carClass').value,
+          description: document.getElementById('carDescription').value
+        };
+        const { error } = await supabase.from('cars').insert([car]);
+        if (error) {
+          alert('Error adding car');
+          console.error('Add error:', error);
+        } else {
+          alert('Car added!');
+          loadCars();
+        }
+      }
 
       document.getElementById('loginBtn').addEventListener('click', () => {
         const pass = document.getElementById('adminPassword').value;
         if (pass === 'jacks') {
+          console.log('Correct password entered!');
+          const panel = document.getElementById('adminPanel');
+          if (!panel) {
+            alert('Admin panel not found.');
+            return;
+          }
           document.getElementById('adminLogin').style.display = 'none';
-          document.getElementById('adminPanel').style.display = 'block';
+          panel.style.display = 'block';
+          console.log('Admin panel shown.');
         } else {
           alert('Wrong password!');
         }
       });
 
       document.getElementById('addCarBtn').addEventListener('click', addCar);
+      loadCars();
     });
   </script>
 </body>
