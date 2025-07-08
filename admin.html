@@ -129,18 +129,19 @@
         addCarBtn.disabled = true;
         addCarBtn.textContent = 'Uploading Image...';
 
-        const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-        const fileName = `${Date.now()}-${cleanName}`;
+        // Clean, short, safe filename
+        const ext = file.name.split('.').pop();
+        const cleanName = `car_${Date.now()}.${ext}`;
 
-        const { data, error } = await client.storage.from('images').upload(fileName, file);
+        const { data, error } = await client.storage.from('images').upload(cleanName, file);
         if (error) {
-          alert('Error uploading image.');
+          alert('Error uploading image: ' + error.message);
           addCarBtn.disabled = false;
           addCarBtn.textContent = 'Add Car to Inventory';
           return;
         }
 
-        const { data: publicURLData } = client.storage.from('images').getPublicUrl(fileName);
+        const { data: publicURLData } = client.storage.from('images').getPublicUrl(cleanName);
         showPreview(publicURLData.publicUrl);
         addCarBtn.disabled = false;
         addCarBtn.textContent = 'Add Car to Inventory';
