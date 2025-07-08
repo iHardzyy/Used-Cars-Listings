@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Used Cars</title>
+</head>
+<body>
+  <h1>Used Cars</h1>
+  <form id="carForm">
+    <input name="title" placeholder="Car Title" required><br>
+    <input name="price" type="number" placeholder="Price" required><br>
+    <input name="mileage" type="number" placeholder="Mileage" required><br>
+    <input name="location" placeholder="Location" required><br>
+    <input name="image_url" placeholder="Image URL" required><br>
+    <textarea name="description" placeholder="Description"></textarea><br>
+    <button type="submit">Add Car</button>
+  </form>
+  <h2>Car Listings</h2>
+  <div id="carList"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
