@@ -1,32 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Test Admin Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jacks Used Cars</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: Arial; background: #2a5298; color: #fff; padding: 20px; }
+    .container { max-width: 700px; margin: auto; }
+    input, select, textarea, button {
+      width: 100%; padding: 10px; margin-bottom: 10px;
+      border-radius: 5px; border: none;
+    }
+    input, select, textarea { color: #000; }
+    button { background: #27ae60; color: #fff; font-weight: bold; }
+    .car { background: #fff; color: #000; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+    img { max-width: 100%; border-radius: 5px; }
+    .badge { float: right; background: #333; color: #fff; padding: 2px 10px; border-radius: 5px; }
+  </style>
 </head>
-<body style="font-family:sans-serif;padding:2rem;">
-  <h1>Login Test</h1>
-  <div id="adminLogin">
-    <input type="password" id="adminPassword" placeholder="Enter admin password"><br>
-    <button id="loginBtn">Login</button>
-  </div>
+<body>
+  <div class="container">
+    <h1>Jack's Used Cars</h1>
 
-  <div id="adminPanel" style="display:none;">
-    <h2>Admin Panel Access Granted 🎉</h2>
+    <div id="adminLogin">
+      <input type="password" id="adminPassword" placeholder="Enter admin password">
+      <button id="loginBtn">Login</button>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+      <input type="text" id="carName" placeholder="Car Name">
+      <input type="text" id="carImage" placeholder="Image URL">
+      <input type="number" id="carPrice" placeholder="Price">
+      <select id="carClass">
+        <option value="S">S</option>
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+        <option value="M">M</option>
+      </select>
+      <textarea id="carDescription" placeholder="Description"></textarea>
+      <button id="addCarBtn">Add Car</button>
+    </div>
+
+    <h2>Available Cars</h2>
+    <div id="carList">Loading...</div>
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadCars() {
+      const list = document.getElementById('carList');
+      list.innerHTML = 'Loading...';
+      const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+      if (error) {
+        list.innerHTML = 'Error loading cars.';
+        return;
+      }
+      list.innerHTML = '';
+      data.forEach(car => {
+        const div = document.createElement('div');
+        div.className = 'car';
+        div.innerHTML = `
+          <span class="badge">${car.class}</span>
+          <h3>${car.name}</h3>
+          <img src="${car.image}" />
+          <p><strong>Price:</strong> $${car.price}</p>
+          <p>${car.description}</p>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    async function addCar() {
+      const car = {
+        name: document.getElementById('carName').value,
+        image: document.getElementById('carImage').value,
+        price: parseFloat(document.getElementById('carPrice').value),
+        class: document.getElementById('carClass').value,
+        description: document.getElementById('carDescription').value
+      };
+      const { error } = await supabase.from('cars').insert([car]);
+      if (error) {
+        alert('Error adding car');
+      } else {
+        alert('Car added!');
+        loadCars();
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      loadCars();
+
       document.getElementById('loginBtn').addEventListener('click', () => {
-        const password = document.getElementById('adminPassword').value;
-        if (password === 'jacks') {
+        const pass = document.getElementById('adminPassword').value;
+        if (pass === 'jacks') {
           document.getElementById('adminLogin').style.display = 'none';
           document.getElementById('adminPanel').style.display = 'block';
         } else {
           alert('Wrong password!');
         }
       });
+
+      document.getElementById('addCarBtn').addEventListener('click', addCar);
     });
   </script>
 </body>
