@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jack's Used Cars - Debug</title>
+  <title>Jack's Used Cars - Fixed</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
     body { font-family: Arial, sans-serif; background: #2a5298; color: #fff; padding: 20px; }
@@ -50,16 +50,16 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      console.log('DOM fully loaded.');
+      console.log('DOM ready');
 
       const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
-      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
       async function loadCars() {
         const list = document.getElementById('carList');
         list.innerHTML = 'Loading...';
-        const { data, error } = await supabase.from('cars').select('*').order('created_at', { ascending: false });
+        const { data, error } = await client.from('cars').select('*').order('created_at', { ascending: false });
         if (error) {
           console.error('Error loading cars:', error);
           list.innerHTML = 'Error loading cars.';
@@ -78,7 +78,6 @@
           `;
           list.appendChild(div);
         });
-        console.log('Cars loaded successfully.');
       }
 
       async function addCar() {
@@ -89,7 +88,7 @@
           class: document.getElementById('carClass').value,
           description: document.getElementById('carDescription').value
         };
-        const { error } = await supabase.from('cars').insert([car]);
+        const { error } = await client.from('cars').insert([car]);
         if (error) {
           alert('Error adding car');
           console.error('Add error:', error);
@@ -102,15 +101,9 @@
       document.getElementById('loginBtn').addEventListener('click', () => {
         const pass = document.getElementById('adminPassword').value;
         if (pass === 'jacks') {
-          console.log('Correct password entered!');
-          const panel = document.getElementById('adminPanel');
-          if (!panel) {
-            alert('Admin panel not found.');
-            return;
-          }
+          console.log('Correct password!');
           document.getElementById('adminLogin').style.display = 'none';
-          panel.style.display = 'block';
-          console.log('Admin panel shown.');
+          document.getElementById('adminPanel').style.display = 'block';
         } else {
           alert('Wrong password!');
         }
