@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applications - Jack's Used Cars</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; background: #232323; color: #e0e0e0;}
+    .container { max-width: 700px; margin: 40px auto; padding: 24px 18px; background: #2a2a2a; border-radius: 10px; }
+    h1 { text-align: center; }
+    .application { background: #232323; border: 1px solid #444; border-radius: 7px; margin-bottom: 20px; padding: 12px 14px;}
+    .field { margin-bottom: 5px; }
+    .field span { font-weight: bold; color: #ffc107; }
+    #loginPanel { margin: 60px auto 0 auto; max-width: 300px; background: #242424; padding: 28px 16px; border-radius: 10px;}
+    input, button { width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #444; background: #333; color: #e0e0e0; }
+    button { background: #dc3545; font-weight: bold; border: none;}
+    button:hover { background: #b52c35; }
+  </style>
+</head>
+<body>
+  <div class="container" id="mainPanel" style="display:none;">
+    <h1>Applications</h1>
+    <div id="applications"></div>
+  </div>
+
+  <div id="loginPanel">
+    <h2 style="text-align:center;">Manager Login</h2>
+    <input type="password" id="reviewPass" placeholder="Enter review password">
+    <button id="reviewLoginBtn">Login</button>
+    <div id="reviewError" style="color:#e8455a;font-weight:bold;text-align:center;"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz...'; // (full key)
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const managerPassword = "manager123"; // <--- CHANGE THIS TO YOUR SECRET
+
+    document.getElementById('reviewLoginBtn').onclick = () => {
+      const input = document.getElementById('reviewPass').value;
+      if (input === managerPassword) {
+        document.getElementById('loginPanel').style.display = 'none';
+        document.getElementById('mainPanel').style.display = 'block';
+        loadApplications();
+      } else {
+        document.getElementById('reviewError').textContent = "Wrong password!";
+      }
+    };
+
+    async function loadApplications() {
+      const { data, error } = await client.from('applications').select('*').order('created_at', { ascending: false });
+      const list = document.getElementById('applications');
+      list.innerHTML = '';
+      if (error || !data || data.length === 0) {
+        list.innerHTML = "<p style='color:#ffc107'>No applications found.</p>";
+        return;
+      }
+      data.forEach(app => {
+        const div = document.createElement('div');
+        div.className = "application";
+        div.innerHTML = `
+          <div class="field"><span>Name:</span> ${app.name}</div>
+          <div class="field"><span>Email:</span> ${app.email}</div>
+          <div class="field"><span>Phone:</span> ${app.phone}</div>
+          <div class="field"><span>Position:</span> ${app.position}</div>
+          <div class="field"><span>Message:</span> ${app.message}</div>
+          <div class="field" style="font-size:0.95em;color:#888;"><span>Date:</span> ${app.created_at ? new Date(app.created_at).toLocaleString() : ''}</div>
+        `;
+        list.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
