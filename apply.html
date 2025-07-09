@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for a Job - Jack's Used Cars</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <style>
+    body { font-family: sans-serif; background: #232323; color: #e0e0e0; }
+    .container { max-width: 430px; margin: 40px auto; padding: 24px 22px; background: #2a2a2a; border-radius: 10px; }
+    h1 { text-align: center; }
+    input, textarea, select, button {
+      width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 14px; border: 1px solid #444; background: #333; color: #e0e0e0;
+    }
+    button { background: #dc3545; font-weight: bold; border: none; }
+    button:hover { background: #b52c35; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Job Application</h1>
+    <form id="applyForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required />
+      <select id="position" required>
+        <option value="">Select Position</option>
+        <option value="Salesperson">Salesperson</option>
+        <option value="Mechanic">Mechanic</option>
+        <option value="Finance">Finance</option>
+        <option value="Other">Other</option>
+      </select>
+      <textarea id="message" placeholder="Tell us about yourself..." rows="5" required></textarea>
+      <button type="submit">Submit Application</button>
+    </form>
+    <div id="result" style="text-align:center;margin-top:12px;font-weight:bold;"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz...'; // (keep full)
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    document.getElementById('applyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const result = document.getElementById('result');
+      result.textContent = '';
+      const app = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        position: document.getElementById('position').value,
+        message: document.getElementById('message').value.trim(),
+      };
+      // Basic validation
+      if (!app.name || !app.email || !app.phone || !app.position || !app.message) {
+        result.textContent = "All fields required!";
+        return;
+      }
+      const { error } = await client.from('applications').insert([app]);
+      if (error) {
+        result.textContent = "Error submitting. Try again.";
+      } else {
+        result.textContent = "Application submitted!";
+        document.getElementById('applyForm').reset();
+      }
+    });
+  </script>
+</body>
+</html>
