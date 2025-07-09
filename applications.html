@@ -16,28 +16,35 @@
     input, button { width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #444; background: #333; color: #e0e0e0; }
     button { background: #dc3545; font-weight: bold; border: none;}
     button:hover { background: #b52c35; }
+    nav { background:#161616d9;padding:10px 0;text-align:center;margin-bottom:20px;}
+    nav a {color:#e0e0e0; margin:0 18px; text-decoration:none; font-weight:500;}
+    nav a[href*="apply"] {color:#4fd1c5;}
+    nav a[href*="admin"] {color:#ffc107;}
+    nav a[href*="applications"] {color:#e8455a;}
   </style>
 </head>
 <body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="apply.html">Apply for a Job</a>
+    <a href="admin.html">Admin Panel</a>
+    <a href="applications.html">Applications</a>
+  </nav>
   <div class="container" id="mainPanel" style="display:none;">
     <h1>Applications</h1>
     <div id="applications"></div>
   </div>
-
   <div id="loginPanel">
     <h2 style="text-align:center;">Manager Login</h2>
     <input type="password" id="reviewPass" placeholder="Enter review password">
     <button id="reviewLoginBtn">Login</button>
     <div id="reviewError" style="color:#e8455a;font-weight:bold;text-align:center;"></div>
   </div>
-
   <script>
     const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz...'; // (full key)
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     const managerPassword = "manager123"; // <--- CHANGE THIS TO YOUR SECRET
-
     document.getElementById('reviewLoginBtn').onclick = () => {
       const input = document.getElementById('reviewPass').value;
       if (input === managerPassword) {
@@ -48,7 +55,6 @@
         document.getElementById('reviewError').textContent = "Wrong password!";
       }
     };
-
     async function loadApplications() {
       const { data, error } = await client.from('applications').select('*').order('created_at', { ascending: false });
       const list = document.getElementById('applications');
