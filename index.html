@@ -37,6 +37,11 @@
     .car p { margin: 0 0 7px 0; }
     .car .price { font-size: 1.15rem; font-weight: 600; color: #e8455a; }
     .car .class { background: #333b; color: #ffc107; display: inline-block; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px; font-weight: 500; }
+    nav { background:#161616d9;padding:10px 0;text-align:center;margin-bottom:20px;}
+    nav a {color:#e0e0e0; margin:0 18px; text-decoration:none; font-weight:500;}
+    nav a[href*="apply"] {color:#4fd1c5;}
+    nav a[href*="admin"] {color:#ffc107;}
+    nav a[href*="applications"] {color:#e8455a;}
     @media (max-width: 700px) {
       #carList { grid-template-columns: 1fr; }
       .container { padding: 10px 0; }
@@ -45,11 +50,16 @@
   </style>
 </head>
 <body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="apply.html">Apply for a Job</a>
+    <a href="admin.html">Admin Panel</a>
+    <a href="applications.html">Applications</a>
+  </nav>
   <header>
     <h1>Jack's Used Cars</h1>
     <p style="margin:0;color:#ccc;font-size:1.1rem;">Quality pre-owned vehicles for any budget.</p>
   </header>
-
   <main class="container">
     <!-- Filter Bar -->
     <div class="filter-bar">
@@ -63,37 +73,30 @@
         <option value="D">D Class</option>
         <option value="M">M Class</option>
       </select>
-
       <label for="sortSelect">Sort by Price:</label>
       <select id="sortSelect">
         <option value="desc">Highest to Lowest</option>
         <option value="asc">Lowest to Highest</option>
       </select>
     </div>
-
     <div id="carList"></div>
   </main>
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
       const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
       const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
       const carList = document.getElementById('carList');
       const sortSelect = document.getElementById('sortSelect');
       const classSelect = document.getElementById('classSelect');
-
       async function loadCars() {
         const sortOrder = sortSelect.value;
         const selectedClass = classSelect.value;
-
         let query = client.from('cars').select('*');
         if (selectedClass !== 'all') {
           query = query.eq('class', selectedClass);
         }
         query = query.order('price', { ascending: sortOrder === 'asc' });
-
         const { data, error } = await query;
         carList.innerHTML = '';
         if (error || !data || !Array.isArray(data) || data.length === 0) {
@@ -113,7 +116,6 @@
           carList.appendChild(div);
         });
       }
-
       sortSelect.addEventListener('change', loadCars);
       classSelect.addEventListener('change', loadCars);
       loadCars();
