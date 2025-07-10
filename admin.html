@@ -1,274 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel - Jack's Used Cars</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: url('https://i.postimg.cc/tTnFWqxt/darkbackround.png') no-repeat center center fixed;
-      background-size: cover; color: #e0e0e0; margin: 0; line-height: 1.6;
-    }
-    .container { width: 90%; max-width: 1200px; margin: auto; padding: 20px 0; }
-    header {
-      background: rgba(31, 31, 31, 0.8); backdrop-filter: blur(10px);
-      color: #fff; padding: 1rem 0; border-bottom: 4px solid #dc3545;
-    }
-    header .container { display: flex; justify-content: space-between; align-items: center; }
-    header h1 { margin: 0; font-size: 2rem; }
-    .site-link {
-      background-color: #6c757d; color: white; padding: 10px 20px;
-      text-decoration: none; border-radius: 5px; font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
-    .site-link:hover { background-color: #5a6268; }
-    input, select, textarea, button {
-      background-color: #333; color: #e0e0e0; width: 100%; padding: 12px;
-      margin-bottom: 15px; border-radius: 5px; border: 1px solid #555;
-      box-sizing: border-box; font-family: 'Roboto', sans-serif; font-size: 1rem;
-    }
-    button {
-      background-color: #dc3545; color: white; font-weight: bold; border: none;
-      cursor: pointer; transition: background-color 0.3s ease;
-    }
-    button:hover { background-color: #c82333; }
-    .delete-btn { background-color: #6c757d; }
-    .delete-btn:hover { background-color: #5a6268; }
-    #adminLogin, #adminPanel {
-      background: rgba(31, 31, 31, 0.8); backdrop-filter: blur(10px);
-      padding: 30px; border-radius: 8px; margin-bottom: 30px;
-      border-left: 5px solid #dc3545;
-    }
-    h2 { font-size: 1.8rem; margin-bottom: 20px; text-align: center; color: #fff; }
-    #imageDropZone {
-      border: 2px dashed #555; border-radius: 5px; padding: 40px 20px;
-      text-align: center; color: #aaa; cursor: pointer; margin-bottom: 15px;
-      transition: border-color 0.3s, background-color 0.3s;
-    }
-    #imageDropZone.dragover { border-color: #dc3545; background-color: rgba(220, 53, 69, 0.1); }
-    #imagePreview { display: block; max-width: 100%; max-height: 200px; margin: 0 auto 15px; border-radius: 5px; }
-    .url-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
-    #useUrlBtn { width: auto; padding: 12px 20px; flex-shrink: 0; }
-    #carList { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-    .car { background: #2b2b2b; border-radius: 8px; border: 1px solid #444; padding: 15px; }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel - Jack's Used Cars</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('https://i.postimg.cc/tTnFWqxt/darkbackround.png') no-repeat center center fixed;
+            background-size: cover; color: #e0e0e0; margin: 0; line-height: 1.6;
+        }
+        .container { width: 90%; max-width: 1200px; margin: auto; padding: 20px 0; }
+        nav { background:#161616d9; padding:10px 0; text-align:center; }
+        nav a {
+            color:#e0e0e0; margin:0 18px; text-decoration:none; 
+            font-weight:500; transition: color 0.2s ease-in-out;
+        }
+        nav a:hover { color: #fff; }
+        nav a[href*="apply"] { color:#4fd1c5; }
+        nav a[href*="admin"] { color:#ffc107; text-decoration: underline;}
+        nav a[href*="applications"] { color:#e8455a; }
+        header {
+            background: rgba(31, 31, 31, 0.85); backdrop-filter: blur(8px);
+            color: #fff; padding: 1rem 0 0.5rem 0; border-bottom: 4px solid #dc3545;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 2.3rem; font-weight: 700; }
+        input, select, textarea, button {
+            background-color: #333; color: #e0e0e0; width: 100%; padding: 12px;
+            margin-bottom: 15px; border-radius: 5px; border: 1px solid #555;
+            box-sizing: border-box; font-family: 'Roboto', sans-serif; font-size: 1rem;
+        }
+        button {
+            background-color: #dc3545; color: white; font-weight: bold; border: none;
+            cursor: pointer; transition: background-color 0.3s ease;
+        }
+        button:hover { background-color: #c82333; }
+        .edit-btn { background-color: #007bff; }
+        .edit-btn:hover { background-color: #0056b3; }
+        .delete-btn { background-color: #6c757d; }
+        .delete-btn:hover { background-color: #5a6268; }
+        #adminLogin, #adminPanel {
+            background: #212124dd; padding: 30px; border-radius: 10px;
+            border: 1px solid #444; box-shadow: 0 4px 24px #0005; margin-bottom: 30px;
+        }
+        h2 { font-size: 1.8rem; margin-bottom: 20px; text-align: center; color: #fff; }
+        #imageDropZone {
+            border: 2px dashed #555; border-radius: 5px; padding: 40px 20px;
+            text-align: center; color: #aaa; cursor: pointer; margin-bottom: 15px;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+        #imageDropZone.dragover { border-color: #dc3545; background-color: rgba(220, 53, 69, 0.1); }
+        #imagePreview { display: block; max-width: 100%; max-height: 200px; margin: 0 auto 15px; border-radius: 5px; }
+        .url-input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        #useUrlBtn { width: auto; padding: 12px 20px; flex-shrink: 0; }
+        #carList { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .car {
+            background: #2b2b2b; border-radius: 8px; border: 1px solid #444;
+            padding: 15px; display: flex; flex-direction: column;
+        }
+        .car img {
+            width:100%; max-height:150px; object-fit:cover;
+            border-radius:5px; margin-bottom:10px;
+        }
+        .car-actions { display: flex; gap: 10px; margin-top: auto; }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1>Admin Panel</h1>
-      <a href="index.html" class="site-link">Back to Main Site</a>
-    </div>
-  </header>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="policy.html">Purchase Policy</a>
+        <a href="apply.html">Apply for a Job</a>
+        <a href="admin.html">Admin Panel</a>
+        <a href="applications.html">Applications</a>
+    </nav>
+    <header>
+        <h1>Admin Panel</h1>
+    </header>
 
-  <main class="container">
-    <div id="adminLogin">
-      <h2>Admin Login</h2>
-      <input type="password" id="adminPassword" placeholder="Enter admin password">
-      <button id="loginBtn">Login</button>
-    </div>
-
-    <div id="adminSection" style="display:none;">
-      <div id="adminPanel">
-        <h2>Add a New Car</h2>
-        <input type="text" id="carName" placeholder="Car Name (e.g., Sultan Classic)">
-        <div id="imageDropZone"><p>Drag & Drop image, paste, or click to upload</p></div>
-        <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-        <div class="url-input-group">
-          <input type="text" id="imageUrlInput" placeholder="Or paste image URL here">
-          <button type="button" id="useUrlBtn">Use URL</button>
+    <main class="container">
+        <div id="adminLogin">
+            <h2>Admin Login</h2>
+            <input type="password" id="adminPassword" placeholder="Enter admin password">
+            <button id="loginBtn">Login</button>
         </div>
-        <img id="imagePreview" src="" alt="Image Preview" style="display:none;">
-        <input type="hidden" id="carImageURL">
-        <input type="number" id="carPrice" placeholder="Price">
-        <select id="carClass">
-          <option value="S">S Class</option><option value="A">A Class</option><option value="B">B Class</option>
-          <option value="C">C Class</option><option value="D">D Class</option><option value="M">M Class</option>
-        </select>
-        <textarea id="carDescription" placeholder="Description"></textarea>
-        <button id="addCarBtn">Add Car to Inventory</button>
-      </div>
-      <h2>Current Inventory</h2>
-      <div id="carList"></div>
-    </div>
-  </main>
 
-  <script>
+        <div id="adminSection" style="display:none;">
+            <div id="adminPanel">
+                <h2 id="formTitle">Add a New Car</h2>
+                <input type="hidden" id="editingCarId">
+                <input type="text" id="carName" placeholder="Car Name (e.g., Sultan Classic)">
+                <div id="imageDropZone"><p>Drag & Drop image, paste, or click to upload</p></div>
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                <div class="url-input-group">
+                    <input type="text" id="imageUrlInput" placeholder="Or paste image URL here">
+                    <button type="button" id="useUrlBtn">Use URL</button>
+                </div>
+                <img id="imagePreview" src="" alt="Image Preview" style="display:none;">
+                <input type="hidden" id="carImageURL">
+                <input type="number" id="carPrice" placeholder="Price">
+                <select id="carClass">
+                    <option value="S">S Class</option><option value="A">A Class</option><option value="B">B Class</option>
+                    <option value="C">C Class</option><option value="D">D Class</option><option value="M">M Class</option>
+                </select>
+                <textarea id="carDescription" placeholder="Description"></textarea>
+                <div class="car-actions">
+                    <button id="mainActionBtn">Add Car to Inventory</button>
+                    <button type="button" id="cancelEditBtn" class="delete-btn" style="display:none;">Cancel Edit</button>
+                </div>
+            </div>
+            <h2>Current Inventory</h2>
+            <div id="carList"></div>
+        </div>
+    </main>
+
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
-      const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const imageDropZone = document.getElementById('imageDropZone');
-      const imageUpload = document.getElementById('imageUpload');
-      const imagePreview = document.getElementById('imagePreview');
-      const carImageURL = document.getElementById('carImageURL');
-      const addCarBtn = document.getElementById('addCarBtn');
-      const imageUrlInput = document.getElementById('imageUrlInput');
-      const useUrlBtn = document.getElementById('useUrlBtn');
+        const imageDropZone = document.getElementById('imageDropZone');
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+        const carImageURL = document.getElementById('carImageURL');
+        const mainActionBtn = document.getElementById('mainActionBtn');
+        const imageUrlInput = document.getElementById('imageUrlInput');
+        const useUrlBtn = document.getElementById('useUrlBtn');
+        const editingCarId = document.getElementById('editingCarId');
+        const formTitle = document.getElementById('formTitle');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
 
-      function showPreview(url) {
-        if (url) {
-          imagePreview.src = url;
-          imagePreview.style.display = 'block';
-          carImageURL.value = url;
-        } else {
-          imagePreview.src = '';
-          imagePreview.style.display = 'none';
-          carImageURL.value = '';
+        function showPreview(url) {
+            if (url) {
+                imagePreview.src = url;
+                imagePreview.style.display = 'block';
+                carImageURL.value = url;
+            } else {
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
+                carImageURL.value = '';
+            }
         }
-      }
-
-      async function uploadFile(file) {
-        if (!file) return;
-        addCarBtn.disabled = true;
-        addCarBtn.textContent = 'Uploading Image...';
-
-        // Clean, short, safe filename
-        const ext = file.name.split('.').pop();
-        const cleanName = `car_${Date.now()}.${ext}`;
-
-        const { data, error } = await client.storage.from('images').upload(cleanName, file);
-        if (error) {
-          alert('Error uploading image: ' + error.message);
-          addCarBtn.disabled = false;
-          addCarBtn.textContent = 'Add Car to Inventory';
-          return;
+        
+        function resetForm() {
+            document.getElementById('carName').value = '';
+            showPreview('');
+            imageUrlInput.value = '';
+            document.getElementById('carPrice').value = '';
+            document.getElementById('carDescription').value = '';
+            editingCarId.value = '';
+            formTitle.textContent = 'Add a New Car';
+            mainActionBtn.textContent = 'Add Car to Inventory';
+            mainActionBtn.style.backgroundColor = '';
+            cancelEditBtn.style.display = 'none';
         }
 
-        const { data: publicURLData } = client.storage.from('images').getPublicUrl(cleanName);
-        showPreview(publicURLData.publicUrl);
-        addCarBtn.disabled = false;
-        addCarBtn.textContent = 'Add Car to Inventory';
-      }
-
-      useUrlBtn.addEventListener('click', () => {
-        const url = imageUrlInput.value.trim();
-        if (url) showPreview(url);
-      });
-
-      imageDropZone.addEventListener('click', () => imageUpload.click());
-      imageDropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        imageDropZone.classList.add('dragover');
-      });
-      imageDropZone.addEventListener('dragleave', () => imageDropZone.classList.remove('dragover'));
-      imageDropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        imageDropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length) {
-          uploadFile(e.dataTransfer.files[0]);
+        async function uploadFile(file) {
+            if (!file) return;
+            mainActionBtn.disabled = true;
+            mainActionBtn.textContent = 'Uploading Image...';
+            const fileName = `car_${Date.now()}.${file.name.split('.').pop()}`;
+            const { data, error } = await client.storage.from('images').upload(fileName, file);
+            if (error) {
+                alert('Error uploading image: ' + error.message);
+                mainActionBtn.disabled = false;
+                mainActionBtn.textContent = editingCarId.value ? 'Update Car' : 'Add Car to Inventory';
+                return;
+            }
+            const { data: publicURLData } = client.storage.from('images').getPublicUrl(fileName);
+            showPreview(publicURLData.publicUrl);
+            mainActionBtn.disabled = false;
+            mainActionBtn.textContent = editingCarId.value ? 'Update Car' : 'Add Car to Inventory';
         }
-      });
-      imageDropZone.addEventListener('paste', (e) => {
-        const items = e.clipboardData.items;
-        for (const item of items) {
-          if (item.type.indexOf('image') !== -1) {
-            uploadFile(item.getAsFile());
-            break;
-          }
-        }
-      });
-      imageUpload.addEventListener('change', () => uploadFile(imageUpload.files[0]));
 
-      // ✅ PATCH: Show car images in inventory!
-      async function loadAdminCars() {
-        const list = document.getElementById('carList');
-        const { data, error } = await client.from('cars').select('*').order('created_at', { ascending: false });
-        list.innerHTML = '';
-        data.forEach(car => {
-          const div = document.createElement('div');
-          div.className = 'car';
-          div.dataset.id = car.id;
-          div.innerHTML = `
-            <img src="${car.image}" alt="${car.name}" style="width:100%;max-height:200px;object-fit:cover;border-radius:5px;margin-bottom:10px;">
-            <h3>${car.name}</h3>
-            <p><strong>Class:</strong> ${car.class}</p>
-            <p><strong>Price:</strong> $${car.price.toLocaleString()}</p>
-            <p>${car.description || ''}</p>
-            <button class="delete-btn">Delete</button>
-          `;
-          list.appendChild(div);
+        useUrlBtn.addEventListener('click', () => {
+            const url = imageUrlInput.value.trim();
+            if (url) showPreview(url);
         });
-      }
 
-      async function addCar() {
-        const car = {
-          name: document.getElementById('carName').value,
-          image: carImageURL.value,
-          price: parseFloat(document.getElementById('carPrice').value),
-          class: document.getElementById('carClass').value,
-          description: document.getElementById('carDescription').value
-        };
-        if (!car.name || !car.image || !car.price || !car.description) {
-          alert('Please fill out all fields and upload an image.');
-          return;
+        imageDropZone.addEventListener('click', () => imageUpload.click());
+        imageDropZone.addEventListener('dragover', (e) => { e.preventDefault(); imageDropZone.classList.add('dragover'); });
+        imageDropZone.addEventListener('dragleave', () => imageDropZone.classList.remove('dragover'));
+        imageDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            imageDropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) uploadFile(e.dataTransfer.files[0]);
+        });
+        imageDropZone.addEventListener('paste', (e) => {
+            const items = e.clipboardData.items;
+            for (const item of items) {
+                if (item.type.indexOf('image') !== -1) {
+                    uploadFile(item.getAsFile());
+                    break;
+                }
+            }
+        });
+        imageUpload.addEventListener('change', () => uploadFile(imageUpload.files[0]));
+
+        async function loadAdminCars() {
+            const list = document.getElementById('carList');
+            const { data, error } = await client.from('cars').select('*').order('created_at', { ascending: false });
+            list.innerHTML = '';
+            data.forEach(car => {
+                const div = document.createElement('div');
+                div.className = 'car';
+                div.dataset.id = car.id;
+                div.innerHTML = `
+                  <img src="${car.image || 'https://via.placeholder.com/400x200?text=No+Image'}" alt="${car.name}">
+                  <h3>${car.name}</h3>
+                  <p><strong>Class:</strong> ${car.class}</p>
+                  <p><strong>Price:</strong> $${car.price.toLocaleString()}</p>
+                  <p style="flex-grow:1;">${car.description || ''}</p>
+                  <div class="car-actions">
+                    <button class="edit-btn">Edit</button>
+                    <button class="delete-btn">Delete</button>
+                  </div>
+                `;
+                list.appendChild(div);
+            });
         }
-        const { error } = await client.from('cars').insert([car]);
-        if (error) {
-          alert('Error adding car');
-        } else {
-          alert('Car added!');
-          document.getElementById('carName').value = '';
-          showPreview('');
-          imageUrlInput.value = '';
-          document.getElementById('carPrice').value = '';
-          document.getElementById('carDescription').value = '';
-          loadAdminCars();
+        
+        async function startEdit(carId) {
+            const { data: car, error } = await client.from('cars').select('*').eq('id', carId).single();
+            if (error) {
+                alert('Could not fetch car details.');
+                return;
+            }
+            editingCarId.value = car.id;
+            document.getElementById('carName').value = car.name;
+            showPreview(car.image);
+            imageUrlInput.value = car.image;
+            document.getElementById('carPrice').value = car.price;
+            document.getElementById('carClass').value = car.class;
+            document.getElementById('carDescription').value = car.description;
+            
+            formTitle.textContent = 'Editing Car: ' + car.name;
+            mainActionBtn.textContent = 'Update Car';
+            mainActionBtn.style.backgroundColor = '#007bff';
+            cancelEditBtn.style.display = 'block';
+            
+            document.getElementById('adminPanel').scrollIntoView({ behavior: 'smooth' });
         }
-      }
-
-      async function deleteCar(carId) {
-        if (!confirm('Are you sure you want to delete this car?')) return;
-
-        // Optionally delete the car's image from storage here, if you want
-        const { data, error } = await client.from('cars').select('image').eq('id', carId).single();
-        if (error || !data) {
-            alert('Error finding car image.');
-        } else {
-            // Extract the storage path from the public image URL
-            const imageUrl = data.image;
-            const parts = imageUrl.split('/');
-            const fileName = parts[parts.length - 1];
-            await client.storage.from('images').remove([fileName]);
-        }
-
-        // Delete car row from table
-        const { error: deleteError } = await client.from('cars').delete().eq('id', carId);
-        if (deleteError) {
-          alert('Error deleting car.');
-          return;
+        
+        async function handleFormSubmit() {
+            if (editingCarId.value) {
+                updateCar(editingCarId.value);
+            } else {
+                addCar();
+            }
         }
 
-        // Refresh car list
-        loadAdminCars();
-      }
-
-      document.getElementById('loginBtn').addEventListener('click', () => {
-        const pass = document.getElementById('adminPassword').value;
-        if (pass === 'JUCONTOP') {
-          document.getElementById('adminLogin').style.display = 'none';
-          document.getElementById('adminSection').style.display = 'block';
-          loadAdminCars();
-        } else {
-          alert('Wrong password!');
+        async function addCar() {
+            const car = {
+                name: document.getElementById('carName').value, image: carImageURL.value,
+                price: parseFloat(document.getElementById('carPrice').value), class: document.getElementById('carClass').value,
+                description: document.getElementById('carDescription').value
+            };
+            if (!car.name || !car.image || !car.price || !car.description) {
+                alert('Please fill out all fields and provide an image.'); return;
+            }
+            const { error } = await client.from('cars').insert([car]);
+            if (error) { alert('Error adding car'); } 
+            else { alert('Car added!'); resetForm(); loadAdminCars(); }
         }
-      });
-
-      document.getElementById('carList').addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          const carId = e.target.closest('.car').dataset.id;
-          deleteCar(carId);
+        
+        async function updateCar(id) {
+            const car = {
+                name: document.getElementById('carName').value, image: carImageURL.value,
+                price: parseFloat(document.getElementById('carPrice').value), class: document.getElementById('carClass').value,
+                description: document.getElementById('carDescription').value
+            };
+            if (!car.name || !car.image || !car.price || !car.description) {
+                alert('Please fill out all fields and provide an image.'); return;
+            }
+            const { error } = await client.from('cars').update(car).eq('id', id);
+            if (error) { alert('Error updating car.'); }
+            else { alert('Car updated!'); resetForm(); loadAdminCars(); }
         }
-      });
 
-      addCarBtn.addEventListener('click', addCar);
+        async function deleteCar(carId) {
+            if (!confirm('Are you sure you want to delete this car?')) return;
+            const { data } = await client.from('cars').select('image').eq('id', carId).single();
+            if (data && data.image) {
+                const imageUrl = data.image;
+                const fileName = imageUrl.split('/').pop();
+                if (fileName) await client.storage.from('images').remove([fileName]);
+            }
+            const { error: deleteError } = await client.from('cars').delete().eq('id', carId);
+            if (deleteError) { alert('Error deleting car.'); return; }
+            loadAdminCars();
+        }
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pass = document.getElementById('adminPassword').value;
+            if (pass === 'JUCONTOP') { // Replace with your actual password
+                document.getElementById('adminLogin').style.display = 'none';
+                document.getElementById('adminSection').style.display = 'block';
+                loadAdminCars();
+            } else { alert('Wrong password!'); }
+        });
+
+        document.getElementById('carList').addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const carId = e.target.closest('.car').dataset.id;
+                deleteCar(carId);
+            }
+            if (e.target.classList.contains('edit-btn')) {
+                const carId = e.target.closest('.car').dataset.id;
+                startEdit(carId);
+            }
+        });
+        
+        cancelEditBtn.addEventListener('click', resetForm);
+        mainActionBtn.addEventListener('click', handleFormSubmit);
     });
-  </script>
+    </script>
 </body>
 </html>
