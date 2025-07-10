@@ -1,125 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jack's Used Cars</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: url('https://i.postimg.cc/tTnFWqxt/darkbackround.png') no-repeat center center fixed;
-      background-size: cover; color: #e0e0e0; margin: 0; line-height: 1.6;
-    }
-    .container { width: 95%; max-width: 1300px; margin: auto; padding: 25px 0; }
-    header {
-      background: rgba(31, 31, 31, 0.85); backdrop-filter: blur(8px);
-      color: #fff; padding: 1rem 0 0.5rem 0; border-bottom: 4px solid #dc3545;
-      text-align: center;
-    }
-    header h1 { margin: 0; font-size: 2.3rem; font-weight: 700; }
-    .filter-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; justify-content: flex-end;}
-    .filter-bar label { font-weight: bold;}
-    #carList { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
-    .car {
-      background: #212124dd; border-radius: 10px; border: 1px solid #444; padding: 20px 15px 14px 15px;
-      display: flex; flex-direction: column; box-shadow: 0 4px 24px #0005;
-    }
-    .car img {
-      width: 100%; max-height: 220px; object-fit: cover;
-      border-radius: 8px; background: #161616;
-      margin-bottom: 10px; border: 1px solid #333;
-    }
-    .car h3 { font-size: 1.35rem; margin: 0 0 8px 0; color: #fff; }
-    .car p { margin: 0 0 7px 0; }
-    .car .price { font-size: 1.15rem; font-weight: 600; color: #e8455a; }
-    .car .class { background: #333b; color: #ffc107; display: inline-block; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px; font-weight: 500; }
-    nav { background:#161616d9;padding:10px 0;text-align:center;margin-bottom:20px;}
-    nav a {color:#e0e0e0; margin:0 18px; text-decoration:none; font-weight:500;}
-    nav a[href*="apply"] {color:#4fd1c5;}
-    nav a[href*="admin"] {color:#ffc107;}
-    nav a[href*="applications"] {color:#e8455a;}
-    @media (max-width: 700px) {
-      #carList { grid-template-columns: 1fr; }
-      .container { padding: 10px 0; }
-      .filter-bar { flex-direction: column; align-items: flex-start; gap: 8px;}
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jack's Used Cars</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('https://i.postimg.cc/tTnFWqxt/darkbackround.png') no-repeat center center fixed;
+            background-size: cover; color: #e0e0e0; margin: 0; line-height: 1.6;
+        }
+        .container { width: 95%; max-width: 1300px; margin: auto; padding: 25px 0; }
+        nav { background:#161616d9; padding:10px 0; text-align:center; }
+        nav a {
+            color:#e0e0e0; margin:0 18px; text-decoration:none; 
+            font-weight:500; transition: color 0.2s ease-in-out;
+        }
+        nav a:hover { color: #fff; }
+        nav a[href*="index.html"] { color: #fff; text-decoration: underline; }
+        nav a[href*="policy"] { color:#6c757d; }
+        nav a[href*="apply"] { color:#4fd1c5; }
+        nav a[href*="admin"] { color:#ffc107; }
+        nav a[href*="applications"] { color:#e8455a; }
+        header {
+            background: rgba(31, 31, 31, 0.85); backdrop-filter: blur(8px);
+            color: #fff; padding: 1rem 0 0.5rem 0; border-bottom: 4px solid #dc3545;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 2.3rem; font-weight: 700; }
+        .filter-bar { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; justify-content: flex-end;}
+        .filter-bar label { font-weight: bold;}
+        select {
+             background-color: #333; color: #e0e0e0; padding: 6px 10px;
+             border-radius: 5px; border: 1px solid #555; font-size: 0.9rem;
+        }
+        #carList { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
+        .car {
+            background: #212124dd; border-radius: 10px; border: 1px solid #444;
+            display: flex; flex-direction: column; box-shadow: 0 4px 24px #0005;
+            overflow: hidden;
+        }
+        .car img {
+            width: 100%; height: 220px; object-fit: cover; background: #161616;
+        }
+        .car-content { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .car-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .car h3 { font-size: 1.35rem; margin: 0; color: #fff; line-height: 1.2; }
+        .car p { margin: 10px 0 7px 0; flex-grow: 1; color: #aaa; }
+        .car .price { font-size: 1.25rem; font-weight: 600; color: #e8455a; margin-top: auto; }
+        .badge {
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        @media (max-width: 768px) {
+            #carList { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+        }
+    </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="apply.html">Apply for a Job</a>
-    <a href="admin.html">Admin Panel</a>
-    <a href="applications.html">Applications</a>
-  </nav>
-  <header>
-    <h1>Jack's Used Cars</h1>
-    <p style="margin:0;color:#ccc;font-size:1.1rem;">Quality pre-owned vehicles for any budget.</p>
-  </header>
-  <main class="container">
-    <!-- Filter Bar -->
-    <div class="filter-bar">
-      <label for="classSelect">Filter by Class:</label>
-      <select id="classSelect">
-        <option value="all">All Classes</option>
-        <option value="S">S Class</option>
-        <option value="A">A Class</option>
-        <option value="B">B Class</option>
-        <option value="C">C Class</option>
-        <option value="D">D Class</option>
-        <option value="M">M Class</option>
-      </select>
-      <label for="sortSelect">Sort by Price:</label>
-      <select id="sortSelect">
-        <option value="desc">Highest to Lowest</option>
-        <option value="asc">Lowest to Highest</option>
-      </select>
-    </div>
-    <div id="carList"></div>
-  </main>
-  <script>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="policy.html">Purchase Policy</a>
+        <a href="apply.html">Apply for a Job</a>
+        <a href="admin.html">Admin Panel</a>
+        <a href="applications.html">Applications</a>
+    </nav>
+    <header>
+        <h1>Jack's Used Cars</h1>
+        <p style="margin:0;color:#ccc;font-size:1.1rem;">Quality pre-owned vehicles for any budget.</p>
+    </header>
+    <main class="container">
+        <div class="filter-bar">
+            <label for="classSelect">Filter by Class:</label>
+            <select id="classSelect">
+                <option value="all">All Classes</option>
+                <option value="S">S Class</option>
+                <option value="A">A Class</option>
+                <option value="B">B Class</option>
+                <option value="C">C Class</option>
+                <option value="D">D Class</option>
+                <option value="M">M Class</option>
+            </select>
+            <label for="sortSelect">Sort by Price:</label>
+            <select id="sortSelect">
+                <option value="desc">Highest to Lowest</option>
+                <option value="asc">Lowest to Highest</option>
+            </select>
+        </div>
+        <div id="carList"></div>
+    </main>
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
-      const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
-      const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      const carList = document.getElementById('carList');
-      const sortSelect = document.getElementById('sortSelect');
-      const classSelect = document.getElementById('classSelect');
-      async function loadCars() {
-        const sortOrder = sortSelect.value;
-        const selectedClass = classSelect.value;
-        let query = client.from('cars').select('*');
-        if (selectedClass !== 'all') {
-          query = query.eq('class', selectedClass);
+        const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const carList = document.getElementById('carList');
+        const sortSelect = document.getElementById('sortSelect');
+        const classSelect = document.getElementById('classSelect');
+
+        async function loadCars() {
+            const sortOrder = sortSelect.value;
+            const selectedClass = classSelect.value;
+            let query = client.from('cars').select('*');
+            if (selectedClass !== 'all') {
+                query = query.eq('class', selectedClass);
+            }
+            query = query.order('price', { ascending: sortOrder === 'asc' });
+            const { data, error } = await query;
+            carList.innerHTML = '';
+            if (error || !data || !Array.isArray(data) || data.length === 0) {
+                carList.innerHTML = '<p style="color:#ffc107; text-align:center;">No cars found matching your criteria.</p>';
+                return;
+            }
+            data.forEach(car => {
+                const div = document.createElement('div');
+                div.className = 'car';
+                div.innerHTML = `
+                    <img src="${car.image || 'https://via.placeholder.com/400x200?text=No+Image'}" alt="${car.name}" loading="lazy">
+                    <div class="car-content">
+                        <div class="car-header">
+                            <h3>${car.name}</h3>
+                            <span class="badge">${car.class || '?'}</span>
+                        </div>
+                        <p>${car.description || ''}</p>
+                        <div class="price">$${car.price ? car.price.toLocaleString() : '—'}</div>
+                    </div>
+                `;
+                carList.appendChild(div);
+            });
         }
-        query = query.order('price', { ascending: sortOrder === 'asc' });
-        const { data, error } = await query;
-        carList.innerHTML = '';
-        if (error || !data || !Array.isArray(data) || data.length === 0) {
-          carList.innerHTML = '<p style="color:#ffc107;">No cars found.</p>';
-          return;
-        }
-        data.forEach(car => {
-          const div = document.createElement('div');
-          div.className = 'car';
-          div.innerHTML = `
-            <img src="${car.image || 'https://via.placeholder.com/400x200?text=No+Image'}" alt="${car.name}" loading="lazy">
-            <h3>${car.name}</h3>
-            <div class="class">${car.class || ''}</div>
-            <div class="price">$${car.price ? car.price.toLocaleString() : '—'}</div>
-            <p>${car.description || ''}</p>
-          `;
-          carList.appendChild(div);
-        });
-      }
-      sortSelect.addEventListener('change', loadCars);
-      classSelect.addEventListener('change', loadCars);
-      loadCars();
+        sortSelect.addEventListener('change', loadCars);
+        classSelect.addEventListener('change', loadCars);
+        loadCars();
     });
-  </script>
+    </script>
 </body>
 </html>
