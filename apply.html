@@ -1,77 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apply for a Job - Jack's Used Cars</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <style>
-    body { font-family: sans-serif; background: #232323; color: #e0e0e0; margin:0; }
-    .container { max-width: 430px; margin: 40px auto; padding: 24px 22px; background: #2a2a2a; border-radius: 10px; }
-    h1 { text-align: center; }
-    input, textarea, select, button {
-      width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 14px; border: 1px solid #444; background: #333; color: #e0e0e0;
-    }
-    button { background: #dc3545; font-weight: bold; border: none; }
-    button:hover { background: #b52c35; }
-    nav { background:#161616d9;padding:10px 0;text-align:center;margin-bottom:20px;}
-    nav a {color:#e0e0e0; margin:0 18px; text-decoration:none; font-weight:500;}
-    nav a[href*="apply"] {color:#4fd1c5;}
-    nav a[href*="admin"] {color:#ffc107;}
-    nav a[href*="applications"] {color:#e8455a;}
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apply for a Job - Jack's Used Cars</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('https://i.postimg.cc/tTnFWqxt/darkbackround.png') no-repeat center center fixed;
+            background-size: cover; color: #e0e0e0; margin: 0; line-height: 1.6;
+        }
+        .container { width: 90%; max-width: 800px; margin: auto; padding: 25px 0; }
+        nav { background:#161616d9; padding:10px 0; text-align:center; }
+        nav a {
+            color:#e0e0e0; margin:0 18px; text-decoration:none; 
+            font-weight:500; transition: color 0.2s ease-in-out;
+        }
+        nav a:hover { color: #fff; }
+        nav a[href*="apply.html"] { color:#4fd1c5; text-decoration: underline; }
+        nav a[href*="policy"] { color:#6c757d; }
+        nav a[href*="admin"] { color:#ffc107; }
+        nav a[href*="applications"] { color:#e8455a; }
+        header {
+            background: rgba(31, 31, 31, 0.85); backdrop-filter: blur(8px);
+            color: #fff; padding: 1rem 0 0.5rem 0; border-bottom: 4px solid #dc3545;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 2.3rem; font-weight: 700; }
+        .form-container {
+            background: #212124dd;
+            padding: 2.5rem;
+            border-radius: 10px;
+            border: 1px solid #444;
+            box-shadow: 0 4px 24px #0005;
+        }
+        .form-container h2 {
+            text-align: center; margin-top: 0; margin-bottom: 2rem;
+            font-size: 1.8rem; color: #fff;
+        }
+        input, select, textarea {
+            background-color: #333; color: #e0e0e0; width: 100%; padding: 12px;
+            margin-bottom: 15px; border-radius: 5px; border: 1px solid #555;
+            box-sizing: border-box; font-family: 'Roboto', sans-serif; font-size: 1rem;
+        }
+        textarea {
+            resize: vertical;
+        }
+        button {
+            background-color: #dc3545; color: white; font-weight: bold; border: none;
+            cursor: pointer; transition: background-color 0.3s ease;
+            width: 100%; padding: 12px; border-radius: 5px; font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+        button:hover { background-color: #c82333; }
+        #result {
+            text-align:center; margin-top:1rem; font-weight:bold; font-size: 1.1rem;
+        }
+    </style>
 </head>
 <body>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="apply.html">Apply for a Job</a>
-    <a href="admin.html">Admin Panel</a>
-    <a href="applications.html">Applications</a>
-  </nav>
-  <div class="container">
-    <h1>Job Application</h1>
-    <form id="applyForm">
-      <input type="text" id="name" placeholder="Full Name" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="tel" id="phone" placeholder="Phone Number" required />
-      <select id="position" required>
-        <option value="">Select Position</option>
-        <option value="Salesperson">Salesperson</option>
-        <option value="Finance">Finance</option>
-        <option value="Other">Other</option>
-      </select>
-      <textarea id="message" placeholder="Tell us about yourself..." rows="5" required></textarea>
-      <button type="submit">Submit Application</button>
-    </form>
-    <div id="result" style="text-align:center;margin-top:12px;font-weight:bold;"></div>
-  </div>
-  <script>
-    const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    document.getElementById('applyForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const result = document.getElementById('result');
-      result.textContent = '';
-      const app = {
-        name: document.getElementById('name').value.trim(),
-        email: document.getElementById('email').value.trim(),
-        phone: document.getElementById('phone').value.trim(),
-        position: document.getElementById('position').value,
-        message: document.getElementById('message').value.trim(),
-      };
-      if (!app.name || !app.email || !app.phone || !app.position || !app.message) {
-        result.textContent = "All fields required!";
-        return;
-      }
-      const { error } = await client.from('applications').insert([app]);
-      if (error) {
-        result.textContent = "Error submitting. Try again.";
-      } else {
-        result.textContent = "Application submitted!";
-        document.getElementById('applyForm').reset();
-      }
-    });
-  </script>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="policy.html">Purchase Policy</a>
+        <a href="apply.html">Apply for a Job</a>
+        <a href="admin.html">Admin Panel</a>
+        <a href="applications.html">Applications</a>
+    </nav>
+    <header>
+        <h1>Jack's Used Cars</h1>
+        <p style="margin:0;color:#ccc;font-size:1.1rem;">Quality pre-owned vehicles for any budget.</p>
+    </header>
+
+    <main class="container">
+        <div class="form-container">
+            <h2>Job Application</h2>
+            <form id="applyForm">
+                <input type="text" id="name" placeholder="Full Name" required />
+                <input type="email" id="email" placeholder="Email" required />
+                <input type="tel" id="phone" placeholder="Phone Number" required />
+                <select id="position" required>
+                    <option value="">Select Position</option>
+                    <option value="Salesperson">Salesperson</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Other">Other</option>
+                </select>
+                <textarea id="message" placeholder="Tell us about yourself..." rows="5" required></textarea>
+                <button type="submit">Submit Application</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </main>
+
+    <script>
+        const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        document.getElementById('applyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const result = document.getElementById('result');
+            result.textContent = '';
+            const app = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                position: document.getElementById('position').value,
+                message: document.getElementById('message').value.trim(),
+            };
+            if (!app.name || !app.email || !app.phone || !app.position || !app.message) {
+                result.textContent = "All fields required!";
+                result.style.color = '#e8455a';
+                return;
+            }
+            const { error } = await client.from('applications').insert([app]);
+            if (error) {
+                result.textContent = "Error submitting. Try again.";
+                result.style.color = '#e8455a';
+            } else {
+                result.textContent = "Application submitted!";
+                result.style.color = '#4fd1c5';
+                document.getElementById('applyForm').reset();
+            }
+        });
+    </script>
 </body>
 </html>
