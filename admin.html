@@ -83,7 +83,7 @@
 
     <!-- Admin Panel (hidden by default) -->
     <div id="adminSection" style="display:none;">
-      <button class="logout-btn" onclick="logout()">Logout</button>
+      <button class="logout-btn" onclick="logout()" style="margin-top:10px;">Logout</button>
       <div id="adminPanel">
         <h2>Add a New Car</h2>
         <input type="text" id="carName" placeholder="Car Name (e.g., Sultan Classic)">
@@ -145,7 +145,7 @@
     // Logout logic
     async function logout() {
       await client.auth.signOut();
-      checkAuth();
+      location.reload();
     }
     window.logout = logout;
 
