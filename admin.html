@@ -199,8 +199,7 @@
       e.preventDefault();
       imageDropZone.classList.add('dragover');
     });
-    imageDropZone.addEventListener('dragleave', () => imageDropZone.classList.remove('dragover');
-    );
+    imageDropZone.addEventListener('dragleave', () => imageDropZone.classList.remove('dragover'));
     imageDropZone.addEventListener('drop', (e) => {
       e.preventDefault();
       imageDropZone.classList.remove('dragover');
