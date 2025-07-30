@@ -39,7 +39,7 @@
     button:hover { background-color: #c82333; }
     .delete-btn { background-color: #6c757d; }
     .delete-btn:hover { background-color: #5a6268; }
-    .edit-btn { 
+    .edit-btn {
       background-color: #007bff; /* Blue for edit */
       margin-right: 10px; /* Space from delete button */
     }
@@ -77,7 +77,6 @@
   </header>
 
   <main class="container">
-    <!-- Staff Login -->
     <div id="staffLogin">
       <h2>Staff Login</h2>
       <input type="email" id="staffEmail" placeholder="Email" required />
@@ -86,7 +85,6 @@
       <div id="staffLoginError" style="color:#e8455a;margin-top:10px;"></div>
     </div>
 
-    <!-- Admin Panel (hidden by default) -->
     <div id="adminSection" style="display:none;">
       <button class="logout-btn" onclick="logout()" style="margin-top:10px;">Logout</button>
       <div id="adminPanel">
@@ -122,7 +120,7 @@
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Global variable to track editing state
-    let editingCarId = null; 
+    let editingCarId = null;
 
     // DOM Elements
     const staffLogin = document.getElementById('staffLogin');
@@ -134,18 +132,17 @@
 
     const carNameInput = document.getElementById('carName');
     const carClassSelect = document.getElementById('carClass');
-    const carUpgradesTextarea = document.getElementById('carUpgrades');
     const carPriceInput = document.getElementById('carPrice');
-    const carMainDescriptionTextarea = document.getElementById('carMainDescription'); // Renamed from carDescription
+    const carMainDescriptionTextarea = document.getElementById('carMainDescription');
     const imageDropZone = document.getElementById('imageDropZone');
-    const imageUploadInput = document.getElementById('imageUpload'); // Renamed from imageUpload
+    const imageUploadInput = document.getElementById('imageUpload');
     const imagePreview = document.getElementById('imagePreview');
-    const carImageURLInput = document.getElementById('carImageURL'); // Renamed from carImageURL
+    const carImageURLInput = document.getElementById('carImageURL');
     const imageUrlInput = document.getElementById('imageUrlInput');
     const useUrlBtn = document.getElementById('useUrlBtn');
-    const saveOrUpdateCarBtn = document.getElementById('saveOrUpdateCarBtn'); // Renamed from addCarBtn
-    const cancelEditBtn = document.getElementById('cancelEditBtn'); // New cancel button
-    const carListDiv = document.getElementById('carList'); // Renamed from carList
+    const saveOrUpdateCarBtn = document.getElementById('saveOrUpdateCarBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const carListDiv = document.getElementById('carList');
 
     // Show/hide based on login status
     async function checkAuth() {
@@ -264,7 +261,6 @@
           <h3>${car.name}</h3>
           <p><strong>Class:</strong> ${car.class}</p>
           <p><strong>Price:</strong> $${car.price.toLocaleString()}</p>
-          ${car.upgrades ? `<p><strong>Upgrades:</strong> ${car.upgrades}</p>` : ''}
           <p>${car.description || ''}</p>
           <button class="edit-btn">Edit</button>
           <button class="delete-btn">Delete</button>
@@ -278,10 +274,9 @@
       const car = {
         name: carNameInput.value.trim(),
         class: carClassSelect.value,
-        upgrades: carUpgradesTextarea.value.trim(), // New upgrades field
         price: parseFloat(carPriceInput.value),
-        description: carMainDescriptionTextarea.value.trim(), // Main description field
-        image: carImageURLInput.value // Hidden input holds the image URL
+        description: carMainDescriptionTextarea.value.trim(),
+        image: carImageURLInput.value
       };
 
       if (!car.name || !car.class || isNaN(car.price) || !car.description || !car.image) {
@@ -330,8 +325,7 @@
 
       // Populate form fields
       carNameInput.value = car.name || '';
-      carClassSelect.value = car.class || 'S'; // Default to S if class is null
-      carUpgradesTextarea.value = car.upgrades || '';
+      carClassSelect.value = car.class || 'S';
       carPriceInput.value = car.price || '';
       carMainDescriptionTextarea.value = car.description || '';
       showPreview(car.image); // Show current image
@@ -354,7 +348,6 @@
     function clearForm() {
       carNameInput.value = '';
       carClassSelect.value = 'S';
-      carUpgradesTextarea.value = '';
       carPriceInput.value = '';
       carMainDescriptionTextarea.value = '';
       showPreview(''); // Clear image preview
@@ -368,17 +361,16 @@
 
       const { data, error } = await client.from('cars').select('image').eq('id', carId).single();
       if (error || !data || !data.image) {
-        alert('Error finding car image for deletion or image URL is missing.');
+        console.warn('Could not find car image to delete, proceeding with DB deletion.');
       } else {
         // Remove image from storage
         const imageUrl = data.image;
         const parts = imageUrl.split('/');
-        // Assuming the image path in storage is 'car_images/car_timestamp.ext'
-        const fileNameInStorage = `car_images/${parts[parts.length - 1]}`; 
+        const fileNameInStorage = `car_images/${parts[parts.length - 1]}`;
         const { error: storageError } = await client.storage.from('images').remove([fileNameInStorage]);
         if (storageError) {
           console.error('Error removing image from storage:', storageError.message);
-          alert('Error removing image from storage: ' + storageError.message);
+          alert('Could not remove image from storage, but will proceed with deleting database entry. ' + storageError.message);
         }
       }
 
@@ -394,7 +386,7 @@
     // Event listener for car list (delegation for edit/delete buttons)
     carListDiv.addEventListener('click', (e) => {
       const carElement = e.target.closest('.car');
-      if (!carElement) return; // Click wasn't on a car item
+      if (!carElement) return;
 
       const carId = carElement.dataset.id;
 
