@@ -9,7 +9,7 @@
     body { font-family: sans-serif; background: #232323; color: #e0e0e0;}
     .container { max-width: 700px; margin: 40px auto; padding: 24px 18px; background: #2a2a2a; border-radius: 10px; }
     h1 { text-align: center; }
-    .application { background: #232323; border: 1px solid #444; border-radius: 7px; margin-bottom: 20px; padding: 12px 14px;}
+    .application { background: #232323; border: 1px solid #444; border-radius: 7px; margin-bottom: 20px; padding: 12px 14px; position: relative;}
     .field { margin-bottom: 5px; }
     .field span { font-weight: bold; color: #ffc107; }
     #loginPanel { margin: 60px auto 0 auto; max-width: 300px; background: #242424; padding: 28px 16px; border-radius: 10px;}
@@ -21,6 +21,93 @@
     nav a[href*="apply"] {color:#4fd1c5;}
     nav a[href*="admin"] {color:#ffc107;}
     nav a[href*="applications"] {color:#e8455a;}
+    
+    /* Delete button styles */
+    .delete-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+      width: auto;
+      margin: 0;
+    }
+    
+    .delete-btn:hover {
+      background: #b52c35;
+    }
+    
+    .delete-btn:active {
+      background: #a02a37;
+    }
+    
+    /* Bulk actions */
+    .bulk-actions {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #1a1a1a;
+      border-radius: 7px;
+      border: 1px solid #444;
+      text-align: center;
+    }
+    
+    .bulk-actions button {
+      width: auto;
+      margin: 0 5px;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+    
+    .select-all-btn {
+      background: #28a745 !important;
+    }
+    
+    .select-all-btn:hover {
+      background: #218838 !important;
+    }
+    
+    .delete-selected-btn {
+      background: #dc3545 !important;
+    }
+    
+    .delete-selected-btn:hover {
+      background: #c82333 !important;
+    }
+    
+    .application-checkbox {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      transform: scale(1.2);
+    }
+    
+    .application.has-checkbox {
+      padding-left: 40px;
+      padding-right: 100px;
+    }
+    
+    /* Loading and success states */
+    .deleting {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    
+    .success-message {
+      background: #28a745;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -32,6 +119,14 @@
   </nav>
   <div class="container" id="mainPanel" style="display:none;">
     <h1>Applications</h1>
+    
+    <div class="bulk-actions">
+      <button class="select-all-btn" id="selectAllBtn">Select All</button>
+      <button class="delete-selected-btn" id="deleteSelectedBtn">Delete Selected</button>
+      <span id="selectedCount" style="margin-left: 15px; color: #ffc107;"></span>
+    </div>
+    
+    <div id="successMessage" style="display: none;"></div>
     <div id="applications"></div>
   </div>
   <div id="loginPanel">
@@ -45,6 +140,10 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const managerPassword = "manager123"; // <--- CHANGE THIS TO YOUR SECRET
+    
+    let applications = [];
+    let selectedApplications = new Set();
+    
     document.getElementById('reviewLoginBtn').onclick = () => {
       const input = document.getElementById('reviewPass').value;
       if (input === managerPassword) {
@@ -55,18 +154,40 @@
         document.getElementById('reviewError').textContent = "Wrong password!";
       }
     };
+    
+    // Allow Enter key to submit password
+    document.getElementById('reviewPass').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('reviewLoginBtn').click();
+      }
+    });
+    
     async function loadApplications() {
       const { data, error } = await client.from('applications').select('*').order('created_at', { ascending: false });
       const list = document.getElementById('applications');
       list.innerHTML = '';
-      if (error || !data || data.length === 0) {
+      
+      if (error) {
+        list.innerHTML = "<p style='color:#dc3545'>Error loading applications.</p>";
+        return;
+      }
+      
+      if (!data || data.length === 0) {
         list.innerHTML = "<p style='color:#ffc107'>No applications found.</p>";
         return;
       }
+      
+      applications = data;
+      selectedApplications.clear();
+      updateSelectedCount();
+      
       data.forEach(app => {
         const div = document.createElement('div');
-        div.className = "application";
+        div.className = "application has-checkbox";
+        div.dataset.id = app.id;
         div.innerHTML = `
+          <input type="checkbox" class="application-checkbox" data-id="${app.id}">
+          <button class="delete-btn" onclick="deleteApplication(${app.id})">Delete</button>
           <div class="field"><span>Name:</span> ${app.name}</div>
           <div class="field"><span>Email:</span> ${app.email}</div>
           <div class="field"><span>Phone:</span> ${app.phone}</div>
@@ -76,6 +197,148 @@
         `;
         list.appendChild(div);
       });
+      
+      // Add event listeners for checkboxes
+      document.querySelectorAll('.application-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', handleCheckboxChange);
+      });
+    }
+    
+    function handleCheckboxChange(e) {
+      const appId = parseInt(e.target.dataset.id);
+      if (e.target.checked) {
+        selectedApplications.add(appId);
+      } else {
+        selectedApplications.delete(appId);
+      }
+      updateSelectedCount();
+    }
+    
+    function updateSelectedCount() {
+      const count = selectedApplications.size;
+      const countElement = document.getElementById('selectedCount');
+      if (count > 0) {
+        countElement.textContent = `${count} selected`;
+      } else {
+        countElement.textContent = '';
+      }
+    }
+    
+    async function deleteApplication(id) {
+      if (!confirm('Are you sure you want to delete this application?')) {
+        return;
+      }
+      
+      const appElement = document.querySelector(`[data-id="${id}"]`);
+      appElement.classList.add('deleting');
+      
+      try {
+        const { error } = await client.from('applications').delete().eq('id', id);
+        
+        if (error) {
+          throw error;
+        }
+        
+        // Remove from DOM
+        appElement.remove();
+        
+        // Remove from selected if it was selected
+        selectedApplications.delete(id);
+        updateSelectedCount();
+        
+        showSuccessMessage('Application deleted successfully!');
+        
+      } catch (error) {
+        console.error('Error deleting application:', error);
+        appElement.classList.remove('deleting');
+        alert('Error deleting application. Please try again.');
+      }
+    }
+    
+    // Select All functionality
+    document.getElementById('selectAllBtn').onclick = () => {
+      const checkboxes = document.querySelectorAll('.application-checkbox');
+      const allSelected = selectedApplications.size === checkboxes.length;
+      
+      checkboxes.forEach(checkbox => {
+        const appId = parseInt(checkbox.dataset.id);
+        if (allSelected) {
+          checkbox.checked = false;
+          selectedApplications.delete(appId);
+        } else {
+          checkbox.checked = true;
+          selectedApplications.add(appId);
+        }
+      });
+      
+      updateSelectedCount();
+    };
+    
+    // Delete Selected functionality
+    document.getElementById('deleteSelectedBtn').onclick = async () => {
+      if (selectedApplications.size === 0) {
+        alert('Please select applications to delete.');
+        return;
+      }
+      
+      if (!confirm(`Are you sure you want to delete ${selectedApplications.size} selected application(s)?`)) {
+        return;
+      }
+      
+      const selectedIds = Array.from(selectedApplications);
+      
+      // Add deleting class to selected applications
+      selectedIds.forEach(id => {
+        const appElement = document.querySelector(`[data-id="${id}"]`);
+        if (appElement) {
+          appElement.classList.add('deleting');
+        }
+      });
+      
+      try {
+        const { error } = await client.from('applications').delete().in('id', selectedIds);
+        
+        if (error) {
+          throw error;
+        }
+        
+        // Remove deleted applications from DOM
+        selectedIds.forEach(id => {
+          const appElement = document.querySelector(`[data-id="${id}"]`);
+          if (appElement) {
+            appElement.remove();
+          }
+        });
+        
+        selectedApplications.clear();
+        updateSelectedCount();
+        
+        showSuccessMessage(`${selectedIds.length} application(s) deleted successfully!`);
+        
+      } catch (error) {
+        console.error('Error deleting applications:', error);
+        
+        // Remove deleting class if error occurred
+        selectedIds.forEach(id => {
+          const appElement = document.querySelector(`[data-id="${id}"]`);
+          if (appElement) {
+            appElement.classList.remove('deleting');
+          }
+        });
+        
+        alert('Error deleting applications. Please try again.');
+      }
+    };
+    
+    function showSuccessMessage(message) {
+      const successDiv = document.getElementById('successMessage');
+      successDiv.textContent = message;
+      successDiv.className = 'success-message';
+      successDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        successDiv.style.display = 'none';
+      }, 3000);
     }
   </script>
 </body>
