@@ -5,26 +5,478 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Panel - Jack's Used Cars</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; background:#232323; color:#e0e0e0; margin:0; }
-    .container { max-width:1200px; margin:auto; padding:20px; }
-    header { background:#111; padding:10px; border-bottom:3px solid #dc3545; color:#fff; }
-    header .container { display:flex; justify-content:space-between; align-items:center; }
-    h1 { margin:0; }
-    .site-link { color:#fff; background:#666; padding:8px 14px; border-radius:5px; text-decoration:none; }
-    input,textarea,select,button { width:100%; padding:10px; margin-bottom:12px; border:1px solid #444; border-radius:5px; background:#333; color:#eee; }
-    button { cursor:pointer; font-weight:bold; background:#dc3545; }
-    button:hover { background:#b52c35; }
-    .delete-btn { background:#666; }
-    .edit-btn { background:#ffc107; color:#000; margin-right:5px; }
-    #carList { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
-    .car { background:#2a2a2a; border:1px solid #444; border-radius:8px; padding:10px; }
-    table { width:100%; border-collapse:collapse; margin-top:15px; }
-    th,td { border:1px solid #555; padding:8px; text-align:center; }
-    th { background:#444; }
-    tfoot { background:#333; font-weight:bold; }
-    #imageDropZone { border:2px dashed #666; padding:20px; text-align:center; margin-bottom:12px; cursor:pointer; }
-    #imagePreview { display:none; max-width:100%; max-height:200px; margin-bottom:12px; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body { 
+      font-family: 'Roboto', sans-serif;
+      background: url('https://i.postimg.cc/4yzktd1D/background.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(220,53,69,0.1) 100%);
+      z-index: -1;
+    }
+
+    .container { 
+      max-width: 1200px; 
+      margin: auto; 
+      padding: 20px; 
+    }
+
+    header { 
+      background: linear-gradient(135deg, rgba(17,17,17,0.95) 0%, rgba(33,33,36,0.9) 100%);
+      backdrop-filter: blur(15px);
+      padding: 20px 0; 
+      border-bottom: 4px solid #dc3545; 
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header .container { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    h1 { 
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .site-link { 
+      color: #fff; 
+      background: linear-gradient(45deg, #666, #888);
+      padding: 12px 20px; 
+      border-radius: 25px; 
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .site-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      background: linear-gradient(45deg, #777, #999);
+    }
+
+    /* Login Section */
+    #staffLogin {
+      max-width: 400px;
+      margin: 60px auto;
+      background: linear-gradient(145deg, rgba(33,33,36,0.95), rgba(26,26,26,0.95));
+      backdrop-filter: blur(15px);
+      padding: 40px 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    #staffLogin h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* Form Elements */
+    input, textarea, select, button { 
+      width: 100%; 
+      padding: 15px 20px; 
+      margin-bottom: 20px; 
+      border: 2px solid rgba(255,255,255,0.1); 
+      border-radius: 12px; 
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      color: #eee;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220,53,69,0.2);
+      transform: translateY(-2px);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: #888;
+      font-weight: 400;
+    }
+
+    button { 
+      cursor: pointer; 
+      font-weight: 700; 
+      background: linear-gradient(45deg, #dc3545, #e8455a);
+      border: none;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #b52c35, #dc3545);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(220,53,69,0.4);
+    }
+
+    button:hover::before {
+      left: 100%;
+    }
+
+    button:active {
+      transform: translateY(-1px);
+    }
+
+    .delete-btn { 
+      background: linear-gradient(45deg, #666, #777) !important;
+      margin-left: 10px;
+    }
+
+    .delete-btn:hover {
+      background: linear-gradient(45deg, #555, #666) !important;
+    }
+
+    .edit-btn { 
+      background: linear-gradient(45deg, #ffc107, #ffca28) !important;
+      color: #000 !important; 
+      margin-right: 10px;
+    }
+
+    .edit-btn:hover {
+      background: linear-gradient(45deg, #ffb300, #ffc107) !important;
+    }
+
+    .logout-btn {
+      background: linear-gradient(45deg, #555, #666) !important;
+      float: right;
+      margin-bottom: 20px !important;
+      width: auto !important;
+      padding: 10px 20px !important;
+    }
+
+    /* Admin Section */
+    #adminSection {
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-card {
+      background: linear-gradient(145deg, rgba(33,33,36,0.95), rgba(26,26,26,0.95));
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      padding: 30px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #dc3545, #e8455a, #ffc107);
+    }
+
+    .section-card h2 {
+      color: #fff;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-card h2::before {
+      content: '';
+      width: 4px;
+      height: 30px;
+      background: linear-gradient(45deg, #dc3545, #e8455a);
+      border-radius: 2px;
+    }
+
+    /* Image Upload */
+    #imageDropZone { 
+      border: 3px dashed rgba(220,53,69,0.5);
+      background: linear-gradient(145deg, rgba(42,42,42,0.8), rgba(26,26,26,0.8));
+      padding: 40px 20px; 
+      text-align: center; 
+      margin-bottom: 20px; 
+      cursor: pointer;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #imageDropZone::before {
+      content: '📁';
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #imageDropZone:hover {
+      border-color: #dc3545;
+      background: linear-gradient(145deg, rgba(220,53,69,0.1), rgba(26,26,26,0.9));
+      transform: translateY(-2px);
+    }
+
+    #imageDropZone.dragover {
+      border-color: #e8455a;
+      background: linear-gradient(145deg, rgba(220,53,69,0.2), rgba(26,26,26,0.9));
+    }
+
+    #imagePreview { 
+      display: none; 
+      max-width: 100%; 
+      max-height: 300px; 
+      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    /* Car Grid */
+    #carList { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+      gap: 25px; 
+    }
+
+    .car { 
+      background: linear-gradient(145deg, rgba(42,42,42,0.95), rgba(26,26,26,0.95));
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1); 
+      border-radius: 20px; 
+      padding: 20px;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .car::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #dc3545, #e8455a, #ffc107);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .car:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(220,53,69,0.3);
+      border-color: rgba(220,53,69,0.3);
+    }
+
+    .car:hover::before {
+      transform: scaleX(1);
+    }
+
+    .car img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      transition: transform 0.4s ease;
+    }
+
+    .car:hover img {
+      transform: scale(1.05);
+    }
+
+    .car h3 {
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .car p {
+      color: #bbb;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .car-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .car-actions button {
+      flex: 1;
+      margin-bottom: 0;
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    /* Error Messages */
+    #staffLoginError {
+      color: #e8455a;
+      text-align: center;
+      font-weight: 600;
+      background: rgba(232,69,90,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(232,69,90,0.3);
+      margin-top: 15px;
+    }
+
+    /* Success Messages */
+    .success-message {
+      background: linear-gradient(45deg, #28a745, #34ce57);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+      animation: slideInDown 0.5s ease;
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Loading States */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+      position: relative;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid transparent;
+      border-top: 2px solid #dc3545;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      header .container {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      #carList {
+        grid-template-columns: 1fr;
+      }
+
+      .car-actions {
+        flex-direction: column;
+      }
+
+      #staffLogin {
+        margin: 30px auto;
+        padding: 30px 20px;
+      }
+
+      .section-card {
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+
+      input, textarea, select, button {
+        padding: 12px 15px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -39,34 +491,50 @@
     <!-- Staff Login -->
     <div id="staffLogin">
       <h2>Staff Login</h2>
-      <input type="email" id="staffEmail" placeholder="Email" />
+      <input type="email" id="staffEmail" placeholder="Email Address" />
       <input type="password" id="staffPassword" placeholder="Password" />
-      <button id="staffLoginBtn">Login</button>
-      <div id="staffLoginError" style="color:red;"></div>
+      <button id="staffLoginBtn">Login to Admin Panel</button>
+      <div id="staffLoginError"></div>
     </div>
 
     <!-- Admin Section -->
     <div id="adminSection" style="display:none;">
-      <button onclick="logout()" style="float:right; background:#555; margin-bottom:15px;">Logout</button>
+      <button onclick="logout()" class="logout-btn">Logout</button>
+      <div style="clear: both;"></div>
 
-      <!-- Cars -->
-      <h2>Add / Edit Car</h2>
-      <input type="text" id="carName" placeholder="Car Name" />
-      <div id="imageDropZone">Click or Drop PNG/JPG Here</div>
-      <input type="file" id="imageUpload" accept="image/*" style="display:none;" />
-      <img id="imagePreview" />
-      <input type="hidden" id="carImageURL" />
-      <input type="number" id="carPrice" placeholder="Price" />
-      <select id="carClass">
-        <option value="S">S Class</option><option value="A">A Class</option>
-        <option value="B">B Class</option><option value="C">C Class</option>
-        <option value="D">D Class</option><option value="M">M Class</option>
-      </select>
-      <textarea id="carDescription" placeholder="Description"></textarea>
-      <button id="addCarBtn">Add Car</button>
+      <!-- Add/Edit Car Section -->
+      <div class="section-card">
+        <h2>Add / Edit Vehicle</h2>
+        <input type="text" id="carName" placeholder="Vehicle Name (e.g., Sultan Classic)" />
+        
+        <div id="imageDropZone">
+          <div>Click here or drop an image to upload</div>
+          <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
+        </div>
+        <input type="file" id="imageUpload" accept="image/*" style="display:none;" />
+        <img id="imagePreview" />
+        <input type="hidden" id="carImageURL" />
+        
+        <input type="number" id="carPrice" placeholder="Price $$$" step="0.01" />
+        
+        <select id="carClass">
+          <option value="S">S Class</option>
+          <option value="A">A Class</option>
+          <option value="B">B Class</option>
+          <option value="C">C Class</option>
+          <option value="D">D Class</option>
+          <option value="M">M Class</option>
+        </select>
+        
+        <textarea id="carDescription" placeholder="Vehicle description..." rows="4"></textarea>
+        <button id="addCarBtn">Add Vehicle to Inventory</button>
+      </div>
 
-      <h2>Current Inventory</h2>
-      <div id="carList"></div>
+      <!-- Current Inventory -->
+      <div class="section-card">
+        <h2>Current Inventory</h2>
+        <div id="carList"></div>
+      </div>
     </div>
   </main>
 
@@ -78,49 +546,140 @@
     let editingCarId = null;
 
     async function checkAuth() {
-      const { data:{user} } = await client.auth.getUser();
-      if(user){
-        document.getElementById('staffLogin').style.display='none';
-        document.getElementById('adminSection').style.display='block';
+      const { data: { user } } = await client.auth.getUser();
+      if (user) {
+        document.getElementById('staffLogin').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'block';
         loadAdminCars();
       }
     }
     checkAuth();
 
-    document.getElementById('staffLoginBtn').onclick = async ()=>{
-      const email=document.getElementById('staffEmail').value;
-      const password=document.getElementById('staffPassword').value;
-      const { error } = await client.auth.signInWithPassword({ email, password });
-      if(error) document.getElementById('staffLoginError').textContent="Login failed!";
-      else location.reload();
+    document.getElementById('staffLoginBtn').onclick = async () => {
+      const email = document.getElementById('staffEmail').value;
+      const password = document.getElementById('staffPassword').value;
+      const loginBtn = document.getElementById('staffLoginBtn');
+      
+      if (!email || !password) {
+        showError('Please fill in all fields');
+        return;
+      }
+
+      loginBtn.classList.add('loading');
+      loginBtn.textContent = 'Logging in...';
+
+      try {
+        const { error } = await client.auth.signInWithPassword({ email, password });
+        if (error) {
+          showError('Login failed! Check your credentials.');
+        } else {
+          location.reload();
+        }
+      } catch (err) {
+        showError('Connection error. Please try again.');
+      } finally {
+        loginBtn.classList.remove('loading');
+        loginBtn.textContent = 'Login to Admin Panel';
+      }
     };
 
-    async function logout(){ await client.auth.signOut(); location.reload(); }
+    function showError(message) {
+      const errorDiv = document.getElementById('staffLoginError');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
 
-    // Image upload + preview
+    function showSuccess(message) {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'success-message';
+      successDiv.textContent = message;
+      document.querySelector('#adminSection').insertBefore(successDiv, document.querySelector('.section-card'));
+      setTimeout(() => {
+        successDiv.remove();
+      }, 3000);
+    }
+
+    async function logout() { 
+      await client.auth.signOut(); 
+      location.reload(); 
+    }
+
+    // Image upload + preview with drag and drop
     const imageDropZone = document.getElementById("imageDropZone");
     const imageUpload = document.getElementById("imageUpload");
     const imagePreview = document.getElementById("imagePreview");
     const carImageURL = document.getElementById("carImageURL");
 
     imageDropZone.onclick = () => imageUpload.click();
+
+    // Drag and drop functionality
+    imageDropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      imageDropZone.classList.add('dragover');
+    });
+
+    imageDropZone.addEventListener('dragleave', () => {
+      imageDropZone.classList.remove('dragover');
+    });
+
+    imageDropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      imageDropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length) {
+        uploadFile(e.dataTransfer.files[0]);
+      }
+    });
+
     imageUpload.onchange = () => {
-      if(imageUpload.files.length) uploadFile(imageUpload.files[0]);
+      if (imageUpload.files.length) uploadFile(imageUpload.files[0]);
     };
 
     async function uploadFile(file) {
       if (!file) return;
-      const ext = file.name.split('.').pop();
-      const fileName = `car_${Date.now()}.${ext}`;
-      const { error } = await client.storage.from('images').upload(fileName, file);
-      if (error) {
-        alert("Upload failed: " + error.message);
+      
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
         return;
       }
-      const { data: publicData } = client.storage.from('images').getPublicUrl(fileName);
-      carImageURL.value = publicData.publicUrl;
-      imagePreview.src = publicData.publicUrl;
-      imagePreview.style.display = "block";
+
+      const ext = file.name.split('.').pop();
+      const fileName = `car_${Date.now()}.${ext}`;
+      
+      imageDropZone.style.opacity = '0.5';
+      imageDropZone.innerHTML = '<div>Uploading...</div>';
+
+      try {
+        const { error } = await client.storage.from('images').upload(fileName, file);
+        if (error) {
+          throw error;
+        }
+        
+        const { data: publicData } = client.storage.from('images').getPublicUrl(fileName);
+        carImageURL.value = publicData.publicUrl;
+        imagePreview.src = publicData.publicUrl;
+        imagePreview.style.display = "block";
+        
+        imageDropZone.innerHTML = '<div>✅ Image uploaded successfully!</div>';
+        showSuccess('Image uploaded successfully!');
+        
+      } catch (error) {
+        console.error('Upload error:', error);
+        alert("Upload failed: " + error.message);
+        resetImageDropZone();
+      } finally {
+        setTimeout(resetImageDropZone, 2000);
+      }
+    }
+
+    function resetImageDropZone() {
+      imageDropZone.style.opacity = '1';
+      imageDropZone.innerHTML = `
+        <div>Click here or drop an image to upload</div>
+        <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
+      `;
     }
 
     function showPreview(url) {
@@ -134,66 +693,146 @@
       }
     }
 
-    // Cars
-    async function loadAdminCars(){
-      const { data } = await client.from('cars').select('*').order('created_at',{ascending:false});
-      const list=document.getElementById('carList'); list.innerHTML='';
-      if(!data) return;
-      data.forEach(car=>{
-        const div=document.createElement('div'); div.className='car'; div.dataset.id=car.id;
-        div.innerHTML=`
-          <img src="${car.image}" style="width:100%;max-height:180px;object-fit:cover;">
-          <h3>${car.name}</h3>
-          <p>${car.class} | $${car.price.toLocaleString()}</p>
-          <p>${car.description||''}</p>
-          <button class="edit-btn">Edit</button>
-          <button class="delete-btn">Delete</button>
-        `;
-        list.appendChild(div);
-      });
+    // Cars management
+    async function loadAdminCars() {
+      const carList = document.getElementById('carList');
+      carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #888;">Loading inventory...</div>';
+
+      try {
+        const { data, error } = await client.from('cars').select('*').order('created_at', { ascending: false });
+        
+        if (error) throw error;
+
+        carList.innerHTML = '';
+        
+        if (!data || data.length === 0) {
+          carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #888;">No vehicles in inventory</div>';
+          return;
+        }
+
+        data.forEach(car => {
+          const div = document.createElement('div');
+          div.className = 'car';
+          div.dataset.id = car.id;
+          div.innerHTML = `
+            <img src="${car.image || 'https://via.placeholder.com/400x200/333/666?text=No+Image'}" 
+                 alt="${car.name}"
+                 onerror="this.src='https://via.placeholder.com/400x200/333/666?text=Image+Error'">
+            <h3>${car.name}</h3>
+            <p><strong>${car.class} Class</strong> | <strong style="color: #e8455a;">$${car.price ? car.price.toLocaleString() : 'N/A'}</strong></p>
+            <p>${car.description || 'No description available'}</p>
+            <div class="car-actions">
+              <button class="edit-btn">Edit Vehicle</button>
+              <button class="delete-btn">Delete</button>
+            </div>
+          `;
+          carList.appendChild(div);
+        });
+      } catch (error) {
+        console.error('Error loading cars:', error);
+        carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #e8455a;">Error loading inventory</div>';
+      }
     }
 
-    document.getElementById('carList').addEventListener('click',async e=>{
-      const carId=e.target.closest('.car').dataset.id;
-      if(e.target.classList.contains('delete-btn')){
-        if(confirm("Delete this car?")) await client.from('cars').delete().eq('id',carId);
-        loadAdminCars();
+    document.getElementById('carList').addEventListener('click', async e => {
+      const carElement = e.target.closest('.car');
+      if (!carElement) return;
+      
+      const carId = carElement.dataset.id;
+      
+      if (e.target.classList.contains('delete-btn')) {
+        if (confirm("Are you sure you want to delete this vehicle from inventory?")) {
+          e.target.classList.add('loading');
+          try {
+            const { error } = await client.from('cars').delete().eq('id', carId);
+            if (error) throw error;
+            showSuccess('Vehicle deleted successfully!');
+            loadAdminCars();
+          } catch (error) {
+            console.error('Delete error:', error);
+            alert('Error deleting vehicle');
+          }
+        }
       }
-      if(e.target.classList.contains('edit-btn')){
-        editingCarId=carId;
-        const { data } = await client.from('cars').select('*').eq('id',carId).single();
-        if(data){
-          document.getElementById('carName').value=data.name;
-          document.getElementById('carPrice').value=data.price;
-          document.getElementById('carClass').value=data.class;
-          document.getElementById('carDescription').value=data.description;
-          showPreview(data.image);
-          document.getElementById('addCarBtn').textContent="Update Car";
+      
+      if (e.target.classList.contains('edit-btn')) {
+        editingCarId = carId;
+        try {
+          const { data, error } = await client.from('cars').select('*').eq('id', carId).single();
+          if (error) throw error;
+          
+          if (data) {
+            document.getElementById('carName').value = data.name || '';
+            document.getElementById('carPrice').value = data.price || '';
+            document.getElementById('carClass').value = data.class || 'C';
+            document.getElementById('carDescription').value = data.description || '';
+            showPreview(data.image);
+            document.getElementById('addCarBtn').textContent = "Update Vehicle";
+            
+            // Scroll to form
+            document.querySelector('.section-card').scrollIntoView({ behavior: 'smooth' });
+          }
+        } catch (error) {
+          console.error('Edit error:', error);
+          alert('Error loading vehicle data');
         }
       }
     });
 
-    document.getElementById('addCarBtn').onclick=async ()=>{
-      const car={
-        name:document.getElementById('carName').value,
-        image:document.getElementById('carImageURL').value,
-        price:parseFloat(document.getElementById('carPrice').value),
-        class:document.getElementById('carClass').value,
-        description:document.getElementById('carDescription').value
-      };
-      if(editingCarId){
-        await client.from('cars').update(car).eq('id',editingCarId);
-        editingCarId=null;
-        document.getElementById('addCarBtn').textContent="Add Car";
-      } else {
-        await client.from('cars').insert([car]);
+    document.getElementById('addCarBtn').onclick = async () => {
+      const addBtn = document.getElementById('addCarBtn');
+      const name = document.getElementById('carName').value.trim();
+      const price = parseFloat(document.getElementById('carPrice').value);
+      const carClass = document.getElementById('carClass').value;
+      const description = document.getElementById('carDescription').value.trim();
+      const image = document.getElementById('carImageURL').value;
+
+      if (!name || !price || isNaN(price)) {
+        alert('Please fill in vehicle name and valid price');
+        return;
       }
-      document.getElementById('carName').value='';
-      document.getElementById('carPrice').value='';
-      document.getElementById('carDescription').value='';
-      showPreview('');
-      loadAdminCars();
+
+      const car = { name, image, price, class: carClass, description };
+      
+      addBtn.classList.add('loading');
+      const originalText = addBtn.textContent;
+      addBtn.textContent = editingCarId ? 'Updating...' : 'Adding...';
+
+      try {
+        if (editingCarId) {
+          const { error } = await client.from('cars').update(car).eq('id', editingCarId);
+          if (error) throw error;
+          showSuccess('Vehicle updated successfully!');
+          editingCarId = null;
+          addBtn.textContent = "Add Vehicle to Inventory";
+        } else {
+          const { error } = await client.from('cars').insert([car]);
+          if (error) throw error;
+          showSuccess('Vehicle added to inventory!');
+        }
+
+        // Reset form
+        document.getElementById('carName').value = '';
+        document.getElementById('carPrice').value = '';
+        document.getElementById('carDescription').value = '';
+        showPreview('');
+        loadAdminCars();
+        
+      } catch (error) {
+        console.error('Save error:', error);
+        alert('Error saving vehicle: ' + error.message);
+      } finally {
+        addBtn.classList.remove('loading');
+        addBtn.textContent = originalText;
+      }
     };
+
+    // Allow Enter key to submit login
+    document.getElementById('staffPassword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('staffLoginBtn').click();
+      }
+    });
   </script>
 </body>
 </html>
