@@ -276,6 +276,7 @@
       }
       
       const selectedIds = Array.from(selectedApplications);
+      console.log('Attempting to delete applications with IDs:', selectedIds);
       
       selectedIds.forEach(function(id) {
         const appElement = document.querySelector('[data-id="' + id + '"]');
@@ -285,13 +286,20 @@
       });
       
       try {
+        let successCount = 0;
         for (const id of selectedIds) {
-          const { error } = await client.from('applications').delete().eq('id', id);
+          console.log('Deleting application:', id);
+          const { data, error } = await client.from('applications').delete().eq('id', id);
+          console.log('Delete result for', id, ':', { data, error });
+          
           if (error) {
+            console.error('Error deleting application', id, ':', error);
             throw error;
           }
+          successCount++;
         }
         
+        // Only remove from DOM if all deletions were successful
         selectedIds.forEach(function(id) {
           const appElement = document.querySelector('[data-id="' + id + '"]');
           if (appElement) {
@@ -301,7 +309,7 @@
         
         selectedApplications.clear();
         updateSelectedCount();
-        showSuccessMessage(selectedIds.length + ' application(s) deleted successfully!');
+        showSuccessMessage(successCount + ' application(s) deleted successfully!');
         
       } catch (error) {
         console.error('Error deleting applications:', error);
@@ -313,7 +321,7 @@
           }
         });
         
-        alert('Error deleting applications. Please try again.');
+        alert('Error deleting applications: ' + (error.message || 'Unknown error'));
       }
     };
     
