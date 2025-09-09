@@ -22,7 +22,6 @@
     nav a[href*="admin"] {color:#ffc107;}
     nav a[href*="applications"] {color:#e8455a;}
     
-    /* Delete button styles */
     .delete-btn {
       position: absolute;
       top: 12px;
@@ -48,7 +47,6 @@
       background: #a02a37;
     }
     
-    /* Bulk actions */
     .bulk-actions {
       margin-bottom: 20px;
       padding: 15px;
@@ -93,7 +91,6 @@
       padding-right: 100px;
     }
     
-    /* Loading and success states */
     .deleting {
       opacity: 0.5;
       pointer-events: none;
@@ -139,12 +136,12 @@
     const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const managerPassword = "manager123"; // <--- CHANGE THIS TO YOUR SECRET
+    const managerPassword = "manager123";
     
     let applications = [];
     let selectedApplications = new Set();
     
-    document.getElementById('reviewLoginBtn').onclick = () => {
+    document.getElementById('reviewLoginBtn').onclick = function() {
       const input = document.getElementById('reviewPass').value;
       if (input === managerPassword) {
         document.getElementById('loginPanel').style.display = 'none';
@@ -155,8 +152,7 @@
       }
     };
     
-    // Allow Enter key to submit password
-    document.getElementById('reviewPass').addEventListener('keypress', (e) => {
+    document.getElementById('reviewPass').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         document.getElementById('reviewLoginBtn').click();
       }
@@ -169,6 +165,7 @@
       
       if (error) {
         list.innerHTML = "<p style='color:#dc3545'>Error loading applications.</p>";
+        console.error('Error loading applications:', error);
         return;
       }
       
@@ -181,13 +178,13 @@
       selectedApplications.clear();
       updateSelectedCount();
       
-      data.forEach(app => {
+      data.forEach(function(app) {
         const div = document.createElement('div');
         div.className = "application has-checkbox";
         div.dataset.id = app.id;
         div.innerHTML = `
           <input type="checkbox" class="application-checkbox" data-id="${app.id}">
-          <button class="delete-btn" onclick="deleteApplication(${app.id})">Delete</button>
+          <button class="delete-btn" onclick="deleteApplication('${app.id}')">Delete</button>
           <div class="field"><span>Name:</span> ${app.name}</div>
           <div class="field"><span>Email:</span> ${app.email}</div>
           <div class="field"><span>Phone:</span> ${app.phone}</div>
@@ -198,14 +195,13 @@
         list.appendChild(div);
       });
       
-      // Add event listeners for checkboxes
-      document.querySelectorAll('.application-checkbox').forEach(checkbox => {
+      document.querySelectorAll('.application-checkbox').forEach(function(checkbox) {
         checkbox.addEventListener('change', handleCheckboxChange);
       });
     }
     
     function handleCheckboxChange(e) {
-      const appId = parseInt(e.target.dataset.id);
+      const appId = e.target.dataset.id;
       if (e.target.checked) {
         selectedApplications.add(appId);
       } else {
@@ -218,7 +214,7 @@
       const count = selectedApplications.size;
       const countElement = document.getElementById('selectedCount');
       if (count > 0) {
-        countElement.textContent = `${count} selected`;
+        countElement.textContent = count + ' selected';
       } else {
         countElement.textContent = '';
       }
@@ -229,7 +225,7 @@
         return;
       }
       
-      const appElement = document.querySelector(`[data-id="${id}"]`);
+      const appElement = document.querySelector('[data-id="' + id + '"]');
       appElement.classList.add('deleting');
       
       try {
@@ -239,13 +235,9 @@
           throw error;
         }
         
-        // Remove from DOM
         appElement.remove();
-        
-        // Remove from selected if it was selected
         selectedApplications.delete(id);
         updateSelectedCount();
-        
         showSuccessMessage('Application deleted successfully!');
         
       } catch (error) {
@@ -255,13 +247,12 @@
       }
     }
     
-    // Select All functionality
-    document.getElementById('selectAllBtn').onclick = () => {
+    document.getElementById('selectAllBtn').onclick = function() {
       const checkboxes = document.querySelectorAll('.application-checkbox');
       const allSelected = selectedApplications.size === checkboxes.length;
       
-      checkboxes.forEach(checkbox => {
-        const appId = parseInt(checkbox.dataset.id);
+      checkboxes.forEach(function(checkbox) {
+        const appId = checkbox.dataset.id;
         if (allSelected) {
           checkbox.checked = false;
           selectedApplications.delete(appId);
@@ -274,37 +265,35 @@
       updateSelectedCount();
     };
     
-    // Delete Selected functionality
-    document.getElementById('deleteSelectedBtn').onclick = async () => {
+    document.getElementById('deleteSelectedBtn').onclick = async function() {
       if (selectedApplications.size === 0) {
         alert('Please select applications to delete.');
         return;
       }
       
-      if (!confirm(`Are you sure you want to delete ${selectedApplications.size} selected application(s)?`)) {
+      if (!confirm('Are you sure you want to delete ' + selectedApplications.size + ' selected application(s)?')) {
         return;
       }
       
       const selectedIds = Array.from(selectedApplications);
       
-      // Add deleting class to selected applications
-      selectedIds.forEach(id => {
-        const appElement = document.querySelector(`[data-id="${id}"]`);
+      selectedIds.forEach(function(id) {
+        const appElement = document.querySelector('[data-id="' + id + '"]');
         if (appElement) {
           appElement.classList.add('deleting');
         }
       });
       
       try {
-        const { error } = await client.from('applications').delete().in('id', selectedIds);
-        
-        if (error) {
-          throw error;
+        for (const id of selectedIds) {
+          const { error } = await client.from('applications').delete().eq('id', id);
+          if (error) {
+            throw error;
+          }
         }
         
-        // Remove deleted applications from DOM
-        selectedIds.forEach(id => {
-          const appElement = document.querySelector(`[data-id="${id}"]`);
+        selectedIds.forEach(function(id) {
+          const appElement = document.querySelector('[data-id="' + id + '"]');
           if (appElement) {
             appElement.remove();
           }
@@ -312,15 +301,13 @@
         
         selectedApplications.clear();
         updateSelectedCount();
-        
-        showSuccessMessage(`${selectedIds.length} application(s) deleted successfully!`);
+        showSuccessMessage(selectedIds.length + ' application(s) deleted successfully!');
         
       } catch (error) {
         console.error('Error deleting applications:', error);
         
-        // Remove deleting class if error occurred
-        selectedIds.forEach(id => {
-          const appElement = document.querySelector(`[data-id="${id}"]`);
+        selectedIds.forEach(function(id) {
+          const appElement = document.querySelector('[data-id="' + id + '"]');
           if (appElement) {
             appElement.classList.remove('deleting');
           }
@@ -336,7 +323,7 @@
       successDiv.className = 'success-message';
       successDiv.style.display = 'block';
       
-      setTimeout(() => {
+      setTimeout(function() {
         successDiv.style.display = 'none';
       }, 3000);
     }
