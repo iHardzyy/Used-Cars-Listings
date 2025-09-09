@@ -505,7 +505,7 @@
       <!-- Add/Edit Car Section -->
       <div class="section-card">
         <h2>Add / Edit Vehicle</h2>
-        <input type="text" id="carName" placeholder="Vehicle Name (e.g., Sultan Classic)" />
+        <input type="text" id="carName" placeholder="Vehicle Name (e.g., 2019 Honda Civic)" />
         
         <div id="imageDropZone">
           <div>Click here or drop an image to upload</div>
@@ -515,18 +515,18 @@
         <img id="imagePreview" />
         <input type="hidden" id="carImageURL" />
         
-        <input type="number" id="carPrice" placeholder="Price $$$" step="0.01" />
+        <input type="number" id="carPrice" placeholder="Price (USD)" step="0.01" />
         
         <select id="carClass">
-          <option value="S">S Class</option>
-          <option value="A">A Class</option>
-          <option value="B">B Class</option>
-          <option value="C">C Class</option>
-          <option value="D">D Class</option>
-          <option value="M">M Class</option>
+          <option value="S">S Class - Premium Luxury</option>
+          <option value="A">A Class - Luxury</option>
+          <option value="B">B Class - Sport</option>
+          <option value="C">C Class - Standard</option>
+          <option value="D">D Class - Economy</option>
+          <option value="M">M Class - Motorcycle</option>
         </select>
         
-        <textarea id="carDescription" placeholder="Vehicle description..." rows="4"></textarea>
+        <textarea id="carDescription" placeholder="Vehicle description, features, condition notes..." rows="4"></textarea>
         <button id="addCarBtn">Add Vehicle to Inventory</button>
       </div>
 
