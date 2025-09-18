@@ -280,25 +280,25 @@
       font-weight: 700;
     }
 
-    /* Form Elements */
+    /* Form Elements - Less aggressive for functionality */
     input, textarea, select, button { 
       width: 100%; 
       padding: 15px 20px; 
       margin-bottom: 20px; 
       border: 2px solid rgba(255,255,255,0.1); 
       border-radius: 12px; 
-      background: linear-gradient(145deg, #2a2a2a, #1a1a1a) !important;
-      color: #eee !important;
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      color: #eee;
       font-size: 1rem;
       font-weight: 500;
       transition: all 0.3s ease;
       outline: none;
     }
 
-    /* Specific select styling with more aggressive overrides */
+    /* Specific select styling with visual improvements but functional compatibility */
     select {
-      background: #1a1a1a !important;
-      color: #eee !important;
+      background: #1a1a1a;
+      color: #eee;
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
@@ -511,6 +511,16 @@
       background: linear-gradient(45deg, #ffb300, #ffc107) !important;
     }
 
+    .remove-sale-btn {
+      background: linear-gradient(45deg, #fd7e14, #ff8c00) !important;
+      color: #fff !important;
+      margin-right: 10px;
+    }
+
+    .remove-sale-btn:hover {
+      background: linear-gradient(45deg, #e06309, #fd7e14) !important;
+    }
+
     .logout-btn {
       background: linear-gradient(45deg, #555, #666) !important;
       float: right;
@@ -683,8 +693,6 @@
     }
 
     .car-detail-row {
-      display: flex;
-      justify-content: space-between;
       margin-bottom: 8px;
       color: #ccc;
       font-size: 0.9rem;
@@ -693,6 +701,54 @@
     .car-detail-label {
       font-weight: 600;
       color: #ffc107;
+    }
+
+    .car-detail-value {
+      font-weight: 500;
+      color: #eee;
+    }
+
+    /* Sale Price Styling */
+    .price-section {
+      margin-top: auto;
+    }
+
+    .original-price {
+      color: #888;
+      text-decoration: line-through;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .sale-price {
+      font-size: 1.6rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #28a745, #34ce57);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sale-badge {
+      background: linear-gradient(45deg, #28a745, #34ce57);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+      animation: salePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes salePulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(40,167,69,0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(40,167,69,0.5); }
     }
 
     .car-tags {
@@ -932,17 +988,18 @@
         
         <!-- Price and Classes -->
         <div class="form-grid">
-          <input type="number" id="carPrice" placeholder="Price $$$" step="0.01" />
-          
-          <select id="carClass">
-            <option value="S">S Class</option>
-            <option value="A">A Class</option>
-            <option value="B">B Class</option>
-            <option value="C">C Class</option>
-            <option value="D">D Class</option>
-            <option value="M">M Class</option>
-          </select>
+          <input type="number" id="carPrice" placeholder="Regular Price $$" step="0.01" />
+          <input type="number" id="carSalePrice" placeholder="Sale Price $$ (Optional)" step="0.01" />
         </div>
+
+        <select id="carClass">
+          <option value="S">S Class</option>
+          <option value="A">A Class</option>
+          <option value="B">B Class</option>
+          <option value="C">C Class</option>
+          <option value="D">D Class</option>
+          <option value="M">M Class</option>
+        </select>
 
         <!-- Upgraded To -->
         <select id="carUpgradedTo">
@@ -976,6 +1033,10 @@
             <div class="tag-checkbox">
               <input type="checkbox" id="tag-2seater" value="2-Seater">
               <label for="tag-2seater">2-Seater</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" id="tag-4seater" value="4-Seater">
+              <label for="tag-4seater">4-Seater</label>
             </div>
             <div class="tag-checkbox">
               <input type="checkbox" id="tag-stock" value="Stock">
@@ -1014,7 +1075,10 @@
         <!-- Description -->
         <textarea id="carDescription" placeholder="Vehicle description..." rows="4"></textarea>
         
-        <button id="addCarBtn">Add Vehicle to Inventory</button>
+        <div style="display: flex; gap: 10px;">
+          <button id="addCarBtn" style="flex: 1;">Add Vehicle to Inventory</button>
+          <button id="cancelEditBtn" style="flex: 0 0 auto; width: auto; padding: 15px 25px; background: linear-gradient(45deg, #666, #777) !important; display: none;" onclick="clearForm()">Cancel</button>
+        </div>
       </div>
 
       <!-- Current Inventory -->
@@ -1026,8 +1090,11 @@
   </main>
 
   <script>
+    // Version 2.0 - PUT ON SALE BUTTON COMPLETELY REMOVED
     const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+    // For production, replace the above with your service_role key:
+    // const SUPABASE_KEY = 'your-service-role-key-here'; // Has full database access
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let editingCarId = null;
@@ -1204,31 +1271,71 @@
       }
     }
 
+    // Clear form function
+    function clearForm() {
+      console.log('Clearing form. Previous editingCarId:', editingCarId);
+      document.getElementById('carName').value = '';
+      document.getElementById('carPrice').value = '';
+      document.getElementById('carSalePrice').value = '';
+      document.getElementById('carClass').value = 'C';
+      document.getElementById('carUpgradedTo').value = '';
+      document.getElementById('carDescription').value = '';
+      showPreview('');
+      setSelectedTags([]);
+      setSelectedSuspension(null);
+      editingCarId = null;
+      document.getElementById('addCarBtn').textContent = "Add Vehicle to Inventory";
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      console.log('Form cleared. New editingCarId:', editingCarId);
+    }
+
     // Get selected tags
     function getSelectedTags() {
       const tags = [];
       document.querySelectorAll('.tag-checkbox input:checked').forEach(checkbox => {
         tags.push(checkbox.value);
       });
+      console.log('Selected tags:', tags);
       return tags;
     }
 
     // Set selected tags
     function setSelectedTags(tags) {
+      console.log('Setting tags:', tags, '(type:', typeof tags, ')');
+      
+      // Clear all tags first
       document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
-        checkbox.checked = tags && tags.includes(checkbox.value);
-        checkbox.closest('.tag-checkbox').classList.toggle('checked', checkbox.checked);
+        checkbox.checked = false;
+        checkbox.closest('.tag-checkbox').classList.remove('checked');
       });
+      
+      // Set the tags if they exist
+      if (tags && Array.isArray(tags)) {
+        document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
+          const isChecked = tags.includes(checkbox.value);
+          console.log('Tag:', checkbox.value, 'Should be checked:', isChecked);
+          checkbox.checked = isChecked;
+          const tagElement = checkbox.closest('.tag-checkbox');
+          if (isChecked) {
+            tagElement.classList.add('checked');
+          } else {
+            tagElement.classList.remove('checked');
+          }
+        });
+      }
     }
 
     // Get selected suspension
     function getSelectedSuspension() {
       const selected = document.querySelector('.suspension-option input:checked');
-      return selected ? parseInt(selected.value) : null;
+      const value = selected ? parseInt(selected.value) : null;
+      console.log('Selected suspension:', value);
+      return value;
     }
 
     // Set selected suspension
     function setSelectedSuspension(level) {
+      console.log('Setting suspension level:', level);
       document.querySelectorAll('.suspension-option').forEach(option => {
         const input = option.querySelector('input');
         const isSelected = level && input.value == level;
@@ -1296,13 +1403,48 @@
             `;
           }
 
-          detailsHtml += `
-              <div class="car-detail-row">
-                <span class="car-detail-label">Price:</span>
-                <span style="color: #e8455a; font-weight: bold;">$${car.price ? car.price.toLocaleString() : 'N/A'}</span>
+          detailsHtml += '</div>';
+
+          // Build price display
+          let priceHtml = '';
+          if (car.sale_price && car.sale_price < car.price) {
+            priceHtml = `
+              <div class="price-section">
+                <div class="original-price">$${car.price.toLocaleString()}</div>
+                <div class="sale-price">
+                  $${car.sale_price.toLocaleString()}
+                  <span class="sale-badge">Sale</span>
+                </div>
               </div>
-            </div>
-          `;
+            `;
+          } else {
+            priceHtml = `
+              <div class="price-section">
+                <div style="font-size: 1.4rem; font-weight: 700; background: linear-gradient(45deg, #e8455a, #dc3545); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                  $${car.price ? car.price.toLocaleString() : 'N/A'}
+                </div>
+              </div>
+            `;
+          }
+
+          // Build action buttons
+          let actionButtons = '';
+          if (car.sale_price && car.sale_price < car.price) {
+            actionButtons = `
+              <div class="car-actions">
+                <button class="edit-btn">Edit Vehicle</button>
+                <button class="remove-sale-btn">Remove Sale</button>
+                <button class="delete-btn">Delete</button>
+              </div>
+            `;
+          } else {
+            actionButtons = `
+              <div class="car-actions">
+                <button class="edit-btn">Edit Vehicle</button>
+                <button class="delete-btn">Delete</button>
+              </div>
+            `;
+          }
 
           div.innerHTML = `
             <img src="${car.image || 'https://via.placeholder.com/400x200/333/666?text=No+Image'}" 
@@ -1311,11 +1453,9 @@
             <h3>${car.name}</h3>
             ${tagsHtml}
             ${detailsHtml}
-            <p>${car.description || 'No description available'}</p>
-            <div class="car-actions">
-              <button class="edit-btn">Edit Vehicle</button>
-              <button class="delete-btn">Delete</button>
-            </div>
+            <p>${car.description || ''}</p>
+            ${priceHtml}
+            ${actionButtons}
           `;
           carList.appendChild(div);
         });
@@ -1335,7 +1475,9 @@
         if (confirm("Are you sure you want to delete this vehicle from inventory?")) {
           e.target.classList.add('loading');
           try {
-            const { error } = await client.from('cars').delete().eq('id', carId);
+            const carIdInt = parseInt(carElement.dataset.id);
+            console.log('Deleting car with ID:', carIdInt);
+            const { error } = await client.from('cars').delete().eq('id', carIdInt);
             if (error) throw error;
             showSuccess('Vehicle deleted successfully!');
             loadAdminCars();
@@ -1347,28 +1489,50 @@
       }
       
       if (e.target.classList.contains('edit-btn')) {
+        const carId = parseInt(carElement.dataset.id); // Convert to integer
+        console.log('Editing car with ID:', carId, '(type:', typeof carId, ')');
         editingCarId = carId;
+        
         try {
           const { data, error } = await client.from('cars').select('*').eq('id', carId).single();
-          if (error) throw error;
+          if (error) {
+            console.error('Fetch error:', error);
+            throw error;
+          }
+          
+          console.log('Fetched car data for editing:', data);
           
           if (data) {
-            document.getElementById('carName').value = data.name || '';
-            document.getElementById('carPrice').value = data.price || '';
-            document.getElementById('carClass').value = data.class || 'C';
-            document.getElementById('carUpgradedTo').value = data.upgraded_to || '';
-            document.getElementById('carDescription').value = data.description || '';
-            showPreview(data.image);
-            setSelectedTags(data.tags);
-            setSelectedSuspension(data.suspension);
-            document.getElementById('addCarBtn').textContent = "Update Vehicle";
+            // Clear form first
+            clearForm();
+            
+            // Set editing mode
+            editingCarId = carId;
+            
+            // Then populate with data after a short delay
+            setTimeout(() => {
+              console.log('Populating form with:', data);
+              document.getElementById('carName').value = data.name || '';
+              document.getElementById('carPrice').value = data.price || '';
+              document.getElementById('carSalePrice').value = data.sale_price || '';
+              document.getElementById('carClass').value = data.class || 'C';
+              document.getElementById('carUpgradedTo').value = data.upgraded_to || '';
+              document.getElementById('carDescription').value = data.description || '';
+              showPreview(data.image);
+              setSelectedTags(data.tags || []);
+              setSelectedSuspension(data.suspension);
+              document.getElementById('addCarBtn').textContent = "Update Vehicle";
+              document.getElementById('cancelEditBtn').style.display = 'block';
+              
+              console.log('Form populated. Current editingCarId:', editingCarId, '(type:', typeof editingCarId, ')');
+            }, 200);
             
             // Scroll to form
             document.querySelector('.section-card').scrollIntoView({ behavior: 'smooth' });
           }
         } catch (error) {
           console.error('Edit error:', error);
-          alert('Error loading vehicle data');
+          alert('Error loading vehicle data: ' + error.message);
         }
       }
     });
@@ -1377,6 +1541,7 @@
       const addBtn = document.getElementById('addCarBtn');
       const name = document.getElementById('carName').value.trim();
       const price = parseFloat(document.getElementById('carPrice').value);
+      const salePrice = document.getElementById('carSalePrice').value.trim() ? parseFloat(document.getElementById('carSalePrice').value) : null;
       const carClass = document.getElementById('carClass').value;
       const upgradedTo = document.getElementById('carUpgradedTo').value;
       const description = document.getElementById('carDescription').value.trim();
@@ -1389,10 +1554,16 @@
         return;
       }
 
+      if (salePrice && (isNaN(salePrice) || salePrice >= price)) {
+        alert('Sale price must be a valid number less than the regular price');
+        return;
+      }
+
       const car = { 
         name, 
         image, 
         price, 
+        sale_price: salePrice,
         class: carClass, 
         upgraded_to: upgradedTo || null,
         description,
@@ -1400,32 +1571,97 @@
         suspension: suspension || null
       };
       
+      console.log('Saving car data:', car);
+      console.log('Editing car ID:', editingCarId);
+      
       addBtn.classList.add('loading');
       const originalText = addBtn.textContent;
       addBtn.textContent = editingCarId ? 'Updating...' : 'Adding...';
 
       try {
         if (editingCarId) {
-          const { error } = await client.from('cars').update(car).eq('id', editingCarId);
-          if (error) throw error;
-          showSuccess('Vehicle updated successfully!');
-          editingCarId = null;
-          addBtn.textContent = "Add Vehicle to Inventory";
+          console.log('Updating car with ID:', editingCarId, '(type:', typeof editingCarId, ')');
+          console.log('Update data:', car);
+          
+          // Make sure ID is an integer
+          const carIdInt = parseInt(editingCarId);
+          console.log('Converted ID to:', carIdInt, '(type:', typeof carIdInt, ')');
+          
+          // First, let's try to fetch the current record to make sure it exists
+          const { data: existingCar, error: fetchError } = await client
+            .from('cars')
+            .select('*')
+            .eq('id', carIdInt)
+            .single();
+            
+          if (fetchError) {
+            console.error('Failed to fetch existing car:', fetchError);
+            throw new Error('Car not found for update: ' + fetchError.message);
+          }
+          
+          console.log('Existing car found:', existingCar);
+          
+          // Try the update with minimal data first to test permissions
+          const testUpdate = {
+            name: car.name,
+            price: car.price,
+            class: car.class
+          };
+          
+          console.log('Trying minimal update first:', testUpdate);
+          
+          const { data: testResult, error: testError } = await client
+            .from('cars')
+            .update(testUpdate)
+            .eq('id', carIdInt)
+            .select();
+            
+          if (testError) {
+            console.error('Test update failed:', testError);
+            throw testError;
+          }
+          
+          console.log('Test update successful:', testResult);
+          
+          // If test succeeded, try the full update
+          if (testResult && testResult.length > 0) {
+            console.log('Proceeding with full update...');
+            const { data, error } = await client
+              .from('cars')
+              .update(car)
+              .eq('id', carIdInt)
+              .select();
+              
+            if (error) {
+              console.error('Full update error:', error);
+              throw error;
+            }
+            
+            console.log('Full update successful:', data);
+            
+            if (!data || data.length === 0) {
+              throw new Error('Full update returned no data');
+            }
+            
+            showSuccess('Vehicle updated successfully!');
+          } else {
+            throw new Error('Test update failed - no rows affected');
+          }
+          
         } else {
-          const { error } = await client.from('cars').insert([car]);
-          if (error) throw error;
+          console.log('Inserting new car');
+          const { data, error } = await client.from('cars').insert([car]).select();
+          if (error) {
+            console.error('Insert error:', error);
+            throw error;
+          }
+          console.log('Insert successful:', data);
           showSuccess('Vehicle added to inventory!');
         }
 
-        // Reset form
-        document.getElementById('carName').value = '';
-        document.getElementById('carPrice').value = '';
-        document.getElementById('carUpgradedTo').value = '';
-        document.getElementById('carDescription').value = '';
-        showPreview('');
-        setSelectedTags([]);
-        setSelectedSuspension(null);
-        loadAdminCars();
+        // Reset form and reload
+        clearForm();
+        await loadAdminCars();
         
       } catch (error) {
         console.error('Save error:', error);
