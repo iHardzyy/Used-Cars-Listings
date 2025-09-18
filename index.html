@@ -491,9 +491,6 @@
         }
         
         .detail-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 8px;
             color: #ccc;
             font-size: 0.9rem;
@@ -506,6 +503,7 @@
         
         .detail-value {
             font-weight: 500;
+            color: #eee;
         }
         
         /* Tags */
@@ -590,15 +588,47 @@
             line-height: 1.6;
         }
         
-        .car .price { 
-            font-size: 1.4rem; 
-            font-weight: 700; 
-            background: linear-gradient(45deg, #e8455a, #dc3545);
+        /* Sale Price Styling for Customer View */
+        .price-section {
+            margin-top: auto;
+        }
+
+        .original-price {
+            color: #888;
+            text-decoration: line-through;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .sale-price {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #28a745, #34ce57);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-top: auto; 
-            text-shadow: 0 2px 10px rgba(220,53,69,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sale-badge {
+            background: linear-gradient(45deg, #28a745, #34ce57);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+            animation: salePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes salePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(40,167,69,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(40,167,69,0.5); }
         }
         
         .loading-spinner {
@@ -687,6 +717,38 @@
             }
         }
         
+        /* Sticky Note Styling */
+        .sticky-note {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-3deg);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sticky-note img {
+            width: 220px;
+            height: auto;
+            filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3));
+            transition: all 0.3s ease;
+        }
+
+        .sticky-note:hover {
+            transform: translateY(-50%) rotate(0deg) scale(1.05);
+        }
+
+        .sticky-note:hover img {
+            filter: drop-shadow(4px 8px 16px rgba(0,0,0,0.4));
+        }
+
+        /* Hide sticky note on mobile */
+        @media (max-width: 768px) {
+            .sticky-note {
+                display: none;
+            }
+        }
+
         @media (max-width: 480px) {
             header h1 {
                 font-size: 2rem;
@@ -780,6 +842,11 @@
         <div id="carList"></div>
     </main>
     
+    <!-- Sticky Note -->
+    <div class="sticky-note">
+        <img src="jacksnote.png" alt="Jack's Note">
+    </div>
+    
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
@@ -846,7 +913,7 @@
                         `;
                     }
                     
-                    // Build details
+                    // Build details with tighter spacing
                     let detailsHtml = '';
                     if (car.upgraded_to || car.suspension) {
                         detailsHtml = '<div class="car-details">';
@@ -854,8 +921,7 @@
                         if (car.upgraded_to) {
                             detailsHtml += `
                                 <div class="detail-row">
-                                    <span class="detail-label">Upgraded to:</span>
-                                    <span class="detail-value">${car.upgraded_to}</span>
+                                    <span class="detail-label">Upgraded to: </span><span class="detail-value">${car.upgraded_to}</span>
                                 </div>
                             `;
                         }
@@ -863,13 +929,34 @@
                         if (car.suspension) {
                             detailsHtml += `
                                 <div class="detail-row">
-                                    <span class="detail-label">Suspension:</span>
-                                    <span class="detail-value">Level ${car.suspension}</span>
+                                    <span class="detail-label">Suspension: </span><span class="detail-value">Level ${car.suspension}</span>
                                 </div>
                             `;
                         }
                         
                         detailsHtml += '</div>';
+                    }
+                    
+                    // Build price display
+                    let priceHtml = '';
+                    if (car.sale_price && car.sale_price < car.price) {
+                        priceHtml = `
+                            <div class="price-section">
+                                <div class="original-price">$${car.price.toLocaleString()}</div>
+                                <div class="sale-price">
+                                    $${car.sale_price.toLocaleString()}
+                                    <span class="sale-badge">Sale</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        priceHtml = `
+                            <div class="price-section">
+                                <div style="font-size: 1.4rem; font-weight: 700; background: linear-gradient(45deg, #e8455a, #dc3545); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: auto; text-shadow: 0 2px 10px rgba(220,53,69,0.3);">
+                                    $${car.price ? car.price.toLocaleString() : 'Contact for Price'}
+                                </div>
+                            </div>
+                        `;
                     }
                     
                     div.innerHTML = `
@@ -887,7 +974,7 @@
                             ${tagsHtml}
                             ${detailsHtml}
                             <p>${car.description || 'No description available for this vehicle.'}</p>
-                            <div class="price">$${car.price ? car.price.toLocaleString() : 'Contact for Price'}</div>
+                            ${priceHtml}
                         </div>
                     `;
                     carList.appendChild(div);
