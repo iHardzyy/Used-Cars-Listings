@@ -295,6 +295,75 @@
       outline: none;
     }
 
+    /* Search input styling */
+    #adminSearchInput {
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      color: #e0e0e0; 
+      padding: 12px 16px;
+      border-radius: 8px; 
+      border: 2px solid rgba(255,255,255,0.1); 
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: text;
+      transition: all 0.3s ease;
+      outline: none;
+      margin-bottom: 20px;
+    }
+
+    #adminSearchInput::placeholder {
+      color: #888;
+      font-style: italic;
+    }
+
+    #adminSearchInput:hover {
+      border-color: rgba(220,53,69,0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    #adminSearchInput:focus {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220,53,69,0.2);
+    }
+
+    /* Search container for admin */
+    .admin-search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .admin-clear-search {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      margin-bottom: 0;
+    }
+
+    .admin-clear-search:hover {
+      background: rgba(220,53,69,0.2);
+      color: #dc3545;
+    }
+
+    .admin-clear-search.visible {
+      display: flex;
+    }
+
     /* Specific select styling with visual improvements but functional compatibility */
     select {
       background: #1a1a1a;
@@ -746,9 +815,64 @@
       animation: salePulse 2s ease-in-out infinite;
     }
 
+    .sale-badge {
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="24" viewBox="0 0 60 24"><rect width="60" height="24" fill="%2328a745" rx="12"/><text x="30" y="16" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">SALE</text></svg>') !important;
+      width: 60px !important;
+      height: 24px !important;
+      display: inline-block !important;
+      background-size: contain !important;
+      background-repeat: no-repeat !important;
+      animation: salePulse 2s ease-in-out infinite !important;
+      color: transparent !important;
+      font-size: 0 !important;
+      text-indent: -9999px !important;
+      overflow: hidden !important;
+    }
+
+    .sale-badge::after {
+      content: "" !important;
+    }
+
     @keyframes salePulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 2px 8px rgba(40,167,69,0.3); }
-      50% { transform: scale(1.05); box-shadow: 0 4px 16px rgba(40,167,69,0.5); }
+      0%, 100% { 
+        transform: scale(1) !important;
+      }
+      50% { 
+        transform: scale(1.05) !important;
+      }
+    }
+
+    @keyframes saleGlow {
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 4px 15px rgba(40,167,69,0.4), 0 0 20px rgba(40,167,69,0.2);
+      }
+      50% { 
+        transform: scale(1.08); 
+        box-shadow: 0 6px 25px rgba(40,167,69,0.6), 0 0 30px rgba(40,167,69,0.4);
+      }
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes saleShimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+      100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { 
+        opacity: 0.6; 
+        transform: scale(0.8) rotate(0deg); 
+      }
+      50% { 
+        opacity: 1; 
+        transform: scale(1.2) rotate(180deg); 
+      }
     }
 
     .car-tags {
@@ -840,6 +964,28 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    /* No cars found message */
+    .no-cars-admin {
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(33,33,36,0.8);
+      border-radius: 20px;
+      border: 2px dashed rgba(255,193,7,0.3);
+      grid-column: 1 / -1;
+    }
+
+    .no-cars-admin h3 {
+      color: #ffc107;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .no-cars-admin p {
+      color: #aaa;
+      font-size: 1.1rem;
     }
 
     /* Responsive Design */
@@ -1014,6 +1160,15 @@
           <option value="D+">D+</option>
         </select>
 
+        <!-- Seating Capacity -->
+        <select id="carSeating">
+          <option value="">Seating Capacity (Optional)</option>
+          <option value="1-Seater">1-Seater</option>
+          <option value="2-Seater">2-Seater</option>
+          <option value="4-Seater">4-Seater</option>
+          <option value="6+ Seats">6+ Seats</option>
+        </select>
+
         <!-- Tags Section -->
         <div class="tags-section">
           <label>Vehicle Tags</label>
@@ -1029,14 +1184,6 @@
             <div class="tag-checkbox">
               <input type="checkbox" id="tag-construction" value="Construction">
               <label for="tag-construction">Construction</label>
-            </div>
-            <div class="tag-checkbox">
-              <input type="checkbox" id="tag-2seater" value="2-Seater">
-              <label for="tag-2seater">2-Seater</label>
-            </div>
-            <div class="tag-checkbox">
-              <input type="checkbox" id="tag-4seater" value="4-Seater">
-              <label for="tag-4seater">4-Seater</label>
             </div>
             <div class="tag-checkbox">
               <input type="checkbox" id="tag-stock" value="Stock">
@@ -1084,6 +1231,13 @@
       <!-- Current Inventory -->
       <div class="section-card">
         <h2>Current Inventory</h2>
+        
+        <!-- Search Bar for Admin -->
+        <div class="admin-search-container">
+          <input type="text" id="adminSearchInput" placeholder="Search vehicles by name..." />
+          <button class="admin-clear-search" id="adminClearSearch">×</button>
+        </div>
+        
         <div id="carList"></div>
       </div>
     </div>
@@ -1098,6 +1252,168 @@
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let editingCarId = null;
+    let allAdminCarsData = []; // Store all cars for admin search filtering
+
+    // Admin search functionality
+    const adminSearchInput = document.getElementById('adminSearchInput');
+    const adminClearSearch = document.getElementById('adminClearSearch');
+
+    adminSearchInput.addEventListener('input', () => {
+      const searchTerm = adminSearchInput.value.trim();
+      adminClearSearch.classList.toggle('visible', searchTerm.length > 0);
+      filterAndDisplayAdminCars();
+    });
+
+    adminClearSearch.addEventListener('click', () => {
+      adminSearchInput.value = '';
+      adminClearSearch.classList.remove('visible');
+      filterAndDisplayAdminCars();
+      adminSearchInput.focus();
+    });
+
+    function filterAndDisplayAdminCars() {
+      const searchTerm = adminSearchInput.value.toLowerCase().trim();
+      let filteredCars = [...allAdminCarsData];
+
+      // Apply search filter
+      if (searchTerm) {
+        filteredCars = filteredCars.filter(car => 
+          car.name && car.name.toLowerCase().includes(searchTerm)
+        );
+      }
+
+      displayAdminCars(filteredCars);
+    }
+
+    function displayAdminCars(cars) {
+      const carList = document.getElementById('carList');
+      carList.innerHTML = '';
+
+      if (!cars || cars.length === 0) {
+        const searchTerm = adminSearchInput.value.trim();
+        let message = 'No vehicles in inventory';
+        
+        if (searchTerm) {
+          message = `No vehicles found matching "${searchTerm}"`;
+        }
+        
+        carList.innerHTML = `
+          <div class="no-cars-admin">
+            <h3>${message}</h3>
+            <p>Try adjusting your search or add a new vehicle to the inventory.</p>
+          </div>
+        `;
+        return;
+      }
+
+      cars.forEach(car => {
+        const div = document.createElement('div');
+        div.className = 'car';
+        div.dataset.id = car.id;
+        
+        // Build tags display
+        let tagsHtml = '';
+        if (car.tags && car.tags.length > 0) {
+          tagsHtml = `
+            <div class="car-tags">
+              ${car.tags.map(tag => `<span class="car-tag">${tag}</span>`).join('')}
+            </div>
+          `;
+        }
+
+        // Build details
+        let detailsHtml = `
+          <div class="car-details">
+            <div class="car-detail-row">
+              <span class="car-detail-label">Class:</span>
+              <span>${car.class} Class</span>
+            </div>
+        `;
+
+        if (car.upgraded_to) {
+          detailsHtml += `
+            <div class="car-detail-row">
+              <span class="car-detail-label">Upgraded to:</span>
+              <span>${car.upgraded_to}</span>
+            </div>
+          `;
+        }
+
+        if (car.suspension) {
+          detailsHtml += `
+            <div class="car-detail-row">
+              <span class="car-detail-label">Suspension:</span>
+              <span>Level ${car.suspension}</span>
+            </div>
+          `;
+        }
+
+        if (car.seating) {
+          detailsHtml += `
+            <div class="car-detail-row">
+              <span class="car-detail-label">Seating:</span>
+              <span>${car.seating}</span>
+            </div>
+          `;
+        }
+
+        detailsHtml += '</div>';
+
+        // Build price display
+        let priceHtml = '';
+        if (car.sale_price && car.sale_price < car.price) {
+          priceHtml = `
+            <div class="price-section">
+              <div class="original-price">$${car.price.toLocaleString()}</div>
+              <div class="sale-price">
+                $${car.sale_price.toLocaleString()}
+                <span class="sale-badge">Sale</span>
+              </div>
+            </div>
+          `;
+        } else {
+          priceHtml = `
+            <div class="price-section">
+              <div style="font-size: 1.4rem; font-weight: 700; background: linear-gradient(45deg, #e8455a, #dc3545); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                $${car.price ? car.price.toLocaleString() : 'N/A'}
+              </div>
+            </div>
+          `;
+        }
+
+        // Build action buttons
+        let actionButtons = '';
+        if (car.sale_price && car.sale_price < car.price) {
+          actionButtons = `
+            <div class="car-actions">
+              <button class="edit-btn">Edit Vehicle</button>
+              <button class="remove-sale-btn">Remove Sale</button>
+              <button class="delete-btn">Delete</button>
+            </div>
+          `;
+        } else {
+          actionButtons = `
+            <div class="car-actions">
+              <button class="edit-btn">Edit Vehicle</button>
+              <button class="delete-btn">Delete</button>
+            </div>
+          `;
+        }
+
+        div.innerHTML = `
+          <img src="${car.image || 'https://via.placeholder.com/400x200/333/666?text=No+Image'}" 
+               alt="${car.name}"
+               onerror="this.src='https://via.placeholder.com/400x200/333/666?text=Image+Error'">
+          <h3>${car.name}</h3>
+          ${tagsHtml}
+          ${detailsHtml}
+          <p>${car.description || ''}</p>
+          ${priceHtml}
+          ${actionButtons}
+        `;
+        carList.appendChild(div);
+      });
+    }
 
     async function checkAuth() {
       const { data: { user } } = await client.auth.getUser();
@@ -1279,6 +1595,7 @@
       document.getElementById('carSalePrice').value = '';
       document.getElementById('carClass').value = 'C';
       document.getElementById('carUpgradedTo').value = '';
+      document.getElementById('carSeating').value = '';
       document.getElementById('carDescription').value = '';
       showPreview('');
       setSelectedTags([]);
@@ -1354,111 +1671,9 @@
         
         if (error) throw error;
 
-        carList.innerHTML = '';
+        allAdminCarsData = data || [];
+        filterAndDisplayAdminCars();
         
-        if (!data || data.length === 0) {
-          carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #888;">No vehicles in inventory</div>';
-          return;
-        }
-
-        data.forEach(car => {
-          const div = document.createElement('div');
-          div.className = 'car';
-          div.dataset.id = car.id;
-          
-          // Build tags display
-          let tagsHtml = '';
-          if (car.tags && car.tags.length > 0) {
-            tagsHtml = `
-              <div class="car-tags">
-                ${car.tags.map(tag => `<span class="car-tag">${tag}</span>`).join('')}
-              </div>
-            `;
-          }
-
-          // Build details
-          let detailsHtml = `
-            <div class="car-details">
-              <div class="car-detail-row">
-                <span class="car-detail-label">Class:</span>
-                <span>${car.class} Class</span>
-              </div>
-          `;
-
-          if (car.upgraded_to) {
-            detailsHtml += `
-              <div class="car-detail-row">
-                <span class="car-detail-label">Upgraded to:</span>
-                <span>${car.upgraded_to}</span>
-              </div>
-            `;
-          }
-
-          if (car.suspension) {
-            detailsHtml += `
-              <div class="car-detail-row">
-                <span class="car-detail-label">Suspension:</span>
-                <span>Level ${car.suspension}</span>
-              </div>
-            `;
-          }
-
-          detailsHtml += '</div>';
-
-          // Build price display
-          let priceHtml = '';
-          if (car.sale_price && car.sale_price < car.price) {
-            priceHtml = `
-              <div class="price-section">
-                <div class="original-price">$${car.price.toLocaleString()}</div>
-                <div class="sale-price">
-                  $${car.sale_price.toLocaleString()}
-                  <span class="sale-badge">Sale</span>
-                </div>
-              </div>
-            `;
-          } else {
-            priceHtml = `
-              <div class="price-section">
-                <div style="font-size: 1.4rem; font-weight: 700; background: linear-gradient(45deg, #e8455a, #dc3545); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-                  $${car.price ? car.price.toLocaleString() : 'N/A'}
-                </div>
-              </div>
-            `;
-          }
-
-          // Build action buttons
-          let actionButtons = '';
-          if (car.sale_price && car.sale_price < car.price) {
-            actionButtons = `
-              <div class="car-actions">
-                <button class="edit-btn">Edit Vehicle</button>
-                <button class="remove-sale-btn">Remove Sale</button>
-                <button class="delete-btn">Delete</button>
-              </div>
-            `;
-          } else {
-            actionButtons = `
-              <div class="car-actions">
-                <button class="edit-btn">Edit Vehicle</button>
-                <button class="delete-btn">Delete</button>
-              </div>
-            `;
-          }
-
-          div.innerHTML = `
-            <img src="${car.image || 'https://via.placeholder.com/400x200/333/666?text=No+Image'}" 
-                 alt="${car.name}"
-                 onerror="this.src='https://via.placeholder.com/400x200/333/666?text=Image+Error'">
-            <h3>${car.name}</h3>
-            ${tagsHtml}
-            ${detailsHtml}
-            <p>${car.description || ''}</p>
-            ${priceHtml}
-            ${actionButtons}
-          `;
-          carList.appendChild(div);
-        });
       } catch (error) {
         console.error('Error loading cars:', error);
         carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #e8455a;">Error loading inventory</div>';
@@ -1517,6 +1732,7 @@
               document.getElementById('carSalePrice').value = data.sale_price || '';
               document.getElementById('carClass').value = data.class || 'C';
               document.getElementById('carUpgradedTo').value = data.upgraded_to || '';
+              document.getElementById('carSeating').value = data.seating || '';
               document.getElementById('carDescription').value = data.description || '';
               showPreview(data.image);
               setSelectedTags(data.tags || []);
@@ -1544,6 +1760,7 @@
       const salePrice = document.getElementById('carSalePrice').value.trim() ? parseFloat(document.getElementById('carSalePrice').value) : null;
       const carClass = document.getElementById('carClass').value;
       const upgradedTo = document.getElementById('carUpgradedTo').value;
+      const seating = document.getElementById('carSeating').value;
       const description = document.getElementById('carDescription').value.trim();
       const image = document.getElementById('carImageURL').value;
       const tags = getSelectedTags();
@@ -1566,6 +1783,7 @@
         sale_price: salePrice,
         class: carClass, 
         upgraded_to: upgradedTo || null,
+        seating: seating || null,
         description,
         tags: tags.length > 0 ? tags : null,
         suspension: suspension || null
