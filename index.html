@@ -307,7 +307,7 @@
             font-size: 0.95rem;
         }
         
-        select {
+        select, #searchInput {
             background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
             color: #e0e0e0; 
             padding: 12px 16px;
@@ -319,16 +319,62 @@
             transition: all 0.3s ease;
             outline: none;
         }
+
+        #searchInput {
+            cursor: text;
+            min-width: 250px;
+        }
+
+        #searchInput::placeholder {
+            color: #888;
+            font-style: italic;
+        }
         
-        select:hover {
+        select:hover, #searchInput:hover {
             border-color: rgba(220,53,69,0.5);
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         
-        select:focus {
+        select:focus, #searchInput:focus {
             border-color: #dc3545;
             box-shadow: 0 0 0 3px rgba(220,53,69,0.2);
+        }
+        
+        /* Clear search button */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .clear-search:hover {
+            background: rgba(220,53,69,0.2);
+            color: #dc3545;
+        }
+
+        .clear-search.visible {
+            display: flex;
         }
         
         /* Fix dropdown options readability - More specific targeting */
@@ -688,6 +734,21 @@
                 align-items: stretch; 
                 gap: 15px;
             }
+
+            .filter-bar > div {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .search-container {
+                width: 100%;
+            }
+
+            #searchInput {
+                min-width: auto;
+                width: 100%;
+            }
             
             header h1 {
                 font-size: 2.5rem;
@@ -818,21 +879,32 @@
     
     <main class="container">
         <div class="filter-bar">
-            <label for="classSelect">Filter by Class:</label>
-            <select id="classSelect">
-                <option value="all">All Classes</option>
-                <option value="S">S Class</option>
-                <option value="A">A Class</option>
-                <option value="B">B Class</option>
-                <option value="C">C Class</option>
-                <option value="D">D Class</option>
-                <option value="M">M Class</option>
-            </select>
-            <label for="sortSelect">Sort by Price:</label>
-            <select id="sortSelect">
-                <option value="desc">Highest to Lowest</option>
-                <option value="asc">Lowest to Highest</option>
-            </select>
+            <div>
+                <label for="searchInput">Search Vehicles:</label>
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Type vehicle name..." />
+                    <button class="clear-search" id="clearSearch">×</button>
+                </div>
+            </div>
+            <div>
+                <label for="classSelect">Filter by Class:</label>
+                <select id="classSelect">
+                    <option value="all">All Classes</option>
+                    <option value="S">S Class</option>
+                    <option value="A">A Class</option>
+                    <option value="B">B Class</option>
+                    <option value="C">C Class</option>
+                    <option value="D">D Class</option>
+                    <option value="M">M Class</option>
+                </select>
+            </div>
+            <div>
+                <label for="sortSelect">Sort by Price:</label>
+                <select id="sortSelect">
+                    <option value="desc">Highest to Lowest</option>
+                    <option value="asc">Lowest to Highest</option>
+                </select>
+            </div>
         </div>
         
         <div class="loading-spinner" id="loadingSpinner">
@@ -855,23 +927,179 @@
         const carList = document.getElementById('carList');
         const sortSelect = document.getElementById('sortSelect');
         const classSelect = document.getElementById('classSelect');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
         const loadingSpinner = document.getElementById('loadingSpinner');
+
+        let allCarsData = []; // Store all cars for filtering
+
+        // Search and clear functionality
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.trim();
+            clearSearch.classList.toggle('visible', searchTerm.length > 0);
+            filterAndDisplayCars();
+        });
+
+        clearSearch.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearch.classList.remove('visible');
+            filterAndDisplayCars();
+            searchInput.focus();
+        });
+
+        // Filter cars based on search, class, and sort
+        function filterAndDisplayCars() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const selectedClass = classSelect.value;
+            const sortOrder = sortSelect.value;
+
+            let filteredCars = [...allCarsData];
+
+            // Apply search filter
+            if (searchTerm) {
+                filteredCars = filteredCars.filter(car => 
+                    car.name && car.name.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            // Apply class filter
+            if (selectedClass !== 'all') {
+                filteredCars = filteredCars.filter(car => car.class === selectedClass);
+            }
+
+            // Apply sorting
+            filteredCars.sort((a, b) => {
+                const priceA = a.sale_price && a.sale_price < a.price ? a.sale_price : a.price;
+                const priceB = b.sale_price && b.sale_price < b.price ? b.sale_price : b.price;
+                return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+            });
+
+            displayCars(filteredCars);
+        }
+
+        function displayCars(cars) {
+            carList.innerHTML = '';
+            
+            if (!cars || cars.length === 0) {
+                const searchTerm = searchInput.value.trim();
+                const selectedClass = classSelect.value;
+                let message = 'No vehicles found';
+                
+                if (searchTerm && selectedClass !== 'all') {
+                    message = `No vehicles found matching "${searchTerm}" in ${selectedClass} class`;
+                } else if (searchTerm) {
+                    message = `No vehicles found matching "${searchTerm}"`;
+                } else if (selectedClass !== 'all') {
+                    message = `No vehicles found in ${selectedClass} class`;
+                }
+                
+                carList.innerHTML = `
+                    <div class="no-cars">
+                        <h3>${message}</h3>
+                        <p>Try adjusting your search or filters to find what you're looking for.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            cars.forEach((car, index) => {
+                const div = document.createElement('div');
+                div.className = 'car';
+                div.style.animationDelay = `${index * 0.1}s`;
+                
+                // Build badges
+                let badgesHtml = `<span class="badge">${car.class || '?'}</span>`;
+                if (car.upgraded_to) {
+                    badgesHtml += `<span class="badge upgrade-badge">${car.upgraded_to}</span>`;
+                }
+                
+                // Build tags
+                let tagsHtml = '';
+                if (car.tags && car.tags.length > 0) {
+                    tagsHtml = `
+                        <div class="car-tags">
+                            ${car.tags.map(tag => {
+                                const isHot = tag.toLowerCase() === 'hot';
+                                return `<span class="car-tag${isHot ? ' hot-tag' : ''}">${tag}</span>`;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Build details with tighter spacing
+                let detailsHtml = '';
+                if (car.upgraded_to || car.suspension) {
+                    detailsHtml = '<div class="car-details">';
+                    
+                    if (car.upgraded_to) {
+                        detailsHtml += `
+                            <div class="detail-row">
+                                <span class="detail-label">Upgraded to: </span><span class="detail-value">${car.upgraded_to}</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (car.suspension) {
+                        detailsHtml += `
+                            <div class="detail-row">
+                                <span class="detail-label">Suspension: </span><span class="detail-value">Level ${car.suspension}</span>
+                            </div>
+                        `;
+                    }
+                    
+                    detailsHtml += '</div>';
+                }
+                
+                // Build price display
+                let priceHtml = '';
+                if (car.sale_price && car.sale_price < car.price) {
+                    priceHtml = `
+                        <div class="price-section">
+                            <div class="original-price">$${car.price.toLocaleString()}</div>
+                            <div class="sale-price">
+                                $${car.sale_price.toLocaleString()}
+                                <span class="sale-badge">Sale</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    priceHtml = `
+                        <div class="price-section">
+                            <div style="font-size: 1.4rem; font-weight: 700; background: linear-gradient(45deg, #e8455a, #dc3545); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: auto; text-shadow: 0 2px 10px rgba(220,53,69,0.3);">
+                                $${car.price ? car.price.toLocaleString() : 'Contact for Price'}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                div.innerHTML = `
+                    <img src="${car.image || 'https://via.placeholder.com/400x240/333/666?text=No+Image+Available'}" 
+                         alt="${car.name || 'Vehicle'}" 
+                         loading="lazy"
+                         onerror="this.src='https://via.placeholder.com/400x240/333/666?text=Image+Not+Found'">
+                    <div class="car-content">
+                        <div class="car-header">
+                            <h3>${car.name || 'Unknown Vehicle'}</h3>
+                            <div class="car-badges">
+                                ${badgesHtml}
+                            </div>
+                        </div>
+                        ${tagsHtml}
+                        ${detailsHtml}
+                        <p>${car.description || 'No description available for this vehicle.'}</p>
+                        ${priceHtml}
+                    </div>
+                `;
+                carList.appendChild(div);
+            });
+        }
 
         async function loadCars() {
             loadingSpinner.style.display = 'flex';
             carList.innerHTML = '';
             
             try {
-                const sortOrder = sortSelect.value;
-                const selectedClass = classSelect.value;
-                let query = client.from('cars').select('*');
-                
-                if (selectedClass !== 'all') {
-                    query = query.eq('class', selectedClass);
-                }
-                
-                query = query.order('price', { ascending: sortOrder === 'asc' });
-                const { data, error } = await query;
+                const { data, error } = await client.from('cars').select('*').order('created_at', { ascending: false });
                 
                 loadingSpinner.style.display = 'none';
                 
@@ -879,106 +1107,8 @@
                     throw error;
                 }
                 
-                if (!data || !Array.isArray(data) || data.length === 0) {
-                    carList.innerHTML = `
-                        <div class="no-cars">
-                            <h3>No Vehicles Found</h3>
-                            <p>We couldn't find any cars matching your criteria. Try adjusting your filters or check back later for new inventory.</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                data.forEach((car, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'car';
-                    div.style.animationDelay = `${index * 0.1}s`;
-                    
-                    // Build badges
-                    let badgesHtml = `<span class="badge">${car.class || '?'}</span>`;
-                    if (car.upgraded_to) {
-                        badgesHtml += `<span class="badge upgrade-badge">${car.upgraded_to}</span>`;
-                    }
-                    
-                    // Build tags
-                    let tagsHtml = '';
-                    if (car.tags && car.tags.length > 0) {
-                        tagsHtml = `
-                            <div class="car-tags">
-                                ${car.tags.map(tag => {
-                                    const isHot = tag.toLowerCase() === 'hot';
-                                    return `<span class="car-tag${isHot ? ' hot-tag' : ''}">${tag}</span>`;
-                                }).join('')}
-                            </div>
-                        `;
-                    }
-                    
-                    // Build details with tighter spacing
-                    let detailsHtml = '';
-                    if (car.upgraded_to || car.suspension) {
-                        detailsHtml = '<div class="car-details">';
-                        
-                        if (car.upgraded_to) {
-                            detailsHtml += `
-                                <div class="detail-row">
-                                    <span class="detail-label">Upgraded to: </span><span class="detail-value">${car.upgraded_to}</span>
-                                </div>
-                            `;
-                        }
-                        
-                        if (car.suspension) {
-                            detailsHtml += `
-                                <div class="detail-row">
-                                    <span class="detail-label">Suspension: </span><span class="detail-value">Level ${car.suspension}</span>
-                                </div>
-                            `;
-                        }
-                        
-                        detailsHtml += '</div>';
-                    }
-                    
-                    // Build price display
-                    let priceHtml = '';
-                    if (car.sale_price && car.sale_price < car.price) {
-                        priceHtml = `
-                            <div class="price-section">
-                                <div class="original-price">$${car.price.toLocaleString()}</div>
-                                <div class="sale-price">
-                                    $${car.sale_price.toLocaleString()}
-                                    <span class="sale-badge">Sale</span>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        priceHtml = `
-                            <div class="price-section">
-                                <div style="font-size: 1.4rem; font-weight: 700; background: linear-gradient(45deg, #e8455a, #dc3545); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: auto; text-shadow: 0 2px 10px rgba(220,53,69,0.3);">
-                                    $${car.price ? car.price.toLocaleString() : 'Contact for Price'}
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    div.innerHTML = `
-                        <img src="${car.image || 'https://via.placeholder.com/400x240/333/666?text=No+Image+Available'}" 
-                             alt="${car.name || 'Vehicle'}" 
-                             loading="lazy"
-                             onerror="this.src='https://via.placeholder.com/400x240/333/666?text=Image+Not+Found'">
-                        <div class="car-content">
-                            <div class="car-header">
-                                <h3>${car.name || 'Unknown Vehicle'}</h3>
-                                <div class="car-badges">
-                                    ${badgesHtml}
-                                </div>
-                            </div>
-                            ${tagsHtml}
-                            ${detailsHtml}
-                            <p>${car.description || 'No description available for this vehicle.'}</p>
-                            ${priceHtml}
-                        </div>
-                    `;
-                    carList.appendChild(div);
-                });
+                allCarsData = data || [];
+                filterAndDisplayCars();
                 
             } catch (error) {
                 loadingSpinner.style.display = 'none';
@@ -996,18 +1126,16 @@
         sortSelect.addEventListener('change', () => {
             carList.style.opacity = '0.5';
             setTimeout(() => {
-                loadCars().then(() => {
-                    carList.style.opacity = '1';
-                });
+                filterAndDisplayCars();
+                carList.style.opacity = '1';
             }, 150);
         });
         
         classSelect.addEventListener('change', () => {
             carList.style.opacity = '0.5';
             setTimeout(() => {
-                loadCars().then(() => {
-                    carList.style.opacity = '1';
-                });
+                filterAndDisplayCars();
+                carList.style.opacity = '1';
             }, 150);
         });
         
