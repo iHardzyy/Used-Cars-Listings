@@ -335,6 +335,62 @@
             outline: none;
         }
 
+        /* Improved select dropdown styling */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234fd1c5' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        /* Fix dropdown options readability */
+        select option {
+            background: #1a1a1a !important;
+            color: #f0f0f0 !important;
+            padding: 12px !important;
+            font-weight: 500 !important;
+            font-size: 1rem !important;
+            border: none !important;
+        }
+
+        select option:hover,
+        select option:focus,
+        select option:checked,
+        select option:active {
+            background: #4fd1c5 !important;
+            color: #000 !important;
+        }
+
+        /* Browser-specific fixes */
+        select::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        select::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        select::-webkit-scrollbar-thumb {
+            background: #4fd1c5;
+            border-radius: 4px;
+        }
+
+        /* Firefox specific */
+        @-moz-document url-prefix() {
+            select option {
+                background-color: #1a1a1a !important;
+                color: #f0f0f0 !important;
+            }
+            select option:checked {
+                background-color: #4fd1c5 !important;
+                color: #000 !important;
+            }
+        }
+
         input:focus, select:focus, textarea:focus {
             border-color: #4fd1c5;
             box-shadow: 0 0 0 3px rgba(79,209,197,0.2);
@@ -403,6 +459,38 @@
             border-radius: 10px;
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Sticky Note Styling */
+        .sticky-note {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-3deg);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .sticky-note img {
+            width: 220px;
+            height: auto;
+            filter: drop-shadow(2px 4px 8px rgba(0,0,0,0.3));
+            transition: all 0.3s ease;
+        }
+
+        .sticky-note:hover {
+            transform: translateY(-50%) rotate(0deg) scale(1.05);
+        }
+
+        .sticky-note:hover img {
+            filter: drop-shadow(4px 8px 16px rgba(0,0,0,0.4));
+        }
+
+        /* Hide sticky note on mobile */
+        @media (max-width: 768px) {
+            .sticky-note {
+                display: none;
+            }
         }
 
         /* Responsive Design */
@@ -519,6 +607,11 @@
             <div id="result"></div>
         </div>
     </main>
+
+    <!-- Sticky Note -->
+    <div class="sticky-note">
+        <img src="applynote.png" alt="Job Application Note">
+    </div>
 
     <script>
         const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
