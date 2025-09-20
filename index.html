@@ -1064,7 +1064,7 @@
                 
                 // Build details with tighter spacing
                 let detailsHtml = '';
-                if (car.upgraded_to || car.suspension) {
+                if (car.upgraded_to || car.suspension || car.seating) {
                     detailsHtml = '<div class="car-details">';
                     
                     if (car.upgraded_to) {
@@ -1079,6 +1079,14 @@
                         detailsHtml += `
                             <div class="detail-row">
                                 <span class="detail-label">Suspension: </span><span class="detail-value">Level ${car.suspension}</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (car.seating) {
+                        detailsHtml += `
+                            <div class="detail-row">
+                                <span class="detail-label">Seating: </span><span class="detail-value">${car.seating}</span>
                             </div>
                         `;
                     }
