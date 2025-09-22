@@ -490,13 +490,13 @@
 
     .suspension-levels {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .suspension-option {
       flex: 1;
-      min-width: 60px;
+      min-width: 55px;
       text-align: center;
       padding: 12px;
       background: rgba(42,42,42,0.8);
@@ -508,14 +508,31 @@
       font-weight: 600;
     }
 
+    .suspension-option.none-option {
+      min-width: 60px;
+      background: rgba(108,117,125,0.8);
+      border-color: rgba(108,117,125,0.3);
+    }
+
     .suspension-option:hover {
       border-color: rgba(220,53,69,0.3);
       background: rgba(220,53,69,0.1);
     }
 
+    .suspension-option.none-option:hover {
+      border-color: rgba(108,117,125,0.5);
+      background: rgba(108,117,125,0.2);
+    }
+
     .suspension-option.selected {
       border-color: #dc3545;
       background: rgba(220,53,69,0.3);
+      color: #fff;
+    }
+
+    .suspension-option.none-option.selected {
+      border-color: #6c757d;
+      background: rgba(108,117,125,0.3);
       color: #fff;
     }
 
@@ -1003,7 +1020,7 @@
       }
 
       .suspension-levels {
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(6, 1fr);
       }
 
       header .container {
@@ -1200,6 +1217,10 @@
         <div class="suspension-section">
           <label>Suspension Level</label>
           <div class="suspension-levels">
+            <div class="suspension-option none-option">
+              <input type="radio" id="susp-none" name="suspension" value="">
+              <label for="susp-none">None</label>
+            </div>
             <div class="suspension-option">
               <input type="radio" id="susp-1" name="suspension" value="1">
               <label for="susp-1">1</label>
@@ -1646,6 +1667,9 @@
     // Get selected suspension
     function getSelectedSuspension() {
       const selected = document.querySelector('.suspension-option input:checked');
+      if (selected && selected.value === "") {
+        return null; // "None" option selected
+      }
       const value = selected ? parseInt(selected.value) : null;
       console.log('Selected suspension:', value);
       return value;
@@ -1656,7 +1680,15 @@
       console.log('Setting suspension level:', level);
       document.querySelectorAll('.suspension-option').forEach(option => {
         const input = option.querySelector('input');
-        const isSelected = level && input.value == level;
+        let isSelected = false;
+        
+        if (level === null || level === undefined) {
+          // Select "None" option if level is null/undefined
+          isSelected = input.value === "";
+        } else {
+          isSelected = input.value == level;
+        }
+        
         input.checked = isSelected;
         option.classList.toggle('selected', isSelected);
       });
@@ -1937,5 +1969,3 @@
   </script>
 </body>
 </html>
-
-
