@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jack's Used Cars - Be Back Soon</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url('https://i.postimg.cc/4yzktd1D/background.png') no-repeat center center fixed;
+            background-size: cover; 
+            color: #e0e0e0; 
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(220,53,69,0.15) 100%);
+            z-index: -1;
+        }
+        
+        .top-bar {
+            background: linear-gradient(90deg, rgba(22,22,22,0.95) 0%, rgba(33,33,36,0.95) 100%);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 2px solid rgba(220,53,69,0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .top-bar span {
+            color: #ffc107;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            width: 95%;
+            max-width: 900px;
+            margin: auto;
+            padding: 80px 20px 40px 20px;
+        }
+        
+        .closure-card {
+            background: linear-gradient(145deg, rgba(33,33,36,0.98), rgba(26,26,26,0.98));
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(20px);
+            animation: fadeInScale 0.8s ease;
+        }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .closure-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #dc3545, #e8455a, #ffc107);
+        }
+        
+        .card-header {
+            text-align: center;
+            padding: 60px 40px 40px 40px;
+            position: relative;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220,53,69,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ffc107;
+            font-weight: 600;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-content {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .message {
+            font-size: 1.2rem;
+            color: #ccc;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .message strong {
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        .divider {
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #dc3545, transparent);
+            margin: 40px auto;
+        }
+        
+        .contact-section {
+            background: rgba(22,22,22,0.5);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .contact-section h2 {
+            color: #ffc107;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(33,33,36,0.5);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .contact-item:hover {
+            background: rgba(220,53,69,0.1);
+            border-color: rgba(220,53,69,0.3);
+            transform: translateX(5px);
+        }
+        
+        .contact-icon {
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+        
+        .contact-item span {
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+        
+        .appreciation {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(220,53,69,0.1), rgba(255,193,7,0.1));
+            border-radius: 20px;
+            border: 2px solid rgba(220,53,69,0.2);
+        }
+        
+        .appreciation p {
+            font-size: 1.3rem;
+            color: #fff;
+            font-weight: 500;
+            font-style: italic;
+        }
+        
+        .signature {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #ffc107;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 70px 15px 30px 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .card-header {
+                padding: 40px 20px 30px 20px;
+            }
+            
+            .card-content {
+                padding: 30px 20px;
+            }
+            
+            .message {
+                font-size: 1rem;
+            }
+            
+            .contact-section {
+                padding: 20px;
+            }
+            
+            .appreciation p {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .top-bar span {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <span>Jack's Used Cars</span>
+    </div>
+    
+    <div class="container">
+        <div class="closure-card">
+            <div class="card-header">
+                <div class="logo">🚗</div>
+                <h1>Jack's Used Cars</h1>
+                <p class="subtitle">Temporarily Closed</p>
+            </div>
+            
+            <div class="card-content">
+                <p class="message">
+                    <strong>We're taking a break.</strong><br><br>
+                    Jack's Used Cars is temporarily closed as we navigate some changes. 
+                    We appreciate all the support our customers have shown us over the years.
+                </p>
+                
+                <div class="divider"></div>
+                
+                <div class="appreciation">
+                    <p>
+                        Thank you for being part of the Jack's Used Cars family. 
+                        Every customer, every sale, every conversation has been a privilege.
+                    </p>
+                    <p class="signature">— Alex King</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
