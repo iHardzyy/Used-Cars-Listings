@@ -5,25 +5,115 @@
   <title>Set/Reset Your Password</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <style>
-    body { font-family: sans-serif; background: #232323; color: #e0e0e0; margin:0; }
-    .container { max-width: 430px; margin: 40px auto; padding: 24px 22px; background: #2a2a2a; border-radius: 10px; }
-    h1 { text-align: center; }
-    input, button {
-      width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 14px; border: 1px solid #444; background: #333; color: #e0e0e0;
+    body { 
+      font-family: 'Roboto', sans-serif; 
+      background: url('https://i.postimg.cc/4yzktd1D/background.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #e0e0e0; 
+      margin: 0; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
     }
-    button { background: #dc3545; font-weight: bold; border: none; }
-    button:hover { background: #b52c35; }
-    #msg { text-align:center; margin:10px 0; }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(42,74,70,0.2) 100%);
+      z-index: -1;
+    }
+    .container { 
+      max-width: 430px; 
+      width: 90%;
+      padding: 40px 30px; 
+      background: linear-gradient(145deg, rgba(33,33,36,0.95), rgba(26,26,26,0.95));
+      backdrop-filter: blur(15px);
+      border-radius: 20px; 
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+    h1 { 
+      margin-bottom: 25px;
+      font-weight: 700;
+      background: linear-gradient(45deg, #fff, #ffc107, #2a4a46);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    input, button, .back-btn {
+      width: 100%; 
+      padding: 15px; 
+      border-radius: 12px; 
+      margin-bottom: 15px; 
+      border: 2px solid rgba(255,255,255,0.1); 
+      background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+      color: #e0e0e0;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+      outline: none;
+    }
+    input:focus {
+      border-color: #ffc107;
+      box-shadow: 0 0 0 3px rgba(255,193,7,0.2);
+    }
+    button { 
+      background: linear-gradient(45deg, #2a4a46, #3b635f); 
+      font-weight: 700; 
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    button:hover { 
+      background: linear-gradient(45deg, #1d3331, #2a4a46);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(42,74,70,0.4);
+    }
+    .back-btn {
+      display: inline-block;
+      text-decoration: none;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-top: 10px;
+    }
+    .back-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+      color: #fff;
+    }
+    #msg { 
+      margin: 20px 0; 
+      font-weight: 500;
+    }
+    .success {
+      color: #4fd1c5;
+    }
+    .error {
+      color: #e8455a;
+    }
+    #countdown {
+      font-weight: 700;
+      color: #ffc107;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Set Your Password</h1>
+    <h1>Password Reset</h1>
+    <div id="msg">Initializing...</div>
     <form id="resetForm" style="display:none;">
-      <input type="password" id="newPassword" placeholder="New Password" required />
-      <button type="submit">Set Password</button>
+      <input type="password" id="newPassword" placeholder="Enter New Password" required />
+      <button type="submit" id="submitBtn">Set Password</button>
     </form>
-    <div id="msg"></div>
+    <a href="index.html" class="back-btn">Back to Home</a>
   </div>
   <script>
     const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
@@ -33,23 +123,51 @@
     async function checkRecoveryToken() {
       const hash = window.location.hash;
       if (!hash.includes('access_token')) {
-        document.getElementById('msg').textContent = "Invalid or expired link.";
+        document.getElementById('msg').innerHTML = '<span class="error">Invalid or expired link. Please request a new password reset.</span>';
         return;
       }
-      // User is authenticated with magic link; show form
       document.getElementById('resetForm').style.display = 'block';
-      document.getElementById('msg').textContent = "Enter your new password:";
+      document.getElementById('msg').textContent = "Please enter your new password below:";
     }
 
     document.getElementById('resetForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const newPassword = document.getElementById('newPassword').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      const msgDiv = document.getElementById('msg');
+      
+      if (newPassword.length < 6) {
+        msgDiv.innerHTML = '<span class="error">Password must be at least 6 characters long.</span>';
+        return;
+      }
+
+      submitBtn.textContent = 'Updating...';
+      submitBtn.disabled = true;
+
       const { error } = await client.auth.updateUser({ password: newPassword });
+      
       if (error) {
-        document.getElementById('msg').textContent = "Error: " + error.message;
+        msgDiv.innerHTML = '<span class="error">Error: ' + error.message + '</span>';
+        submitBtn.textContent = 'Set Password';
+        submitBtn.disabled = false;
       } else {
-        document.getElementById('msg').textContent = "Password set! You may now log in.";
         document.getElementById('resetForm').style.display = 'none';
+        
+        let seconds = 5;
+        msgDiv.innerHTML = `
+          <span class="success">Password set successfully! You can now log in.</span><br><br>
+          Redirecting to Home in <span id="countdown">${seconds}</span> seconds...
+        `;
+        
+        const timer = setInterval(() => {
+          seconds--;
+          if (seconds <= 0) {
+            clearInterval(timer);
+            window.location.href = 'index.html';
+          } else {
+            document.getElementById('countdown').textContent = seconds;
+          }
+        }, 1000);
       }
     });
 
