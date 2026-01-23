@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apply for a Job - Jack's Used Cars</title>
+    <title>Apply for a Job - Pre Owned Motors</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,29 +31,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(220,53,69,0.1) 100%);
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(42,74,70,0.1) 100%);
             z-index: -1;
         }
 
-        /* Hamburger Menu Button */
         .hamburger {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: linear-gradient(45deg, #dc3545, #e8455a);
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(220,53,69,0.3);
-            width: auto !important; /* Override the form input/button width: 100% rule */
+          position: fixed;
+          top: 20px;
+          left: 20px;
+          z-index: 1001;
+          background: linear-gradient(45deg, #2a4a46, #3b635f);
+          border: none;
+          border-radius: 8px;
+          padding: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(42,74,70,0.3);
+          width: auto !important;
         }
 
         .hamburger:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+            box-shadow: 0 6px 20px rgba(42,74,70,0.4);
         }
 
         .hamburger span {
@@ -78,7 +77,6 @@
             transform: rotate(45deg) translate(-5px, -6px);
         }
 
-        /* Side Navigation */
         .side-nav {
             position: fixed;
             top: 0;
@@ -90,7 +88,7 @@
             transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 1000;
             padding: 80px 0 30px 0;
-            border-right: 3px solid rgba(220,53,69,0.3);
+            border-right: 3px solid rgba(42,74,70,0.3);
             box-shadow: 5px 0 25px rgba(0,0,0,0.3);
         }
 
@@ -108,7 +106,7 @@
             color: #fff;
             font-size: 1.5rem;
             font-weight: 700;
-            background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+            background: linear-gradient(45deg, #fff, #ffc107, #2a4a46);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -142,14 +140,14 @@
             left: 0;
             width: 0;
             height: 100%;
-            background: linear-gradient(90deg, rgba(220,53,69,0.2), rgba(220,53,69,0.05));
+            background: linear-gradient(90deg, rgba(42,74,70,0.3), rgba(42,74,70,0.1));
             transition: width 0.3s ease;
             z-index: -1;
         }
 
         .side-nav a:hover {
             color: #fff;
-            border-left-color: #dc3545;
+            border-left-color: #2a4a46;
             transform: translateX(10px);
         }
 
@@ -159,24 +157,23 @@
 
         .side-nav a[href*="apply.html"] {
             color: #fff;
-            border-left-color: #4fd1c5;
-            background: linear-gradient(90deg, rgba(79,209,197,0.3), rgba(79,209,197,0.1));
+            border-left-color: #2a4a46;
+            background: linear-gradient(90deg, rgba(42,74,70,0.4), rgba(42,74,70,0.2));
         }
 
         .side-nav a[href*="index.html"] { 
-            color: #e8455a; 
+            color: #2a4a46; 
         }
         .side-nav a[href*="policy"] { 
             color: #6c757d; 
         }
         .side-nav a[href*="admin"] { 
-            color: #ffc107; 
+            color: #2a4a46; 
         }
         .side-nav a[href*="applications"] { 
-            color: #e8455a; 
+            color: #2a4a46; 
         }
 
-        /* Navigation Icons */
         .side-nav a::after {
             content: '';
             position: absolute;
@@ -196,7 +193,6 @@
             transform: translateY(-50%) scale(1.5);
         }
 
-        /* Overlay */
         .nav-overlay {
             position: fixed;
             top: 0;
@@ -216,7 +212,6 @@
             visibility: visible;
         }
 
-        /* Top Bar */
         .top-bar {
             background: linear-gradient(90deg, rgba(22,22,22,0.95) 0%, rgba(33,33,36,0.95) 100%);
             backdrop-filter: blur(10px);
@@ -242,7 +237,7 @@
             backdrop-filter: blur(15px);
             color: #fff; 
             padding: 2rem 0 1rem 0; 
-            border-bottom: 4px solid #dc3545;
+            border-bottom: 4px solid #2a4a46;
             text-align: center;
             box-shadow: 0 8px 32px rgba(0,0,0,0.3);
             position: relative;
@@ -256,7 +251,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(220,53,69,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(42,74,70,0.1) 0%, transparent 70%);
             animation: rotate 20s linear infinite;
         }
 
@@ -269,11 +264,11 @@
             margin: 0; 
             font-size: 2.3rem; 
             font-weight: 700;
-            background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+            background: linear-gradient(45deg, #fff, #ffc107, #2a4a46);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 4px 20px rgba(220,53,69,0.3);
+            text-shadow: 0 4px 20px rgba(42,74,70,0.3);
             position: relative;
             z-index: 1;
         }
@@ -335,7 +330,6 @@
             outline: none;
         }
 
-        /* Improved select dropdown styling */
         select {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -347,7 +341,6 @@
             padding-right: 40px;
         }
 
-        /* Fix dropdown options readability */
         select option {
             background: #1a1a1a !important;
             color: #f0f0f0 !important;
@@ -365,7 +358,6 @@
             color: #000 !important;
         }
 
-        /* Browser-specific fixes */
         select::-webkit-scrollbar {
             width: 8px;
         }
@@ -379,7 +371,6 @@
             border-radius: 4px;
         }
 
-        /* Firefox specific */
         @-moz-document url-prefix() {
             select option {
                 background-color: #1a1a1a !important;
@@ -461,7 +452,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Sticky Note Styling */
         .sticky-note {
             position: fixed;
             right: 20px;
@@ -486,14 +476,12 @@
             filter: drop-shadow(4px 8px 16px rgba(0,0,0,0.4));
         }
 
-        /* Hide sticky note on mobile */
         @media (max-width: 768px) {
             .sticky-note {
                 display: none;
             }
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .container {
                 width: 95%;
@@ -551,20 +539,70 @@
                 height: 2px;
             }
         }
+        .staff-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+
+        .staff-card {
+            background: rgba(42, 74, 70, 0.15);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(42, 74, 70, 0.3);
+            padding: 6px 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .staff-card:hover {
+            background: rgba(42, 74, 70, 0.25);
+            transform: translateY(-2px);
+            border-color: rgba(42, 74, 70, 0.5);
+        }
+
+        .staff-role {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #ffc107;
+            font-weight: 700;
+        }
+
+        .staff-name {
+            font-weight: 500;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .staff-phone {
+            color: #aaa;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .staff-divider {
+            width: 1px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
-    <!-- Hamburger Menu Button -->
     <button class="hamburger" id="hamburger">
         <span></span>
         <span></span>
         <span></span>
     </button>
 
-    <!-- Navigation Overlay -->
     <div class="nav-overlay" id="navOverlay"></div>
-
-    <!-- Side Navigation -->
+    
     <nav class="side-nav" id="navMenu">
         <div class="nav-header">
             <h2>Navigation</h2>
@@ -578,14 +616,27 @@
         </ul>
     </nav>
 
-    <!-- Top Bar -->
     <div class="top-bar">
-        <span style="color: #ffc107; font-weight: 600; font-size: 1.1rem;">Jack's Used Cars</span>
+        <span style="color: #ffc107; font-weight: 600; font-size: 1.1rem;">Pre Owned Motors</span>
     </div>
 
     <header>
-        <h1>Jack's Used Cars</h1>
+        <h1>Pre Owned Motors</h1>
         <p>Quality pre-owned vehicles for any budget.</p>
+        <div class="staff-info">
+            <div class="staff-card">
+                <span class="staff-role">Owner</span>
+                <span class="staff-name">Lexi Vegas</span>
+                <div class="staff-divider"></div>
+                <span class="staff-phone">698-338-2222</span>
+            </div>
+            <div class="staff-card">
+                <span class="staff-role">Manager</span>
+                <span class="staff-name">Okami Scarlet</span>
+                <div class="staff-divider"></div>
+                <span class="staff-phone">263-141-0644</span>
+            </div>
+        </div>
     </header>
 
     <main class="container">
@@ -598,8 +649,7 @@
                 <select id="position" required>
                     <option value="">Select Position</option>
                     <option value="Salesperson">Salesperson</option>
-                    <option value="Finance">Finance</option>
-                    <option value="Other">Other</option>
+                    <option value="Management">Management</option>
                 </select>
                 <textarea id="message" placeholder="Tell us about yourself and why you'd be a great fit for our team..." rows="5" required></textarea>
                 <button type="submit">Submit Application</button>
@@ -608,7 +658,6 @@
         </div>
     </main>
 
-    <!-- Sticky Note -->
     <div class="sticky-note">
         <img src="applynote.png" alt="Job Application Note">
     </div>
@@ -642,7 +691,6 @@
                 return;
             }
 
-            // Show loading state
             submitBtn.textContent = 'Submitting...';
             submitBtn.disabled = true;
 
@@ -671,8 +719,7 @@
             }
         });
 
-        // Hamburger menu functionality
-        const hamburger = document.getElementById('hamburger');
+    const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('navMenu');
         const navOverlay = document.getElementById('navOverlay');
 
@@ -681,7 +728,6 @@
             navMenu.classList.toggle('active');
             navOverlay.classList.toggle('active');
             
-            // Prevent body scroll when menu is open
             if (navMenu.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -696,16 +742,13 @@
             document.body.style.overflow = '';
         }
 
-        // Event listeners
         hamburger.addEventListener('click', toggleMenu);
         navOverlay.addEventListener('click', closeMenu);
 
-        // Close menu when clicking on a nav link
         navMenu.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', closeMenu);
         });
 
-        // Close menu with Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && navMenu.classList.contains('active')) {
                 closeMenu();
