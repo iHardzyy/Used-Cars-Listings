@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Applications - Jack's Used Cars</title>
+  <title>Applications - Pre Owned Motors</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,29 +31,28 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(220,53,69,0.1) 100%);
+      background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(42,74,70,0.1) 100%);
       z-index: -1;
     }
 
-    /* Hamburger Menu Button */
     .hamburger {
       position: fixed;
       top: 20px;
       left: 20px;
       z-index: 1001;
-      background: linear-gradient(45deg, #dc3545, #e8455a);
+      background: linear-gradient(45deg, #2a4a46, #3b635f);
       border: none;
       border-radius: 8px;
       padding: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(220,53,69,0.3);
-      width: auto !important; /* Override any width: 100% rules */
+      box-shadow: 0 4px 15px rgba(42,74,70,0.3);
+      width: auto !important;
     }
 
     .hamburger:hover {
       transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+      box-shadow: 0 6px 20px rgba(42,74,70,0.4);
     }
 
     .hamburger span {
@@ -78,7 +77,6 @@
       transform: rotate(45deg) translate(-5px, -6px);
     }
 
-    /* Side Navigation */
     .side-nav {
       position: fixed;
       top: 0;
@@ -90,7 +88,7 @@
       transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       z-index: 1000;
       padding: 80px 0 30px 0;
-      border-right: 3px solid rgba(220,53,69,0.3);
+      border-right: 3px solid rgba(42,74,70,0.3);
       box-shadow: 5px 0 25px rgba(0,0,0,0.3);
     }
 
@@ -108,7 +106,7 @@
       color: #fff;
       font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+      background: linear-gradient(45deg, #fff, #ffc107, #2a4a46);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -142,14 +140,14 @@
       left: 0;
       width: 0;
       height: 100%;
-      background: linear-gradient(90deg, rgba(220,53,69,0.2), rgba(220,53,69,0.05));
+      background: linear-gradient(90deg, rgba(42,74,70,0.3), rgba(42,74,70,0.1));
       transition: width 0.3s ease;
       z-index: -1;
     }
 
     .side-nav a:hover {
       color: #fff;
-      border-left-color: #dc3545;
+      border-left-color: #2a4a46;
       transform: translateX(10px);
     }
 
@@ -159,12 +157,12 @@
 
     .side-nav a[href*="applications.html"] {
       color: #fff;
-      border-left-color: #e8455a;
-      background: linear-gradient(90deg, rgba(232,69,90,0.3), rgba(232,69,90,0.1));
+      border-left-color: #2a4a46;
+      background: linear-gradient(90deg, rgba(42,74,70,0.4), rgba(42,74,70,0.2));
     }
 
     .side-nav a[href*="index.html"] { 
-      color: #e8455a; 
+      color: #2a4a46; 
     }
     .side-nav a[href*="policy"] { 
       color: #6c757d; 
@@ -173,10 +171,9 @@
       color: #4fd1c5; 
     }
     .side-nav a[href*="admin"] { 
-      color: #ffc107; 
+      color: #2a4a46; 
     }
 
-    /* Navigation Icons */
     .side-nav a::after {
       content: '';
       position: absolute;
@@ -196,7 +193,6 @@
       transform: translateY(-50%) scale(1.5);
     }
 
-    /* Overlay */
     .nav-overlay {
       position: fixed;
       top: 0;
@@ -216,7 +212,6 @@
       visibility: visible;
     }
 
-    /* Top Bar */
     .top-bar {
       background: linear-gradient(90deg, rgba(22,22,22,0.95) 0%, rgba(33,33,36,0.95) 100%);
       backdrop-filter: blur(10px);
@@ -260,7 +255,7 @@
       font-size: 2.2rem;
       font-weight: 700;
       margin-bottom: 30px;
-      border-bottom: 2px solid #e8455a;
+      border-bottom: 2px solid #2a4a46;
       padding-bottom: 15px;
     }
 
@@ -277,8 +272,8 @@
 
     .application:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(232,69,90,0.2);
-      border-color: rgba(232,69,90,0.3);
+      box-shadow: 0 8px 25px rgba(42,74,70,0.2);
+      border-color: rgba(42,74,70,0.3);
     }
 
     .field { 
@@ -312,6 +307,17 @@
       height: 5px;
       background: linear-gradient(45deg, #ffc107, #ffca28);
       border-radius: 1px;
+    }
+
+    #staffLoginError {
+      color: #ff4d4d;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(220,53,69,0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(220,53,69,0.3);
     }
 
     #loginPanel h2 {
@@ -349,7 +355,7 @@
     }
 
     button { 
-      background: linear-gradient(45deg, #dc3545, #e8455a);
+      background: linear-gradient(45deg, #2a4a46, #3b635f);
       font-weight: 700; 
       border: none;
       cursor: pointer;
@@ -371,9 +377,9 @@
     }
 
     button:hover { 
-      background: linear-gradient(45deg, #b52c35, #dc3545);
+      background: linear-gradient(45deg, #1d3331, #2a4a46);
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(220,53,69,0.4);
+      box-shadow: 0 8px 25px rgba(42,74,70,0.4);
     }
 
     button:hover::before {
@@ -384,7 +390,7 @@
       position: absolute;
       top: 15px;
       right: 15px;
-      background: linear-gradient(45deg, #dc3545, #e8455a) !important;
+      background: linear-gradient(45deg, #2a4a46, #3b635f) !important;
       color: white;
       border: none;
       border-radius: 8px;
@@ -400,9 +406,9 @@
     }
 
     .delete-btn:hover {
-      background: linear-gradient(45deg, #b52c35, #dc3545) !important;
+      background: linear-gradient(45deg, #1d3331, #2a4a46) !important;
       transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(220,53,69,0.4);
+      box-shadow: 0 4px 15px rgba(42,74,70,0.4);
     }
 
     .delete-btn:active {
@@ -435,11 +441,11 @@
     }
 
     .delete-selected-btn {
-      background: linear-gradient(45deg, #dc3545, #e8455a) !important;
+      background: linear-gradient(45deg, #2a4a46, #3b635f) !important;
     }
 
     .delete-selected-btn:hover {
-      background: linear-gradient(45deg, #c82333, #dc3545) !important;
+      background: linear-gradient(45deg, #1d3331, #2a4a46) !important;
     }
 
     .application-checkbox {
@@ -447,7 +453,7 @@
       top: 15px;
       left: 15px;
       transform: scale(1.3);
-      accent-color: #e8455a;
+      accent-color: #2a4a46;
     }
 
     .application.has-checkbox {
@@ -486,14 +492,14 @@
     }
 
     #reviewError {
-      color: #e8455a;
+      color: #2a4a46;
       font-weight: 700;
       text-align: center;
       margin-top: 10px;
       padding: 10px;
-      background: rgba(232,69,90,0.1);
+      background: rgba(42,74,70,0.1);
       border-radius: 8px;
-      border: 1px solid rgba(232,69,90,0.3);
+      border: 1px solid rgba(42,74,70,0.3);
     }
 
     #selectedCount {
@@ -503,7 +509,56 @@
       font-size: 1rem;
     }
 
-    /* Responsive Design */
+    .staff-info {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+
+    .staff-card {
+        background: rgba(42, 74, 70, 0.1);
+        border: 1px solid rgba(42, 74, 70, 0.2);
+        padding: 4px 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .staff-card:hover {
+        background: rgba(42, 74, 70, 0.2);
+        border-color: rgba(42, 74, 70, 0.4);
+    }
+
+    .staff-role {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #ffc107;
+        font-weight: 700;
+    }
+
+    .staff-name {
+        font-weight: 500;
+        color: #fff;
+        font-size: 0.85rem;
+    }
+
+    .staff-phone {
+        color: #aaa;
+        font-size: 0.8rem;
+        font-family: monospace;
+    }
+
+    .staff-divider {
+        width: 1px;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+
     @media (max-width: 768px) {
       .container {
         margin: 20px;
@@ -567,17 +622,14 @@
   </style>
 </head>
 <body>
-  <!-- Hamburger Menu Button -->
   <button class="hamburger" id="hamburger">
     <span></span>
     <span></span>
     <span></span>
   </button>
 
-  <!-- Navigation Overlay -->
   <div class="nav-overlay" id="navOverlay"></div>
-
-  <!-- Side Navigation -->
+  
   <nav class="side-nav" id="navMenu">
     <div class="nav-header">
       <h2>Navigation</h2>
@@ -591,13 +643,12 @@
     </ul>
   </nav>
 
-  <!-- Top Bar -->
   <div class="top-bar">
-    <span style="color: #ffc107; font-weight: 600; font-size: 1.1rem;">Jack's Used Cars</span>
+    <span style="color: #ffc107; font-weight: 600; font-size: 1.1rem;">Pre Owned Motors</span>
   </div>
 
   <div class="container" id="mainPanel" style="display:none;">
-    <h1>Job Applications</h1>
+    <h1 style="background: linear-gradient(45deg, #fff, #ffc107, #2a4a46); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Job Applications</h1>
     
     <div class="bulk-actions">
       <button class="select-all-btn" id="selectAllBtn">Select All</button>
@@ -609,42 +660,75 @@
     <div id="applications"></div>
   </div>
 
-  <div id="loginPanel">
-    <h2>Manager Login</h2>
-    <input type="password" id="reviewPass" placeholder="Enter manager password">
-    <button id="reviewLoginBtn">Access Applications</button>
-    <div id="reviewError"></div>
+  <div id="staffLogin" style="text-align: center; max-width: 400px; margin: 100px auto; background: rgba(31,31,31,0.9); padding: 40px; border-radius: 20px; border: 1px solid rgba(42,74,70,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    <h2 style="margin-bottom: 25px; color: #fff;">Manager Login</h2>
+    <input type="email" id="staffEmail" placeholder="Manager Email">
+    <input type="password" id="staffPassword" placeholder="Password">
+    <button id="staffLoginBtn">Login</button>
+    <div id="staffLoginError" style="display: none;"></div>
   </div>
 
   <script>
     const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const managerPassword = "manager123";
+    const ALLOWED_MANAGER_EMAIL = 'Management@Preowned.com';
+
+    async function checkAuth() {
+      const { data: { session } } = await client.auth.getSession();
+      if (session) {
+        if (session.user.email === ALLOWED_MANAGER_EMAIL) {
+          document.getElementById('staffLogin').style.display = 'none';
+          document.getElementById('mainPanel').style.display = 'block';
+          loadApplications();
+        } else {
+          alert('Access Denied: Only authorized managers can view applications.');
+          await client.auth.signOut();
+          location.reload();
+        }
+      } else {
+        document.getElementById('staffLogin').style.display = 'block';
+        document.getElementById('mainPanel').style.display = 'none';
+      }
+    }
+
+    document.getElementById('staffLoginBtn').onclick = async () => {
+      const email = document.getElementById('staffEmail').value;
+      const password = document.getElementById('staffPassword').value;
+      const loginBtn = document.getElementById('staffLoginBtn');
+      const errorDiv = document.getElementById('staffLoginError');
+
+      if (!email || !password) {
+        errorDiv.textContent = "Please fill in all fields";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      loginBtn.textContent = 'Logging in...';
+      try {
+        const { error } = await client.auth.signInWithPassword({ email, password });
+        if (error) {
+          errorDiv.textContent = "Login failed! Check your credentials.";
+          errorDiv.style.display = 'block';
+        } else {
+          location.reload();
+        }
+      } catch (err) {
+        errorDiv.textContent = "Connection error. Please try again.";
+        errorDiv.style.display = 'block';
+      } finally {
+        loginBtn.textContent = 'Login';
+      }
+    };
+
+    checkAuth();
     
     let applications = [];
     let selectedApplications = new Set();
     
-    document.getElementById('reviewLoginBtn').onclick = function() {
-      const input = document.getElementById('reviewPass').value;
-      const errorDiv = document.getElementById('reviewError');
-      
-      if (input === managerPassword) {
-        document.getElementById('loginPanel').style.display = 'none';
-        document.getElementById('mainPanel').style.display = 'block';
-        loadApplications();
-      } else {
-        errorDiv.textContent = "Incorrect password! Please try again.";
-        errorDiv.style.display = 'block';
-        setTimeout(() => {
-          errorDiv.style.display = 'none';
-        }, 3000);
-      }
-    };
-    
-    document.getElementById('reviewPass').addEventListener('keypress', function(e) {
+    document.getElementById('staffPassword').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
-        document.getElementById('reviewLoginBtn').click();
+        document.getElementById('staffLoginBtn').click();
       }
     });
     
@@ -789,7 +873,6 @@
           successCount++;
         }
         
-        // Only remove from DOM if all deletions were successful
         selectedIds.forEach(function(id) {
           const appElement = document.querySelector('[data-id="' + id + '"]');
           if (appElement) {
@@ -826,7 +909,6 @@
       }, 3000);
     }
 
-    // Hamburger menu functionality
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('navMenu');
     const navOverlay = document.getElementById('navOverlay');
@@ -836,7 +918,6 @@
       navMenu.classList.toggle('active');
       navOverlay.classList.toggle('active');
       
-      // Prevent body scroll when menu is open
       if (navMenu.classList.contains('active')) {
         document.body.style.overflow = 'hidden';
       } else {
@@ -851,16 +932,13 @@
       document.body.style.overflow = '';
     }
 
-    // Event listeners
     hamburger.addEventListener('click', toggleMenu);
     navOverlay.addEventListener('click', closeMenu);
 
-    // Close menu when clicking on a nav link
     navMenu.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', closeMenu);
     });
 
-    // Close menu with Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && navMenu.classList.contains('active')) {
         closeMenu();
