@@ -672,7 +672,7 @@
     const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const ALLOWED_MANAGER_EMAIL = 'Management@Preowned.com';
+    const ALLOWED_MANAGER_EMAIL = 'management@preowned.com';
 
     async function checkAuth() {
       const { data: { session } } = await client.auth.getSession();
