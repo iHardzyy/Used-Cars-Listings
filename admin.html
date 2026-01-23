@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel - Jack's Used Cars</title>
+  <title>Admin Panel - Pre Owned Motors</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,29 +31,28 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(220,53,69,0.1) 100%);
+      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(42,74,70,0.1) 100%);
       z-index: -1;
     }
 
-    /* Hamburger Menu Button */
     .hamburger {
       position: fixed;
       top: 20px;
       left: 20px;
       z-index: 1001;
-      background: linear-gradient(45deg, #dc3545, #e8455a);
+      background: linear-gradient(45deg, #2a4a46, #3b635f);
       border: none;
       border-radius: 8px;
       padding: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(220,53,69,0.3);
+      box-shadow: 0 4px 15px rgba(42,74,70,0.3);
       width: auto !important;
     }
 
     .hamburger:hover {
       transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+      box-shadow: 0 6px 20px rgba(42,74,70,0.4);
     }
 
     .hamburger span {
@@ -78,7 +77,6 @@
       transform: rotate(45deg) translate(-5px, -6px);
     }
 
-    /* Side Navigation */
     .side-nav {
       position: fixed;
       top: 0;
@@ -90,7 +88,7 @@
       transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       z-index: 1000;
       padding: 80px 0 30px 0;
-      border-right: 3px solid rgba(220,53,69,0.3);
+      border-right: 3px solid rgba(42,74,70,0.3);
       box-shadow: 5px 0 25px rgba(0,0,0,0.3);
     }
 
@@ -108,7 +106,7 @@
       color: #fff;
       font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+      background: linear-gradient(45deg, #fff, #ffc107, #2a4a46);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -142,14 +140,14 @@
       left: 0;
       width: 0;
       height: 100%;
-      background: linear-gradient(90deg, rgba(220,53,69,0.2), rgba(220,53,69,0.05));
+      background: linear-gradient(90deg, rgba(42,74,70,0.3), rgba(42,74,70,0.1));
       transition: width 0.3s ease;
       z-index: -1;
     }
 
     .side-nav a:hover {
       color: #fff;
-      border-left-color: #dc3545;
+      border-left-color: #2a4a46;
       transform: translateX(10px);
     }
 
@@ -159,14 +157,14 @@
 
     .side-nav a[href*="admin.html"] {
       color: #fff;
-      border-left-color: #dc3545;
-      background: linear-gradient(90deg, rgba(220,53,69,0.3), rgba(220,53,69,0.1));
+      border-left-color: #2a4a46;
+      background: linear-gradient(90deg, rgba(42,74,70,0.4), rgba(42,74,70,0.2));
     }
 
-    .side-nav a[href*="index.html"] { color: #e8455a; }
+    .side-nav a[href*="index.html"] { color: #2a4a46; }
     .side-nav a[href*="policy"] { color: #6c757d; }
     .side-nav a[href*="apply"] { color: #4fd1c5; }
-    .side-nav a[href*="applications"] { color: #e8455a; }
+    .side-nav a[href*="applications"] { color: #2a4a46; }
 
     .side-nav a::after {
       content: '';
@@ -187,7 +185,6 @@
       transform: translateY(-50%) scale(1.5);
     }
 
-    /* Overlay */
     .nav-overlay {
       position: fixed;
       top: 0;
@@ -217,7 +214,7 @@
       background: linear-gradient(135deg, rgba(17,17,17,0.95) 0%, rgba(33,33,36,0.9) 100%);
       backdrop-filter: blur(15px);
       padding: 20px 0; 
-      border-bottom: 4px solid #dc3545; 
+      border-bottom: 4px solid #2a4a46; 
       color: #fff;
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
       position: sticky;
@@ -237,10 +234,68 @@
       margin: 0;
       font-size: 2.2rem;
       font-weight: 900;
-      background: linear-gradient(45deg, #fff, #ffc107, #e8455a);
+      background: linear-gradient(45deg, #fff, #ffc107, #2a4a46);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .contact-info {
+      text-align: center;
+      padding: 10px 0;
+      background: rgba(0,0,0,0.3);
+      color: #aaa;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(42,74,70,0.2);
+    }
+
+    .staff-info {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .staff-card {
+        background: rgba(42, 74, 70, 0.1);
+        border: 1px solid rgba(42, 74, 70, 0.2);
+        padding: 4px 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .staff-card:hover {
+        background: rgba(42, 74, 70, 0.2);
+        border-color: rgba(42, 74, 70, 0.4);
+    }
+
+    .staff-role {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #ffc107;
+        font-weight: 700;
+    }
+
+    .staff-name {
+        font-weight: 500;
+        color: #fff;
+        font-size: 0.85rem;
+    }
+
+    .staff-phone {
+        color: #aaa;
+        font-size: 0.8rem;
+        font-family: monospace;
+    }
+
+    .staff-divider {
+        width: 1px;
+        height: 15px;
+        background: rgba(255, 255, 255, 0.1);
     }
 
     .site-link { 
@@ -260,7 +315,6 @@
       background: linear-gradient(45deg, #777, #999);
     }
 
-    /* Login Section */
     #staffLogin {
       max-width: 400px;
       margin: 60px auto;
@@ -280,8 +334,7 @@
       font-weight: 700;
     }
 
-    /* Form Elements - Less aggressive for functionality */
-    input, textarea, select, button { 
+    input, textarea, select, button {
       width: 100%; 
       padding: 15px 20px; 
       margin-bottom: 20px; 
@@ -295,7 +348,6 @@
       outline: none;
     }
 
-    /* Search input styling */
     #adminSearchInput {
       background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
       color: #e0e0e0; 
@@ -326,7 +378,6 @@
       box-shadow: 0 0 0 3px rgba(220,53,69,0.2);
     }
 
-    /* Search container for admin */
     .admin-search-container {
       position: relative;
       display: flex;
@@ -364,7 +415,6 @@
       display: flex;
     }
 
-    /* Specific select styling with visual improvements but functional compatibility */
     select {
       background: #1a1a1a;
       color: #eee;
@@ -389,7 +439,6 @@
       font-weight: 400;
     }
 
-    /* Form Grid Layout */
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -401,7 +450,6 @@
       grid-template-columns: 1fr;
     }
 
-    /* Tags Section */
     .tags-section {
       margin-bottom: 20px;
     }
@@ -448,7 +496,6 @@
       background: rgba(220,53,69,0.2);
     }
 
-    /* Special styling for Hot tag */
     .hot-tag-option {
       background: linear-gradient(45deg, rgba(255,69,0,0.1), rgba(255,140,0,0.1)) !important;
       border: 2px solid rgba(255,69,0,0.3) !important;
@@ -475,7 +522,6 @@
       }
     }
 
-    /* Suspension Level */
     .suspension-section {
       margin-bottom: 20px;
     }
@@ -615,7 +661,6 @@
       padding: 10px 20px !important;
     }
 
-    /* Admin Section */
     #adminSection {
       animation: fadeIn 0.6s ease;
     }
@@ -666,8 +711,7 @@
       border-radius: 2px;
     }
 
-    /* Image Upload */
-    #imageDropZone { 
+    #imageDropZone {
       border: 3px dashed rgba(220,53,69,0.5);
       background: linear-gradient(145deg, rgba(42,42,42,0.8), rgba(26,26,26,0.8));
       padding: 40px 20px; 
@@ -708,8 +752,7 @@
       border: 2px solid rgba(255,255,255,0.1);
     }
 
-    /* Car Grid */
-    #carList { 
+    #carList {
       display: grid; 
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
       gap: 25px; 
@@ -794,7 +837,6 @@
       color: #eee;
     }
 
-    /* Sale Price Styling */
     .price-section {
       margin-top: auto;
     }
@@ -821,7 +863,10 @@
 
     .sale-badge {
       background: linear-gradient(45deg, #28a745, #34ce57);
-      color: white;
+      color: white !important;
+      -webkit-text-fill-color: white !important;
+      background-clip: padding-box !important;
+      -webkit-background-clip: padding-box !important;
       padding: 4px 12px;
       border-radius: 12px;
       font-size: 0.8rem;
@@ -830,24 +875,44 @@
       letter-spacing: 0.5px;
       box-shadow: 0 2px 8px rgba(40,167,69,0.3);
       animation: salePulse 2s ease-in-out infinite;
+      display: inline-block;
     }
 
-    .sale-badge {
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="24" viewBox="0 0 60 24"><rect width="60" height="24" fill="%2328a745" rx="12"/><text x="30" y="16" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">SALE</text></svg>') !important;
-      width: 60px !important;
-      height: 24px !important;
-      display: inline-block !important;
-      background-size: contain !important;
-      background-repeat: no-repeat !important;
-      animation: salePulse 2s ease-in-out infinite !important;
-      color: transparent !important;
-      font-size: 0 !important;
-      text-indent: -9999px !important;
-      overflow: hidden !important;
+    .badge {
+      background: linear-gradient(45deg, #e8455a, #dc3545);
+      color: white;
+      border-radius: 50%;
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
     }
 
-    .sale-badge::after {
-      content: "" !important;
+    .upgrade-badge {
+      background: linear-gradient(45deg, #ffc107, #ffca28);
+      color: #000;
+      font-size: 0.8rem;
+      width: auto;
+      min-width: 35px;
+      padding: 0 8px;
+      border-radius: 18px;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4) !important;
+    }
+
+    .car-badges {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .car:hover .badge {
+      transform: rotate(360deg) scale(1.1);
     }
 
     @keyframes salePulse {
@@ -922,7 +987,6 @@
       font-size: 0.9rem;
     }
 
-    /* Error Messages */
     #staffLoginError {
       color: #e8455a;
       text-align: center;
@@ -934,7 +998,6 @@
       margin-top: 15px;
     }
 
-    /* Success Messages */
     .success-message {
       background: linear-gradient(45deg, #28a745, #34ce57);
       color: white;
@@ -957,7 +1020,6 @@
       }
     }
 
-    /* Loading States */
     .loading {
       opacity: 0.6;
       pointer-events: none;
@@ -983,7 +1045,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* No cars found message */
     .no-cars-admin {
       text-align: center;
       padding: 60px 20px;
@@ -1005,7 +1066,6 @@
       font-size: 1.1rem;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
       .container {
         padding: 15px;
@@ -1087,17 +1147,14 @@
   </style>
 </head>
 <body>
-  <!-- Hamburger Menu Button -->
   <button class="hamburger" id="hamburger">
     <span></span>
     <span></span>
     <span></span>
   </button>
 
-  <!-- Navigation Overlay -->
   <div class="nav-overlay" id="navOverlay"></div>
-
-  <!-- Side Navigation -->
+  
   <nav class="side-nav" id="navMenu">
     <div class="nav-header">
       <h2>Navigation</h2>
@@ -1113,13 +1170,12 @@
 
   <header>
     <div class="container">
-      <h1>Admin Panel</h1>
+      <h1>Pre Owned Motors Admin</h1>
       <a href="index.html" class="site-link">Back to Main Site</a>
     </div>
   </header>
 
   <main class="container">
-    <!-- Staff Login -->
     <div id="staffLogin">
       <h2>Staff Login</h2>
       <input type="email" id="staffEmail" placeholder="Email Address" />
@@ -1128,19 +1184,15 @@
       <div id="staffLoginError"></div>
     </div>
 
-    <!-- Admin Section -->
     <div id="adminSection" style="display:none;">
       <button onclick="logout()" class="logout-btn">Logout</button>
       <div style="clear: both;"></div>
 
-      <!-- Add/Edit Car Section -->
       <div class="section-card">
         <h2>Add / Edit Vehicle</h2>
         
-        <!-- Basic Info -->
         <input type="text" id="carName" placeholder="Vehicle Name (e.g., Sultan Classic)" />
         
-        <!-- Image Upload -->
         <div id="imageDropZone">
           <div>Click here or drop an image to upload</div>
           <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
@@ -1149,7 +1201,6 @@
         <img id="imagePreview" />
         <input type="hidden" id="carImageURL" />
         
-        <!-- Price and Classes -->
         <div class="form-grid">
           <input type="number" id="carPrice" placeholder="Regular Price $$" step="0.01" />
           <input type="number" id="carSalePrice" placeholder="Sale Price $$ (Optional)" step="0.01" />
@@ -1164,7 +1215,6 @@
           <option value="M">M Class</option>
         </select>
 
-        <!-- Upgraded To -->
         <select id="carUpgradedTo">
           <option value="">Upgraded To (Optional)</option>
           <option value="S">S</option>
@@ -1177,7 +1227,6 @@
           <option value="D+">D+</option>
         </select>
 
-        <!-- Seating Capacity -->
         <select id="carSeating">
           <option value="">Seating Capacity (Optional)</option>
           <option value="1-Seater">1-Seater</option>
@@ -1186,7 +1235,6 @@
           <option value="6+ Seats">6+ Seats</option>
         </select>
 
-        <!-- Tags Section -->
         <div class="tags-section">
           <label>Vehicle Tags</label>
           <div class="tags-grid">
@@ -1213,7 +1261,6 @@
           </div>
         </div>
 
-        <!-- Suspension Level -->
         <div class="suspension-section">
           <label>Suspension Level</label>
           <div class="suspension-levels">
@@ -1244,7 +1291,6 @@
           </div>
         </div>
 
-        <!-- Description -->
         <textarea id="carDescription" placeholder="Vehicle description..." rows="4"></textarea>
         
         <div style="display: flex; gap: 10px;">
@@ -1253,11 +1299,9 @@
         </div>
       </div>
 
-      <!-- Current Inventory -->
       <div class="section-card">
         <h2>Current Inventory</h2>
         
-        <!-- Search Bar for Admin -->
         <div class="admin-search-container">
           <input type="text" id="adminSearchInput" placeholder="Search vehicles by name..." />
           <button class="admin-clear-search" id="adminClearSearch">×</button>
@@ -1275,9 +1319,8 @@
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let editingCarId = null;
-    let allAdminCarsData = []; // Store all cars for admin search filtering
+    let allAdminCarsData = [];
 
-    // Admin search functionality
     const adminSearchInput = document.getElementById('adminSearchInput');
     const adminClearSearch = document.getElementById('adminClearSearch');
 
@@ -1298,7 +1341,6 @@
       const searchTerm = adminSearchInput.value.toLowerCase().trim();
       let filteredCars = [...allAdminCarsData];
 
-      // Apply search filter
       if (searchTerm) {
         filteredCars = filteredCars.filter(car => 
           car.name && car.name.toLowerCase().includes(searchTerm)
@@ -1334,7 +1376,6 @@
         div.className = 'car';
         div.dataset.id = car.id;
         
-        // Build tags display
         let tagsHtml = '';
         if (car.tags && car.tags.length > 0) {
           tagsHtml = `
@@ -1344,7 +1385,11 @@
           `;
         }
 
-        // Build details
+        let badgesHtml = `<span class="badge">${car.class || '?'}</span>`;
+        if (car.upgraded_to) {
+          badgesHtml += `<span class="badge upgrade-badge">${car.upgraded_to}</span>`;
+        }
+
         let detailsHtml = `
           <div class="car-details">
             <div class="car-detail-row">
@@ -1382,7 +1427,6 @@
 
         detailsHtml += '</div>';
 
-        // Build price display
         let priceHtml = '';
         if (car.sale_price && car.sale_price < car.price) {
           priceHtml = `
@@ -1404,7 +1448,6 @@
           `;
         }
 
-        // Build action buttons
         let actionButtons = '';
         if (car.sale_price && car.sale_price < car.price) {
           actionButtons = `
@@ -1426,7 +1469,12 @@
           <img src="${car.image || 'https://via.placeholder.com/400x200/333/666?text=No+Image'}" 
                alt="${car.name}"
                onerror="this.src='https://via.placeholder.com/400x200/333/666?text=Image+Error'">
-          <h3>${car.name}</h3>
+          <div class="car-header" style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; margin-bottom: 15px; padding-top: 15px;">
+            <h3 style="margin: 0;">${car.name}</h3>
+            <div class="car-badges">
+              ${badgesHtml}
+            </div>
+          </div>
           ${tagsHtml}
           ${detailsHtml}
           <p>${car.description || ''}</p>
@@ -1447,9 +1495,7 @@
     }
     checkAuth();
 
-    // Initialize interactive elements
     function initializeInteractiveElements() {
-      // Tag checkboxes
       document.querySelectorAll('.tag-checkbox').forEach(checkbox => {
         checkbox.addEventListener('click', function(e) {
           if (e.target.tagName !== 'INPUT') {
@@ -1460,7 +1506,6 @@
         });
       });
 
-      // Suspension level selection
       document.querySelectorAll('.suspension-option').forEach(option => {
         option.addEventListener('click', function() {
           document.querySelectorAll('.suspension-option').forEach(opt => opt.classList.remove('selected'));
@@ -1524,7 +1569,6 @@
       location.reload(); 
     }
 
-    // Image upload + preview with drag and drop
     const imageDropZone = document.getElementById("imageDropZone");
     const imageUpload = document.getElementById("imageUpload");
     const imagePreview = document.getElementById("imagePreview");
@@ -1609,7 +1653,6 @@
       }
     }
 
-    // Clear form function
     function clearForm() {
       console.log('Clearing form. Previous editingCarId:', editingCarId);
       document.getElementById('carName').value = '';
@@ -1628,7 +1671,6 @@
       console.log('Form cleared. New editingCarId:', editingCarId);
     }
 
-    // Get selected tags
     function getSelectedTags() {
       const tags = [];
       document.querySelectorAll('.tag-checkbox input:checked').forEach(checkbox => {
@@ -1638,17 +1680,14 @@
       return tags;
     }
 
-    // Set selected tags
     function setSelectedTags(tags) {
       console.log('Setting tags:', tags, '(type:', typeof tags, ')');
       
-      // Clear all tags first
       document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
         checkbox.checked = false;
         checkbox.closest('.tag-checkbox').classList.remove('checked');
       });
       
-      // Set the tags if they exist
       if (tags && Array.isArray(tags)) {
         document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
           const isChecked = tags.includes(checkbox.value);
@@ -1664,18 +1703,16 @@
       }
     }
 
-    // Get selected suspension
     function getSelectedSuspension() {
       const selected = document.querySelector('.suspension-option input:checked');
       if (selected && selected.value === "") {
-        return null; // "None" option selected
+        return null;
       }
       const value = selected ? parseInt(selected.value) : null;
       console.log('Selected suspension:', value);
       return value;
     }
 
-    // Set selected suspension
     function setSelectedSuspension(level) {
       console.log('Setting suspension level:', level);
       document.querySelectorAll('.suspension-option').forEach(option => {
@@ -1683,7 +1720,6 @@
         let isSelected = false;
         
         if (level === null || level === undefined) {
-          // Select "None" option if level is null/undefined
           isSelected = input.value === "";
         } else {
           isSelected = input.value == level;
@@ -1694,7 +1730,6 @@
       });
     }
 
-    // Cars management
     async function loadAdminCars() {
       const carList = document.getElementById('carList');
       carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #888;">Loading inventory...</div>';
@@ -1737,7 +1772,7 @@
       }
       
       if (e.target.classList.contains('edit-btn')) {
-        const carId = parseInt(carElement.dataset.id); // Convert to integer
+        const carId = parseInt(carElement.dataset.id);
         console.log('Editing car with ID:', carId, '(type:', typeof carId, ')');
         editingCarId = carId;
         
@@ -1751,13 +1786,10 @@
           console.log('Fetched car data for editing:', data);
           
           if (data) {
-            // Clear form first
             clearForm();
             
-            // Set editing mode
             editingCarId = carId;
             
-            // Then populate with data after a short delay
             setTimeout(() => {
               console.log('Populating form with:', data);
               document.getElementById('carName').value = data.name || '';
@@ -1776,7 +1808,6 @@
               console.log('Form populated. Current editingCarId:', editingCarId, '(type:', typeof editingCarId, ')');
             }, 200);
             
-            // Scroll to form
             document.querySelector('.section-card').scrollIntoView({ behavior: 'smooth' });
           }
         } catch (error) {
@@ -1834,11 +1865,9 @@
           console.log('Updating car with ID:', editingCarId, '(type:', typeof editingCarId, ')');
           console.log('Update data:', car);
           
-          // Make sure ID is an integer
           const carIdInt = parseInt(editingCarId);
           console.log('Converted ID to:', carIdInt, '(type:', typeof carIdInt, ')');
           
-          // First, let's try to fetch the current record to make sure it exists
           const { data: existingCar, error: fetchError } = await client
             .from('cars')
             .select('*')
@@ -1852,7 +1881,6 @@
           
           console.log('Existing car found:', existingCar);
           
-          // Try the update with minimal data first to test permissions
           const testUpdate = {
             name: car.name,
             price: car.price,
@@ -1874,7 +1902,6 @@
           
           console.log('Test update successful:', testResult);
           
-          // If test succeeded, try the full update
           if (testResult && testResult.length > 0) {
             console.log('Proceeding with full update...');
             const { data, error } = await client
@@ -1910,11 +1937,10 @@
           showSuccess('Vehicle added to inventory!');
         }
 
-        // Reset form and reload
-        clearForm();
-        await loadAdminCars();
-        
-      } catch (error) {
+    clearForm();
+    await loadAdminCars();
+    
+    } catch (error) {
         console.error('Save error:', error);
         alert('Error saving vehicle: ' + error.message);
       } finally {
@@ -1923,14 +1949,12 @@
       }
     };
 
-    // Allow Enter key to submit login
     document.getElementById('staffPassword').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         document.getElementById('staffLoginBtn').click();
       }
     });
 
-    // Hamburger menu functionality
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('navMenu');
     const navOverlay = document.getElementById('navOverlay');
