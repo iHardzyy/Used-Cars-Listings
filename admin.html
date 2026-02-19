@@ -18,7 +18,7 @@
 
     body {
       font-family: 'Roboto', sans-serif;
-      background: url('https://i.postimg.cc/4yzktd1D/background.png') no-repeat center center fixed;
+      background: url('background.jpg') no-repeat center center fixed;
       background-size: cover;
       color: #e0e0e0;
       line-height: 1.6;
@@ -603,6 +603,51 @@
 
     .suspension-option input[type="radio"] {
       display: none;
+    }
+
+    /* Background removal provider selector */
+    .bg-provider-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .bg-provider-label {
+      font-size: 0.85rem;
+      color: #aaa;
+      white-space: nowrap;
+    }
+
+    .bg-provider-options {
+      display: flex;
+      gap: 6px;
+    }
+
+    .bg-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border: 1px solid #444;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      color: #aaa;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+
+    .bg-option input[type="radio"] {
+      display: none;
+    }
+
+    .bg-option.active,
+    .bg-option:hover {
+      border-color: #dc3545;
+      color: #fff;
+      background: rgba(220, 53, 69, 0.15);
     }
 
     button {
@@ -1253,6 +1298,32 @@
 
         <input type="text" id="carName" placeholder="Vehicle Name (e.g., Sultan Classic)" />
 
+        <div class="bg-provider-row">
+          <span class="bg-provider-label">Background Removal:</span>
+          <div class="bg-provider-options">
+            <label class="bg-option" id="bgopt-none">
+              <input type="radio" name="bgProvider" value="none" checked> None
+            </label>
+            <label class="bg-option" id="bgopt-removebg">
+              <input type="radio" name="bgProvider" value="removebg"> remove.bg <span id="removeBgCredits"
+                style="font-size:0.75rem; opacity:0.7;"></span>
+            </label>
+            <label class="bg-option" id="bgopt-poofbg">
+              <input type="radio" name="bgProvider" value="poofbg"> poof.bg <span id="poofBgCredits"
+                style="font-size:0.75rem; opacity:0.7;"></span>
+            </label>
+            <label class="bg-option" id="bgopt-clipdrop">
+              <input type="radio" name="bgProvider" value="clipdrop"> ClipDrop <span id="clipdropCredits"
+                style="font-size:0.75rem; opacity:0.7;"></span>
+            </label>
+            <label class="bg-option" id="bgopt-api4ai">
+              <input type="radio" name="bgProvider" value="api4ai"> api4.ai <span id="api4aiCredits"
+                style="font-size:0.75rem; opacity:0.7;"></span>
+            </label>
+
+          </div>
+        </div>
+
         <div id="imageDropZone">
           <div>Click here or drop an image to upload</div>
           <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
@@ -1378,7 +1449,21 @@
 
     const SUPABASE_URL = 'https://kgwrhkbauhjcrqtjofvf.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_tMRBcEVBhIOtdL-o14dKtA_0WTLkQeI';
+    const REMOVE_BG_API_KEY = 'KFMBQFwPuysaTyHX6kVuVtkz';
+    const POOF_BG_API_KEY = 'pk_27bfd657d07ecea7360e2a19d0c1b357';
+    const CLIPDROP_API_KEY = '71a75b06a2e342f7474cd3dea11333c26d54f4e53e93ea6f04acd1fd4fcd4c5247f0285e198c89494a8719d27fc52b52';
+    const API4AI_KEY = 'a4a-Q0MPkmUqU59hmuQAmHDxnCLYdeiCMAN1';
+
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Keep selected bg option visually active
+    document.addEventListener('change', e => {
+      if (e.target.name === 'bgProvider') {
+        document.querySelectorAll('.bg-option').forEach(o => o.classList.remove('active'));
+        e.target.closest('.bg-option').classList.add('active');
+      }
+    });
+    document.querySelector('.bg-option').classList.add('active'); // default: none
 
     let editingCarId = null;
     let allAdminCarsData = [];
@@ -1659,37 +1744,217 @@
       if (imageUpload.files.length) uploadFile(imageUpload.files[0]);
     };
 
+    // Calls remove.bg API → transparent PNG blob
+    async function removeBackground(file) {
+      const formData = new FormData();
+      formData.append('image_file', file);
+      formData.append('size', 'auto');
+      const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+        method: 'POST',
+        headers: { 'X-Api-Key': REMOVE_BG_API_KEY },
+        body: formData
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.errors?.[0]?.title || `remove.bg error ${response.status}`);
+      }
+      fetchRemoveBgCredits(); // refresh counter
+      return await response.blob();
+    }
+
+    // Calls poof.bg API → transparent PNG blob
+    async function removeBackgroundPoof(file) {
+      const formData = new FormData();
+      formData.append('image_file', file);
+      const response = await fetch('https://api.poof.bg/v1/remove', {
+        method: 'POST',
+        headers: { 'x-api-key': POOF_BG_API_KEY },
+        body: formData
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || err.message || `poof.bg error ${response.status}`);
+      }
+      fetchPoofBgCredits(); // refresh counter
+      return await response.blob();
+    }
+
+    // Calls api4.ai bg-removal → transparent PNG blob (base64 response)
+    async function removeBackgroundApi4ai(file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      const response = await fetch('https://api4ai.cloud/img-bg-removal/v1/results', {
+        method: 'POST',
+        headers: { 'X-API-KEY': API4AI_KEY },
+        body: formData
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.message || `api4.ai error ${response.status}`);
+      }
+      const json = await response.json();
+      const b64 = json.results?.[0]?.entities?.[0]?.image;
+      if (!b64) throw new Error('api4.ai: no image in response');
+      const binary = atob(b64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      // Decrement api4.ai counter in Supabase
+      const { data: credRow } = await client.from('settings').select('value').eq('key', 'api4ai_credits').single();
+      if (credRow) {
+        const newVal = Math.max(0, +credRow.value - 1);
+        await client.from('settings').upsert({ key: 'api4ai_credits', value: String(newVal) });
+        updateApi4aiCreditDisplay(newVal);
+      }
+      return new Blob([bytes], { type: 'image/png' });
+    }
+
+    function updateApi4aiCreditDisplay(remaining) {
+      const el = document.getElementById('api4aiCredits');
+      if (!el) return;
+      el.textContent = `— ${remaining}/1000 left`;
+      el.style.color = +remaining <= 50 ? '#dc3545' : +remaining <= 150 ? '#ffc107' : '';
+    }
+
+    async function fetchApi4aiCredits() {
+      try {
+        const { data } = await client.from('settings').select('value').eq('key', 'api4ai_credits').single();
+        if (data?.value != null) updateApi4aiCreditDisplay(data.value);
+      } catch (e) { }
+    }
+    fetchApi4aiCredits();
+
+
+    // Calls ClipDrop API → transparent PNG blob; saves remaining credits to Supabase
+    async function removeBackgroundClipdrop(file) {
+      const formData = new FormData();
+      formData.append('image_file', file);
+      const response = await fetch('https://clipdrop-api.co/remove-background/v1', {
+        method: 'POST',
+        headers: { 'x-api-key': CLIPDROP_API_KEY },
+        body: formData
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || `ClipDrop error ${response.status}`);
+      }
+      // Save remaining credit count to Supabase (shared across all users)
+      const remaining = response.headers.get('x-remaining-credits');
+      if (remaining !== null) {
+        updateClipdropCreditDisplay(remaining);
+        client.from('settings').upsert({ key: 'clipdrop_credits', value: remaining }).then(() => { });
+      }
+      return await response.blob();
+    }
+
+    function updateClipdropCreditDisplay(remaining) {
+      const el = document.getElementById('clipdropCredits');
+      if (!el) return;
+      el.textContent = `— ${remaining} left`;
+      el.style.color = +remaining <= 5 ? '#dc3545' : +remaining <= 15 ? '#ffc107' : '';
+    }
+
+    // Fetch ClipDrop credits from Supabase on load (shared across all users)
+    async function fetchClipdropCredits() {
+      try {
+        const { data } = await client.from('settings').select('value').eq('key', 'clipdrop_credits').single();
+        if (data?.value != null) updateClipdropCreditDisplay(data.value);
+      } catch (e) { }
+    }
+    fetchClipdropCredits();
+
+
+    async function fetchPoofBgCredits() {
+      const el = document.getElementById('poofBgCredits');
+      if (!el) return;
+      try {
+        const res = await fetch('https://api.poof.bg/v1/me', {
+          headers: { 'x-api-key': POOF_BG_API_KEY }
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        const remaining = (json.maxCredits ?? 0) - (json.usedCredits ?? 0);
+        const total = json.maxCredits ?? 0;
+        el.textContent = `— ${remaining}/${total} left`;
+        el.style.color = remaining <= 5 ? '#dc3545' : remaining <= 15 ? '#ffc107' : '';
+      } catch (e) {
+        el.textContent = '';
+      }
+    }
+
+    // Fetch poof.bg credits on load
+    fetchPoofBgCredits();
+
+    async function fetchRemoveBgCredits() {
+      const el = document.getElementById('removeBgCredits');
+      if (!el) return;
+      try {
+        const res = await fetch('https://api.remove.bg/v1.0/account', {
+          headers: { 'X-Api-Key': REMOVE_BG_API_KEY }
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        const remaining = json?.data?.attributes?.api?.free_calls ?? 0;
+        const total = 50;
+        el.textContent = `— ${remaining}/${total} left`;
+        el.style.color = remaining <= 5 ? '#dc3545' : remaining <= 15 ? '#ffc107' : '#888';
+      } catch (e) {
+        el.textContent = '';
+      }
+    }
+
+    // Fetch credits on load
+    fetchRemoveBgCredits();
+
     async function uploadFile(file) {
       if (!file) return;
-
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
       }
 
-      const ext = file.name.split('.').pop();
-      const fileName = `car_${Date.now()}.${ext}`;
-
+      const provider = document.querySelector('input[name="bgProvider"]:checked')?.value || 'none';
       imageDropZone.style.opacity = '0.5';
-      imageDropZone.innerHTML = '<div>Uploading...</div>';
 
       try {
-        const { error } = await client.storage.from('images').upload(fileName, file);
-        if (error) {
-          throw error;
+        let processedFile;
+
+        if (provider === 'removebg') {
+          imageDropZone.innerHTML = '<div>✂️ Removing background (remove.bg)...</div>';
+          const blob = await removeBackground(file);
+          processedFile = new File([blob], `car_${Date.now()}.png`, { type: 'image/png' });
+        } else if (provider === 'poofbg') {
+          imageDropZone.innerHTML = '<div>✂️ Removing background (poof.bg)...</div>';
+          const blob = await removeBackgroundPoof(file);
+          processedFile = new File([blob], `car_${Date.now()}.png`, { type: 'image/png' });
+        } else if (provider === 'clipdrop') {
+          imageDropZone.innerHTML = '<div>✂️ Removing background (ClipDrop)...</div>';
+          const blob = await removeBackgroundClipdrop(file);
+          processedFile = new File([blob], `car_${Date.now()}.png`, { type: 'image/png' });
+        } else if (provider === 'api4ai') {
+          imageDropZone.innerHTML = '<div>✂️ Removing background (api4.ai)...</div>';
+          const blob = await removeBackgroundApi4ai(file);
+          processedFile = new File([blob], `car_${Date.now()}.png`, { type: 'image/png' });
+        } else {
+          const ext = file.name.split('.').pop();
+          processedFile = new File([file], `car_${Date.now()}.${ext}`, { type: file.type });
         }
 
-        const { data: publicData } = client.storage.from('images').getPublicUrl(fileName);
+        imageDropZone.innerHTML = '<div>⬆️ Uploading...</div>';
+        const { error } = await client.storage.from('images').upload(processedFile.name, processedFile);
+        if (error) throw error;
+
+        const { data: publicData } = client.storage.from('images').getPublicUrl(processedFile.name);
         carImageURL.value = publicData.publicUrl;
         imagePreview.src = publicData.publicUrl;
-        imagePreview.style.display = "block";
+        imagePreview.style.display = 'block';
 
-        imageDropZone.innerHTML = '<div>✅ Image uploaded successfully!</div>';
-        showSuccess('Image uploaded successfully!');
+        imageDropZone.innerHTML = '<div>✅ Image uploaded!</div>';
+        const msg = provider === 'none' ? 'Image uploaded!' : 'Image uploaded (background removed)!';
+        showSuccess(msg);
 
       } catch (error) {
         console.error('Upload error:', error);
-        alert("Upload failed: " + error.message);
+        alert('Upload failed: ' + error.message);
         resetImageDropZone();
       } finally {
         setTimeout(resetImageDropZone, 2000);
