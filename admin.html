@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +16,7 @@
       box-sizing: border-box;
     }
 
-    body { 
+    body {
       font-family: 'Roboto', sans-serif;
       background: url('https://i.postimg.cc/4yzktd1D/background.png') no-repeat center center fixed;
       background-size: cover;
@@ -31,7 +32,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(42,74,70,0.1) 100%);
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(42, 74, 70, 0.1) 100%);
       z-index: -1;
     }
 
@@ -46,13 +47,13 @@
       padding: 12px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(42,74,70,0.3);
+      box-shadow: 0 4px 15px rgba(42, 74, 70, 0.3);
       width: auto !important;
     }
 
     .hamburger:hover {
       transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(42,74,70,0.4);
+      box-shadow: 0 6px 20px rgba(42, 74, 70, 0.4);
     }
 
     .hamburger span {
@@ -83,13 +84,13 @@
       left: -300px;
       width: 300px;
       height: 100vh;
-      background: linear-gradient(180deg, rgba(22,22,22,0.98) 0%, rgba(33,33,36,0.98) 100%);
+      background: linear-gradient(180deg, rgba(22, 22, 22, 0.98) 0%, rgba(33, 33, 36, 0.98) 100%);
       backdrop-filter: blur(20px);
       transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       z-index: 1000;
       padding: 80px 0 30px 0;
-      border-right: 3px solid rgba(42,74,70,0.3);
-      box-shadow: 5px 0 25px rgba(0,0,0,0.3);
+      border-right: 3px solid rgba(42, 74, 70, 0.3);
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
     }
 
     .side-nav.active {
@@ -98,7 +99,7 @@
 
     .side-nav .nav-header {
       padding: 0 30px 30px 30px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       margin-bottom: 20px;
     }
 
@@ -140,7 +141,7 @@
       left: 0;
       width: 0;
       height: 100%;
-      background: linear-gradient(90deg, rgba(42,74,70,0.3), rgba(42,74,70,0.1));
+      background: linear-gradient(90deg, rgba(42, 74, 70, 0.3), rgba(42, 74, 70, 0.1));
       transition: width 0.3s ease;
       z-index: -1;
     }
@@ -158,13 +159,24 @@
     .side-nav a[href*="admin.html"] {
       color: #fff;
       border-left-color: #2a4a46;
-      background: linear-gradient(90deg, rgba(42,74,70,0.4), rgba(42,74,70,0.2));
+      background: linear-gradient(90deg, rgba(42, 74, 70, 0.4), rgba(42, 74, 70, 0.2));
     }
 
-    .side-nav a[href*="index.html"] { color: #2a4a46; }
-    .side-nav a[href*="policy"] { color: #6c757d; }
-    .side-nav a[href*="apply"] { color: #4fd1c5; }
-    .side-nav a[href*="applications"] { color: #2a4a46; }
+    .side-nav a[href*="index.html"] {
+      color: #2a4a46;
+    }
+
+    .side-nav a[href*="policy"] {
+      color: #6c757d;
+    }
+
+    .side-nav a[href*="apply"] {
+      color: #4fd1c5;
+    }
+
+    .side-nav a[href*="applications"] {
+      color: #2a4a46;
+    }
 
     .side-nav a::after {
       content: '';
@@ -191,7 +203,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(5px);
       opacity: 0;
       visibility: hidden;
@@ -204,33 +216,33 @@
       visibility: visible;
     }
 
-    .container { 
-      max-width: 1200px; 
-      margin: auto; 
-      padding: 20px; 
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
     }
 
-    header { 
-      background: linear-gradient(135deg, rgba(17,17,17,0.95) 0%, rgba(33,33,36,0.9) 100%);
+    header {
+      background: linear-gradient(135deg, rgba(17, 17, 17, 0.95) 0%, rgba(33, 33, 36, 0.9) 100%);
       backdrop-filter: blur(15px);
-      padding: 20px 0; 
-      border-bottom: 4px solid #2a4a46; 
+      padding: 20px 0;
+      border-bottom: 4px solid #2a4a46;
       color: #fff;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
-    header .container { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 15px;
     }
 
-    h1 { 
+    h1 {
       margin: 0;
       font-size: 2.2rem;
       font-weight: 900;
@@ -243,87 +255,87 @@
     .contact-info {
       text-align: center;
       padding: 10px 0;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       color: #aaa;
       font-size: 0.9rem;
-      border-bottom: 1px solid rgba(42,74,70,0.2);
+      border-bottom: 1px solid rgba(42, 74, 70, 0.2);
     }
 
     .staff-info {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        flex-wrap: wrap;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
     }
 
     .staff-card {
-        background: rgba(42, 74, 70, 0.1);
-        border: 1px solid rgba(42, 74, 70, 0.2);
-        padding: 4px 12px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s ease;
+      background: rgba(42, 74, 70, 0.1);
+      border: 1px solid rgba(42, 74, 70, 0.2);
+      padding: 4px 12px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
     }
 
     .staff-card:hover {
-        background: rgba(42, 74, 70, 0.2);
-        border-color: rgba(42, 74, 70, 0.4);
+      background: rgba(42, 74, 70, 0.2);
+      border-color: rgba(42, 74, 70, 0.4);
     }
 
     .staff-role {
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: #ffc107;
-        font-weight: 700;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffc107;
+      font-weight: 700;
     }
 
     .staff-name {
-        font-weight: 500;
-        color: #fff;
-        font-size: 0.85rem;
+      font-weight: 500;
+      color: #fff;
+      font-size: 0.85rem;
     }
 
     .staff-phone {
-        color: #aaa;
-        font-size: 0.8rem;
-        font-family: monospace;
+      color: #aaa;
+      font-size: 0.8rem;
+      font-family: monospace;
     }
 
     .staff-divider {
-        width: 1px;
-        height: 15px;
-        background: rgba(255, 255, 255, 0.1);
+      width: 1px;
+      height: 15px;
+      background: rgba(255, 255, 255, 0.1);
     }
 
-    .site-link { 
-      color: #fff; 
+    .site-link {
+      color: #fff;
       background: linear-gradient(45deg, #666, #888);
-      padding: 12px 20px; 
-      border-radius: 25px; 
+      padding: 12px 20px;
+      border-radius: 25px;
       text-decoration: none;
       font-weight: 600;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     .site-link:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
       background: linear-gradient(45deg, #777, #999);
     }
 
     #staffLogin {
       max-width: 400px;
       margin: 60px auto;
-      background: linear-gradient(145deg, rgba(33,33,36,0.95), rgba(26,26,26,0.95));
+      background: linear-gradient(145deg, rgba(33, 33, 36, 0.95), rgba(26, 26, 26, 0.95));
       backdrop-filter: blur(15px);
       padding: 40px 30px;
       border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
     }
 
     #staffLogin h2 {
@@ -334,12 +346,15 @@
       font-weight: 700;
     }
 
-    input, textarea, select, button {
-      width: 100%; 
-      padding: 15px 20px; 
-      margin-bottom: 20px; 
-      border: 2px solid rgba(255,255,255,0.1); 
-      border-radius: 12px; 
+    input,
+    textarea,
+    select,
+    button {
+      width: 100%;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
       color: #eee;
       font-size: 1rem;
@@ -350,10 +365,10 @@
 
     #adminSearchInput {
       background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-      color: #e0e0e0; 
+      color: #e0e0e0;
       padding: 12px 16px;
-      border-radius: 8px; 
-      border: 2px solid rgba(255,255,255,0.1); 
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
       font-size: 0.95rem;
       font-weight: 500;
       cursor: text;
@@ -368,14 +383,14 @@
     }
 
     #adminSearchInput:hover {
-      border-color: rgba(220,53,69,0.5);
+      border-color: rgba(220, 53, 69, 0.5);
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     }
 
     #adminSearchInput:focus {
       border-color: #dc3545;
-      box-shadow: 0 0 0 3px rgba(220,53,69,0.2);
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
     }
 
     .admin-search-container {
@@ -407,7 +422,7 @@
     }
 
     .admin-clear-search:hover {
-      background: rgba(220,53,69,0.2);
+      background: rgba(220, 53, 69, 0.2);
       color: #dc3545;
     }
 
@@ -428,13 +443,16 @@
       padding-right: 40px;
     }
 
-    input:focus, textarea:focus, select:focus {
+    input:focus,
+    textarea:focus,
+    select:focus {
       border-color: #dc3545;
-      box-shadow: 0 0 0 3px rgba(220,53,69,0.2);
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
       transform: translateY(-2px);
     }
 
-    input::placeholder, textarea::placeholder {
+    input::placeholder,
+    textarea::placeholder {
       color: #888;
       font-weight: 400;
     }
@@ -471,17 +489,17 @@
     .tag-checkbox {
       display: flex;
       align-items: center;
-      background: rgba(42,42,42,0.8);
+      background: rgba(42, 42, 42, 0.8);
       padding: 12px 15px;
       border-radius: 8px;
-      border: 2px solid rgba(255,255,255,0.1);
+      border: 2px solid rgba(255, 255, 255, 0.1);
       transition: all 0.3s ease;
       cursor: pointer;
     }
 
     .tag-checkbox:hover {
-      border-color: rgba(220,53,69,0.3);
-      background: rgba(220,53,69,0.1);
+      border-color: rgba(220, 53, 69, 0.3);
+      background: rgba(220, 53, 69, 0.1);
     }
 
     .tag-checkbox input[type="checkbox"] {
@@ -493,19 +511,19 @@
 
     .tag-checkbox.checked {
       border-color: #dc3545;
-      background: rgba(220,53,69,0.2);
+      background: rgba(220, 53, 69, 0.2);
     }
 
     .hot-tag-option {
-      background: linear-gradient(45deg, rgba(255,69,0,0.1), rgba(255,140,0,0.1)) !important;
-      border: 2px solid rgba(255,69,0,0.3) !important;
+      background: linear-gradient(45deg, rgba(255, 69, 0, 0.1), rgba(255, 140, 0, 0.1)) !important;
+      border: 2px solid rgba(255, 69, 0, 0.3) !important;
       animation: hotGlow 2s ease-in-out infinite alternate;
     }
 
     .hot-tag-option.checked {
-      background: linear-gradient(45deg, rgba(255,69,0,0.3), rgba(255,140,0,0.3)) !important;
+      background: linear-gradient(45deg, rgba(255, 69, 0, 0.3), rgba(255, 140, 0, 0.3)) !important;
       border-color: #ff4500 !important;
-      box-shadow: 0 0 15px rgba(255,69,0,0.5);
+      box-shadow: 0 0 15px rgba(255, 69, 0, 0.5);
     }
 
     .hot-tag-option label {
@@ -514,11 +532,12 @@
     }
 
     @keyframes hotGlow {
-      0% { 
-        box-shadow: 0 0 5px rgba(255,69,0,0.3);
+      0% {
+        box-shadow: 0 0 5px rgba(255, 69, 0, 0.3);
       }
-      100% { 
-        box-shadow: 0 0 20px rgba(255,69,0,0.6), 0 0 30px rgba(255,69,0,0.4);
+
+      100% {
+        box-shadow: 0 0 20px rgba(255, 69, 0, 0.6), 0 0 30px rgba(255, 69, 0, 0.4);
       }
     }
 
@@ -545,8 +564,8 @@
       min-width: 55px;
       text-align: center;
       padding: 12px;
-      background: rgba(42,42,42,0.8);
-      border: 2px solid rgba(255,255,255,0.1);
+      background: rgba(42, 42, 42, 0.8);
+      border: 2px solid rgba(255, 255, 255, 0.1);
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -556,29 +575,29 @@
 
     .suspension-option.none-option {
       min-width: 60px;
-      background: rgba(108,117,125,0.8);
-      border-color: rgba(108,117,125,0.3);
+      background: rgba(108, 117, 125, 0.8);
+      border-color: rgba(108, 117, 125, 0.3);
     }
 
     .suspension-option:hover {
-      border-color: rgba(220,53,69,0.3);
-      background: rgba(220,53,69,0.1);
+      border-color: rgba(220, 53, 69, 0.3);
+      background: rgba(220, 53, 69, 0.1);
     }
 
     .suspension-option.none-option:hover {
-      border-color: rgba(108,117,125,0.5);
-      background: rgba(108,117,125,0.2);
+      border-color: rgba(108, 117, 125, 0.5);
+      background: rgba(108, 117, 125, 0.2);
     }
 
     .suspension-option.selected {
       border-color: #dc3545;
-      background: rgba(220,53,69,0.3);
+      background: rgba(220, 53, 69, 0.3);
       color: #fff;
     }
 
     .suspension-option.none-option.selected {
       border-color: #6c757d;
-      background: rgba(108,117,125,0.3);
+      background: rgba(108, 117, 125, 0.3);
       color: #fff;
     }
 
@@ -586,9 +605,9 @@
       display: none;
     }
 
-    button { 
-      cursor: pointer; 
-      font-weight: 700; 
+    button {
+      cursor: pointer;
+      font-weight: 700;
       background: linear-gradient(45deg, #dc3545, #e8455a);
       border: none;
       color: white;
@@ -606,14 +625,14 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
       transition: left 0.5s;
     }
 
     button:hover {
       background: linear-gradient(45deg, #b52c35, #dc3545);
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(220,53,69,0.4);
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
     }
 
     button:hover::before {
@@ -624,7 +643,7 @@
       transform: translateY(-1px);
     }
 
-    .delete-btn { 
+    .delete-btn {
       background: linear-gradient(45deg, #666, #777) !important;
       margin-left: 10px;
     }
@@ -633,9 +652,9 @@
       background: linear-gradient(45deg, #555, #666) !important;
     }
 
-    .edit-btn { 
+    .edit-btn {
       background: linear-gradient(45deg, #ffc107, #ffca28) !important;
-      color: #000 !important; 
+      color: #000 !important;
       margin-right: 10px;
     }
 
@@ -666,16 +685,23 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .section-card {
-      background: linear-gradient(145deg, rgba(33,33,36,0.95), rgba(26,26,26,0.95));
+      background: linear-gradient(145deg, rgba(33, 33, 36, 0.95), rgba(26, 26, 26, 0.95));
       backdrop-filter: blur(15px);
       border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
       padding: 30px;
       margin-bottom: 30px;
       position: relative;
@@ -712,11 +738,11 @@
     }
 
     #imageDropZone {
-      border: 3px dashed rgba(220,53,69,0.5);
-      background: linear-gradient(145deg, rgba(42,42,42,0.8), rgba(26,26,26,0.8));
-      padding: 40px 20px; 
-      text-align: center; 
-      margin-bottom: 20px; 
+      border: 3px dashed rgba(220, 53, 69, 0.5);
+      background: linear-gradient(145deg, rgba(42, 42, 42, 0.8), rgba(26, 26, 26, 0.8));
+      padding: 40px 20px;
+      text-align: center;
+      margin-bottom: 20px;
       cursor: pointer;
       border-radius: 15px;
       transition: all 0.3s ease;
@@ -733,36 +759,36 @@
 
     #imageDropZone:hover {
       border-color: #dc3545;
-      background: linear-gradient(145deg, rgba(220,53,69,0.1), rgba(26,26,26,0.9));
+      background: linear-gradient(145deg, rgba(220, 53, 69, 0.1), rgba(26, 26, 26, 0.9));
       transform: translateY(-2px);
     }
 
     #imageDropZone.dragover {
       border-color: #e8455a;
-      background: linear-gradient(145deg, rgba(220,53,69,0.2), rgba(26,26,26,0.9));
+      background: linear-gradient(145deg, rgba(220, 53, 69, 0.2), rgba(26, 26, 26, 0.9));
     }
 
-    #imagePreview { 
-      display: none; 
-      max-width: 100%; 
-      max-height: 300px; 
+    #imagePreview {
+      display: none;
+      max-width: 100%;
+      max-height: 300px;
       margin-bottom: 20px;
       border-radius: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
     }
 
     #carList {
-      display: grid; 
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-      gap: 25px; 
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
     }
 
-    .car { 
-      background: linear-gradient(145deg, rgba(42,42,42,0.95), rgba(26,26,26,0.95));
+    .car {
+      background: linear-gradient(145deg, rgba(42, 42, 42, 0.95), rgba(26, 26, 26, 0.95));
       backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1); 
-      border-radius: 20px; 
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
       padding: 20px;
       transition: all 0.4s ease;
       position: relative;
@@ -783,8 +809,8 @@
 
     .car:hover {
       transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 60px rgba(220,53,69,0.3);
-      border-color: rgba(220,53,69,0.3);
+      box-shadow: 0 20px 60px rgba(220, 53, 69, 0.3);
+      border-color: rgba(220, 53, 69, 0.3);
     }
 
     .car:hover::before {
@@ -873,7 +899,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      box-shadow: 0 2px 8px rgba(40,167,69,0.3);
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
       animation: salePulse 2s ease-in-out infinite;
       display: inline-block;
     }
@@ -916,44 +942,68 @@
     }
 
     @keyframes salePulse {
-      0%, 100% { 
+
+      0%,
+      100% {
         transform: scale(1) !important;
       }
-      50% { 
+
+      50% {
         transform: scale(1.05) !important;
       }
     }
 
     @keyframes saleGlow {
-      0%, 100% { 
-        transform: scale(1); 
-        box-shadow: 0 4px 15px rgba(40,167,69,0.4), 0 0 20px rgba(40,167,69,0.2);
+
+      0%,
+      100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4), 0 0 20px rgba(40, 167, 69, 0.2);
       }
-      50% { 
-        transform: scale(1.08); 
-        box-shadow: 0 6px 25px rgba(40,167,69,0.6), 0 0 30px rgba(40,167,69,0.4);
+
+      50% {
+        transform: scale(1.08);
+        box-shadow: 0 6px 25px rgba(40, 167, 69, 0.6), 0 0 30px rgba(40, 167, 69, 0.4);
       }
     }
 
     @keyframes gradientShift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
     }
 
     @keyframes saleShimmer {
-      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-      50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-      100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+
+      50% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+
+      100% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
     }
 
     @keyframes sparkle {
-      0%, 100% { 
-        opacity: 0.6; 
-        transform: scale(0.8) rotate(0deg); 
+
+      0%,
+      100% {
+        opacity: 0.6;
+        transform: scale(0.8) rotate(0deg);
       }
-      50% { 
-        opacity: 1; 
-        transform: scale(1.2) rotate(180deg); 
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(180deg);
       }
     }
 
@@ -965,13 +1015,13 @@
     }
 
     .car-tag {
-      background: rgba(220,53,69,0.2);
+      background: rgba(220, 53, 69, 0.2);
       color: #fff;
       padding: 4px 8px;
       border-radius: 6px;
       font-size: 0.8rem;
       font-weight: 500;
-      border: 1px solid rgba(220,53,69,0.3);
+      border: 1px solid rgba(220, 53, 69, 0.3);
     }
 
     .car-actions {
@@ -991,10 +1041,10 @@
       color: #e8455a;
       text-align: center;
       font-weight: 600;
-      background: rgba(232,69,90,0.1);
+      background: rgba(232, 69, 90, 0.1);
       padding: 15px;
       border-radius: 10px;
-      border: 1px solid rgba(232,69,90,0.3);
+      border: 1px solid rgba(232, 69, 90, 0.3);
       margin-top: 15px;
     }
 
@@ -1014,6 +1064,7 @@
         opacity: 0;
         transform: translateY(-20px);
       }
+
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1041,16 +1092,21 @@
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
     }
 
     .no-cars-admin {
       text-align: center;
       padding: 60px 20px;
-      background: rgba(33,33,36,0.8);
+      background: rgba(33, 33, 36, 0.8);
       border-radius: 20px;
-      border: 2px dashed rgba(255,193,7,0.3);
+      border: 2px dashed rgba(255, 193, 7, 0.3);
       grid-column: 1 / -1;
     }
 
@@ -1120,7 +1176,10 @@
         padding: 10px;
       }
 
-      input, textarea, select, button {
+      input,
+      textarea,
+      select,
+      button {
         padding: 12px 15px;
       }
 
@@ -1146,6 +1205,7 @@
     }
   </style>
 </head>
+
 <body>
   <button class="hamburger" id="hamburger">
     <span></span>
@@ -1154,7 +1214,7 @@
   </button>
 
   <div class="nav-overlay" id="navOverlay"></div>
-  
+
   <nav class="side-nav" id="navMenu">
     <div class="nav-header">
       <h2>Navigation</h2>
@@ -1190,9 +1250,9 @@
 
       <div class="section-card">
         <h2>Add / Edit Vehicle</h2>
-        
+
         <input type="text" id="carName" placeholder="Vehicle Name (e.g., Sultan Classic)" />
-        
+
         <div id="imageDropZone">
           <div>Click here or drop an image to upload</div>
           <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
@@ -1200,7 +1260,7 @@
         <input type="file" id="imageUpload" accept="image/*" style="display:none;" />
         <img id="imagePreview" />
         <input type="hidden" id="carImageURL" />
-        
+
         <div class="form-grid">
           <input type="number" id="carPrice" placeholder="Regular Price $$" step="0.01" />
           <input type="number" id="carSalePrice" placeholder="Sale Price $$ (Optional)" step="0.01" />
@@ -1246,7 +1306,7 @@
               <input type="checkbox" id="tag-rocks" value="Can Carry Rocks">
               <label for="tag-rocks">Can Carry Rocks</label>
             </div>
-             <div class="tag-checkbox">
+            <div class="tag-checkbox">
               <input type="checkbox" id="tag-800kg" value="800 KG Trunk">
               <label for="tag-rocks">800 KG Trunk</label>
             </div>
@@ -1292,21 +1352,23 @@
         </div>
 
         <textarea id="carDescription" placeholder="Vehicle description..." rows="4"></textarea>
-        
+
         <div style="display: flex; gap: 10px;">
           <button id="addCarBtn" style="flex: 1;">Add Vehicle to Inventory</button>
-          <button id="cancelEditBtn" style="flex: 0 0 auto; width: auto; padding: 15px 25px; background: linear-gradient(45deg, #666, #777) !important; display: none;" onclick="clearForm()">Cancel</button>
+          <button id="cancelEditBtn"
+            style="flex: 0 0 auto; width: auto; padding: 15px 25px; background: linear-gradient(45deg, #666, #777) !important; display: none;"
+            onclick="clearForm()">Cancel</button>
         </div>
       </div>
 
       <div class="section-card">
         <h2>Current Inventory</h2>
-        
+
         <div class="admin-search-container">
           <input type="text" id="adminSearchInput" placeholder="Search vehicles by name..." />
           <button class="admin-clear-search" id="adminClearSearch">×</button>
         </div>
-        
+
         <div id="carList"></div>
       </div>
     </div>
@@ -1314,8 +1376,8 @@
 
   <script>
 
-    const SUPABASE_URL = 'https://xphekmhuxggscxqzpfsp.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhwaGVrbWh1eGdnc2N4cXpwZnNwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwMDU2NjcsImV4cCI6MjA2NzU4MTY2N30.Z8zKO0uXkqr1pvvAzlDMwj-qIJEaN_42tSh4nlXNmeU';
+    const SUPABASE_URL = 'https://kgwrhkbauhjcrqtjofvf.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_tMRBcEVBhIOtdL-o14dKtA_0WTLkQeI';
     const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let editingCarId = null;
@@ -1342,7 +1404,7 @@
       let filteredCars = [...allAdminCarsData];
 
       if (searchTerm) {
-        filteredCars = filteredCars.filter(car => 
+        filteredCars = filteredCars.filter(car =>
           car.name && car.name.toLowerCase().includes(searchTerm)
         );
       }
@@ -1357,11 +1419,11 @@
       if (!cars || cars.length === 0) {
         const searchTerm = adminSearchInput.value.trim();
         let message = 'No vehicles in inventory';
-        
+
         if (searchTerm) {
           message = `No vehicles found matching "${searchTerm}"`;
         }
-        
+
         carList.innerHTML = `
           <div class="no-cars-admin">
             <h3>${message}</h3>
@@ -1375,7 +1437,7 @@
         const div = document.createElement('div');
         div.className = 'car';
         div.dataset.id = car.id;
-        
+
         let tagsHtml = '';
         if (car.tags && car.tags.length > 0) {
           tagsHtml = `
@@ -1497,7 +1559,7 @@
 
     function initializeInteractiveElements() {
       document.querySelectorAll('.tag-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('click', function(e) {
+        checkbox.addEventListener('click', function (e) {
           if (e.target.tagName !== 'INPUT') {
             const input = this.querySelector('input[type="checkbox"]');
             input.checked = !input.checked;
@@ -1507,7 +1569,7 @@
       });
 
       document.querySelectorAll('.suspension-option').forEach(option => {
-        option.addEventListener('click', function() {
+        option.addEventListener('click', function () {
           document.querySelectorAll('.suspension-option').forEach(opt => opt.classList.remove('selected'));
           this.classList.add('selected');
           this.querySelector('input[type="radio"]').checked = true;
@@ -1521,7 +1583,7 @@
       const email = document.getElementById('staffEmail').value;
       const password = document.getElementById('staffPassword').value;
       const loginBtn = document.getElementById('staffLoginBtn');
-      
+
       if (!email || !password) {
         showError('Please fill in all fields');
         return;
@@ -1564,9 +1626,9 @@
       }, 3000);
     }
 
-    async function logout() { 
-      await client.auth.signOut(); 
-      location.reload(); 
+    async function logout() {
+      await client.auth.signOut();
+      location.reload();
     }
 
     const imageDropZone = document.getElementById("imageDropZone");
@@ -1599,7 +1661,7 @@
 
     async function uploadFile(file) {
       if (!file) return;
-      
+
       if (!file.type.startsWith('image/')) {
         alert('Please select an image file');
         return;
@@ -1607,7 +1669,7 @@
 
       const ext = file.name.split('.').pop();
       const fileName = `car_${Date.now()}.${ext}`;
-      
+
       imageDropZone.style.opacity = '0.5';
       imageDropZone.innerHTML = '<div>Uploading...</div>';
 
@@ -1616,15 +1678,15 @@
         if (error) {
           throw error;
         }
-        
+
         const { data: publicData } = client.storage.from('images').getPublicUrl(fileName);
         carImageURL.value = publicData.publicUrl;
         imagePreview.src = publicData.publicUrl;
         imagePreview.style.display = "block";
-        
+
         imageDropZone.innerHTML = '<div>✅ Image uploaded successfully!</div>';
         showSuccess('Image uploaded successfully!');
-        
+
       } catch (error) {
         console.error('Upload error:', error);
         alert("Upload failed: " + error.message);
@@ -1682,12 +1744,12 @@
 
     function setSelectedTags(tags) {
       console.log('Setting tags:', tags, '(type:', typeof tags, ')');
-      
+
       document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
         checkbox.checked = false;
         checkbox.closest('.tag-checkbox').classList.remove('checked');
       });
-      
+
       if (tags && Array.isArray(tags)) {
         document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
           const isChecked = tags.includes(checkbox.value);
@@ -1718,13 +1780,13 @@
       document.querySelectorAll('.suspension-option').forEach(option => {
         const input = option.querySelector('input');
         let isSelected = false;
-        
+
         if (level === null || level === undefined) {
           isSelected = input.value === "";
         } else {
           isSelected = input.value == level;
         }
-        
+
         input.checked = isSelected;
         option.classList.toggle('selected', isSelected);
       });
@@ -1736,12 +1798,12 @@
 
       try {
         const { data, error } = await client.from('cars').select('*').order('created_at', { ascending: false });
-        
+
         if (error) throw error;
 
         allAdminCarsData = data || [];
         filterAndDisplayAdminCars();
-        
+
       } catch (error) {
         console.error('Error loading cars:', error);
         carList.innerHTML = '<div style="text-align: center; padding: 40px; color: #e8455a;">Error loading inventory</div>';
@@ -1751,9 +1813,9 @@
     document.getElementById('carList').addEventListener('click', async e => {
       const carElement = e.target.closest('.car');
       if (!carElement) return;
-      
+
       const carId = carElement.dataset.id;
-      
+
       if (e.target.classList.contains('delete-btn')) {
         if (confirm("Are you sure you want to delete this vehicle from inventory?")) {
           e.target.classList.add('loading');
@@ -1770,26 +1832,26 @@
           }
         }
       }
-      
+
       if (e.target.classList.contains('edit-btn')) {
         const carId = parseInt(carElement.dataset.id);
         console.log('Editing car with ID:', carId, '(type:', typeof carId, ')');
         editingCarId = carId;
-        
+
         try {
           const { data, error } = await client.from('cars').select('*').eq('id', carId).single();
           if (error) {
             console.error('Fetch error:', error);
             throw error;
           }
-          
+
           console.log('Fetched car data for editing:', data);
-          
+
           if (data) {
             clearForm();
-            
+
             editingCarId = carId;
-            
+
             setTimeout(() => {
               console.log('Populating form with:', data);
               document.getElementById('carName').value = data.name || '';
@@ -1804,10 +1866,10 @@
               setSelectedSuspension(data.suspension);
               document.getElementById('addCarBtn').textContent = "Update Vehicle";
               document.getElementById('cancelEditBtn').style.display = 'block';
-              
+
               console.log('Form populated. Current editingCarId:', editingCarId, '(type:', typeof editingCarId, ')');
             }, 200);
-            
+
             document.querySelector('.section-card').scrollIntoView({ behavior: 'smooth' });
           }
         } catch (error) {
@@ -1840,22 +1902,22 @@
         return;
       }
 
-      const car = { 
-        name, 
-        image, 
-        price, 
+      const car = {
+        name,
+        image,
+        price,
         sale_price: salePrice,
-        class: carClass, 
+        class: carClass,
         upgraded_to: upgradedTo || null,
         seating: seating || null,
         description,
         tags: tags.length > 0 ? tags : null,
         suspension: suspension || null
       };
-      
+
       console.log('Saving car data:', car);
       console.log('Editing car ID:', editingCarId);
-      
+
       addBtn.classList.add('loading');
       const originalText = addBtn.textContent;
       addBtn.textContent = editingCarId ? 'Updating...' : 'Adding...';
@@ -1864,44 +1926,44 @@
         if (editingCarId) {
           console.log('Updating car with ID:', editingCarId, '(type:', typeof editingCarId, ')');
           console.log('Update data:', car);
-          
+
           const carIdInt = parseInt(editingCarId);
           console.log('Converted ID to:', carIdInt, '(type:', typeof carIdInt, ')');
-          
+
           const { data: existingCar, error: fetchError } = await client
             .from('cars')
             .select('*')
             .eq('id', carIdInt)
             .single();
-            
+
           if (fetchError) {
             console.error('Failed to fetch existing car:', fetchError);
             throw new Error('Car not found for update: ' + fetchError.message);
           }
-          
+
           console.log('Existing car found:', existingCar);
-          
+
           const testUpdate = {
             name: car.name,
             price: car.price,
             class: car.class
           };
-          
+
           console.log('Trying minimal update first:', testUpdate);
-          
+
           const { data: testResult, error: testError } = await client
             .from('cars')
             .update(testUpdate)
             .eq('id', carIdInt)
             .select();
-            
+
           if (testError) {
             console.error('Test update failed:', testError);
             throw testError;
           }
-          
+
           console.log('Test update successful:', testResult);
-          
+
           if (testResult && testResult.length > 0) {
             console.log('Proceeding with full update...');
             const { data, error } = await client
@@ -1909,23 +1971,23 @@
               .update(car)
               .eq('id', carIdInt)
               .select();
-              
+
             if (error) {
               console.error('Full update error:', error);
               throw error;
             }
-            
+
             console.log('Full update successful:', data);
-            
+
             if (!data || data.length === 0) {
               throw new Error('Full update returned no data');
             }
-            
+
             showSuccess('Vehicle updated successfully!');
           } else {
             throw new Error('Test update failed - no rows affected');
           }
-          
+
         } else {
           console.log('Inserting new car');
           const { data, error } = await client.from('cars').insert([car]).select();
@@ -1937,10 +1999,10 @@
           showSuccess('Vehicle added to inventory!');
         }
 
-    clearForm();
-    await loadAdminCars();
-    
-    } catch (error) {
+        clearForm();
+        await loadAdminCars();
+
+      } catch (error) {
         console.error('Save error:', error);
         alert('Error saving vehicle: ' + error.message);
       } finally {
@@ -1963,7 +2025,7 @@
       hamburger.classList.toggle('active');
       navMenu.classList.toggle('active');
       navOverlay.classList.toggle('active');
-      
+
       if (navMenu.classList.contains('active')) {
         document.body.style.overflow = 'hidden';
       } else {
@@ -1992,4 +2054,5 @@
     });
   </script>
 </body>
+
 </html>
