@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Cast — 3D Fishing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Courier+Prime:wght@400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a1628;
+            overflow: hidden;
+            font-family: 'Courier Prime', monospace;
+            color: #d4c5a0;
+        }
+
+        #canvas {
+            display: block;
+        }
+
+        #ui {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #title {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            letter-spacing: 0.15em;
+            color: #e8d9b0;
+            text-shadow: 0 0 20px rgba(100, 180, 220, 0.5);
+        }
+
+        #stats {
+            position: fixed;
+            top: 24px;
+            left: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat {
+            font-size: 13px;
+            letter-spacing: 0.1em;
+            color: #a0c4d8;
+            text-transform: uppercase;
+        }
+
+        .stat span {
+            color: #e8d9b0;
+            font-weight: 700;
+        }
+
+        #catch-log {
+            position: fixed;
+            top: 24px;
+            right: 28px;
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .catch-entry {
+            font-size: 11px;
+            color: #7ab8cc;
+            text-align: right;
+            animation: fadeIn 0.3s ease;
+            letter-spacing: 0.05em;
+        }
+
+        #status {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: #e8d9b0;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.08em;
+            transition: opacity 0.3s;
+        }
+
+        #controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            pointer-events: all;
+        }
+
+        .btn {
+            background: rgba(10, 30, 60, 0.85);
+            border: 1px solid rgba(100, 170, 210, 0.4);
+            color: #a8cfe0;
+            font-family: 'Courier Prime', monospace;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+
+        .btn:hover {
+            background: rgba(30, 70, 110, 0.9);
+            border-color: rgba(100, 200, 240, 0.7);
+            color: #e8f4fb;
+            box-shadow: 0 0 12px rgba(80, 160, 220, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        #catch-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(5, 18, 38, 0.95);
+            border: 1px solid rgba(140, 200, 230, 0.5);
+            padding: 32px 48px;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 40px rgba(0, 100, 180, 0.3);
+        }
+
+        #catch-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #catch-popup .fish-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #e8d9b0;
+            margin-bottom: 6px;
+        }
+
+        #catch-popup .fish-detail {
+            font-size: 13px;
+            color: #7ab8cc;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        #cast-power {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(100, 180, 220, 0.3);
+            display: none;
+        }
+
+        #cast-power-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2a8fc5, #7dd4f0);
+            width: 0%;
+            transition: width 0.05s linear;
+        }
+
+        #depth-indicator {
+            position: fixed;
+            left: 28px;
+            bottom: 28px;
+            font-size: 11px;
+            color: #5a90a8;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        #intro-card {
+            position: fixed;
+            bottom: 100px;
+            right: 28px;
+            width: 280px;
+            background: rgba(5, 15, 32, 0.88);
+            border: 1px solid rgba(100, 170, 210, 0.35);
+            padding: 20px 24px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 0 30px rgba(0, 80, 160, 0.25);
+            animation: introSlide 0.8s 1.2s both ease-out;
+            z-index: 20;
+            pointer-events: all;
+        }
+
+        @keyframes introSlide {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #intro-card .intro-sig {
+            font-family: 'Playfair Display', serif;
+            font-size: 13px;
+            color: #7ab8cc;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        #intro-card p {
+            font-size: 12.5px;
+            line-height: 1.7;
+            color: #c8d8e0;
+            letter-spacing: 0.04em;
+        }
+
+        #intro-dismiss {
+            margin-top: 14px;
+            display: block;
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: #4a8aaa;
+            cursor: pointer;
+            text-align: right;
+        }
+
+        #intro-dismiss:hover {
+            color: #7ab8cc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="canvas"></canvas>
+    <div id="ui">
+        <div id="title">Deep Cast</div>
+        <div id="stats">
+            <div class="stat">Score <span id="score">0</span></div>
+            <div class="stat">Caught <span id="caught">0</span></div>
+            <div class="stat">Casts <span id="casts">0</span></div>
+        </div>
+        <div id="catch-log"></div>
+        <div id="status">Press CAST to begin</div>
+        <div id="cast-power">
+            <div id="cast-power-fill"></div>
+        </div>
+        <div id="depth-indicator">DEPTH: <span id="depth-val">0.0m</span></div>
+    </div>
+
+    <div id="controls">
+        <button class="btn" id="btn-cast" onclick="handleCast()">🎣 Cast</button>
+        <button class="btn" id="btn-reel" onclick="handleReel()" disabled>⟳ Reel</button>
+        <button class="btn" id="btn-wait" onclick="handleWait()" disabled>⏳ Wait</button>
+    </div>
+
+    <div id="catch-popup">
+        <div class="fish-name" id="popup-name"></div>
+        <div class="fish-detail" id="popup-detail"></div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // === GAME STATE ===
+        const STATE = {
+            IDLE: 'idle',
+            CASTING: 'casting',
+            WAITING: 'waiting',
+            BITE: 'bite',
+            REELING: 'reeling',
+            CATCH: 'catch'
+        };
+
+        let gameState = STATE.IDLE;
+        let score = 0, caught = 0, casts = 0;
+        let castArcProgress = 0;
+        let castArcActive = false;
+        let castStartPos = new THREE.Vector3();
+        let castPowerInterval = null;
+        let waitTimer = null;
+        let lineLength = 0;
+        let targetLineLength = 0;
+        let fishOnHook = null;
+        let biteAlert = false;
+        let reelProgress = 0;
+
+        const FISH_TYPES = [
+            { name: 'Bass', rarity: 'Common', points: 10, color: 0x4a8c2a, size: 0.8 },
+            { name: 'Trout', rarity: 'Common', points: 15, color: 0xa05020, size: 0.7 },
+            { name: 'Catfish', rarity: 'Uncommon', points: 30, color: 0x607850, size: 1.2 },
+            { name: 'Pike', rarity: 'Uncommon', points: 35, color: 0x3a6040, size: 1.3 },
+            { name: 'Salmon', rarity: 'Rare', points: 60, color: 0xe07050, size: 1.0 },
+            { name: 'Tuna', rarity: 'Rare', points: 80, color: 0x2060a0, size: 1.5 },
+            { name: 'Swordfish', rarity: 'Epic', points: 150, color: 0x4080c0, size: 1.8 },
+            { name: 'Golden Koi', rarity: 'Legendary', points: 300, color: 0xffc020, size: 1.0 },
+        ];
+
+        function randomFish() {
+            const r = Math.random();
+            if (r < 0.40) return FISH_TYPES[Math.floor(Math.random() * 2)];
+            if (r < 0.65) return FISH_TYPES[2 + Math.floor(Math.random() * 2)];
+            if (r < 0.82) return FISH_TYPES[4 + Math.floor(Math.random() * 2)];
+            if (r < 0.94) return FISH_TYPES[6];
+            return FISH_TYPES[7];
+        }
+
+        // === THREE.JS SETUP ===
+        const canvas = document.getElementById('canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x08121e);
+        scene.fog = new THREE.FogExp2(0x08121e, 0.008);
+
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 600);
+        // Camera sits BEHIND the dock, low angle, looking out over the water
+        camera.position.set(0, 5, 14);
+        camera.lookAt(0, 1, -8);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x102040, 1.2);
+        scene.add(ambientLight);
+
+        const moonLight = new THREE.DirectionalLight(0x8ab4d0, 1.5);
+        moonLight.position.set(-10, 20, 5);
+        moonLight.castShadow = true;
+        scene.add(moonLight);
+
+        const fillLight = new THREE.PointLight(0x204060, 0.8, 40);
+        fillLight.position.set(0, 4, -5); // above the open water
+        scene.add(fillLight);
+
+        // Warm lamp light on dock
+        const dockLight = new THREE.PointLight(0x806040, 1.2, 12);
+        dockLight.position.set(0, 3, 8);
+        scene.add(dockLight);
+
+        // === WATER — large world-filling plane with vertex waves ===
+        const WATER_SIZE = 400;
+        const WATER_SEGS = 120; // high enough for smooth waves
+        const waterGeo = new THREE.PlaneGeometry(WATER_SIZE, WATER_SIZE, WATER_SEGS, WATER_SEGS);
+        const waterMat = new THREE.MeshPhongMaterial({
+            color: 0x0a2a50,
+            emissive: 0x041018,
+            specular: 0x99ddff,
+            shininess: 160,
+            transparent: true,
+            opacity: 0.93,
+            side: THREE.DoubleSide
+        });
+        const water = new THREE.Mesh(waterGeo, waterMat);
+        water.rotation.x = -Math.PI / 2;
+        water.position.set(0, 0, 0);
+        water.receiveShadow = true;
+        scene.add(water);
+
+        // Store original XZ positions for wave math (Y is "up" in local space before rotation)
+        const waterVerts = waterGeo.attributes.position;
+        const wCount = waterVerts.count;
+        const waterOrigX = new Float32Array(wCount);
+        const waterOrigZ = new Float32Array(wCount);
+        for (let i = 0; i < wCount; i++) {
+            waterOrigX[i] = waterVerts.getX(i); // local X
+            waterOrigZ[i] = waterVerts.getY(i); // local Y = world Z (plane is rotated)
+        }
+
+        // === DOCK (near camera, water stretches ahead into negative Z) ===
+        const dockMat = new THREE.MeshLambertMaterial({ color: 0x4a3020 });
+        const dockBase = new THREE.Mesh(new THREE.BoxGeometry(6, 0.4, 5), dockMat);
+        dockBase.position.set(0, 0.2, 8);
+        dockBase.castShadow = true;
+        scene.add(dockBase);
+
+        // Dock planks (running along Z axis = depth of dock)
+        for (let i = -2.5; i <= 2.5; i += 0.55) {
+            const plank = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.06, 5), new THREE.MeshLambertMaterial({ color: 0x5a3a22 }));
+            plank.position.set(i, 0.44, 8);
+            scene.add(plank);
+        }
+
+        // Dock posts going into water
+        for (const [x, z] of [[-2.6, 5.8], [2.6, 5.8], [-2.6, 10.2], [2.6, 10.2]]) {
+            const post = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, 4.5, 8), dockMat);
+            post.position.set(x, -2, z);
+            scene.add(post);
+        }
+
+        // Front edge cross-beam (toward camera)
+        const beam = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.15, 0.2), new THREE.MeshLambertMaterial({ color: 0x3a2010 }));
+        beam.position.set(0, 0.1, 10.6);
+        scene.add(beam);
+
+        // Cleat / mooring post at front
+        const cleat = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.6, 8), new THREE.MeshLambertMaterial({ color: 0x2a1a0a }));
+        cleat.position.set(-1.5, 0.7, 10.5);
+        scene.add(cleat);
+
+        // === FISHING ROD ===
+        const rodGroup = new THREE.Group();
+        scene.add(rodGroup);
+
+        const rodMat = new THREE.MeshLambertMaterial({ color: 0x8b6030 });
+        const rodMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.06, 4.5, 8), rodMat);
+        rodMesh.position.set(0, 2.25, 0);
+        rodGroup.add(rodMesh);
+
+        // Rod reel
+        const reelMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.15, 12), new THREE.MeshLambertMaterial({ color: 0x334455 }));
+        reelMesh.rotation.z = Math.PI / 2;
+        reelMesh.position.set(0.14, 0.8, 0);
+        rodGroup.add(reelMesh);
+
+        // Rod positioned at front of dock, angled OUT over the water (toward negative Z)
+        rodGroup.position.set(0.5, 0.5, 6.5);
+        // Tilt forward toward open water (positive X rotation = tip toward negative Z)
+        rodGroup.rotation.set(0.5, -0.05, -0.08);
+
+        // The rod tip in LOCAL space is at (0, 4, 0) — top of the cylinder
+        // We'll compute world space tip every frame for line attachment
+
+        // Fishing line — in WORLD space (not child of rod), drawn as a curve each frame
+        const linePointsArr = [];
+        for (let i = 0; i < 22; i++) linePointsArr.push(new THREE.Vector3());
+        const lineGeo = new THREE.BufferGeometry().setFromPoints(linePointsArr);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xd0e8f0, transparent: true, opacity: 0.7 });
+        const fishingLine = new THREE.Line(lineGeo, lineMat);
+        scene.add(fishingLine); // world space, NOT child of rod
+        fishingLine.visible = false;
+
+        // === FISHERMAN (on dock, facing negative Z = toward open water) ===
+        const personMat = new THREE.MeshLambertMaterial({ color: 0x1a2a3a });
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.7, 8), personMat);
+        torso.position.set(0.5, 1.05, 7.5); scene.add(torso);
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 10, 8), personMat);
+        head.position.set(0.5, 1.7, 7.5); scene.add(head);
+        const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.06, 12), new THREE.MeshLambertMaterial({ color: 0x2a1a0a }));
+        hatBrim.position.set(0.5, 1.88, 7.5); scene.add(hatBrim);
+        const hatTop = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 0.25, 12), new THREE.MeshLambertMaterial({ color: 0x2a1a0a }));
+        hatTop.position.set(0.5, 2.04, 7.5); scene.add(hatTop);
+        // Arm reaching forward (holding rod)
+        const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.65, 6), personMat);
+        arm.rotation.x = 0.5;
+        arm.position.set(0.5, 1.3, 7.1); scene.add(arm);
+        // Legs
+        for (const lx of [0.34, 0.66]) {
+            const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.55, 6), personMat);
+            leg.position.set(lx, 0.5, 7.5); scene.add(leg);
+        }
+
+        // === BOBBER ===
+        const bobberGroup = new THREE.Group();
+        const bobberTop = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0xff3020, shininess: 100 }));
+        const bobberBot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 8, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), new THREE.MeshPhongMaterial({ color: 0xf0f0f0, shininess: 80 }));
+        bobberGroup.add(bobberTop);
+        bobberGroup.add(bobberBot);
+        bobberGroup.visible = false;
+        scene.add(bobberGroup);
+
+        // === STARS ===
+        const starGeo = new THREE.BufferGeometry();
+        const starPositions = [];
+        for (let i = 0; i < 800; i++) {
+            starPositions.push((Math.random() - 0.5) * 200, Math.random() * 60 + 5, (Math.random() - 0.5) * 200);
+        }
+        starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.15, transparent: true, opacity: 0.7 }));
+        scene.add(stars);
+
+        // Moon
+        const moonMesh = new THREE.Mesh(new THREE.SphereGeometry(2.5, 16, 16), new THREE.MeshBasicMaterial({ color: 0xe8e0c8 }));
+        moonMesh.position.set(-15, 18, -55);
+        scene.add(moonMesh);
+
+        // Moon glow halo
+        const moonGlow = new THREE.Mesh(new THREE.SphereGeometry(3.5, 16, 16), new THREE.MeshBasicMaterial({ color: 0xc8d8b0, transparent: true, opacity: 0.1, side: THREE.BackSide }));
+        moonGlow.position.copy(moonMesh.position);
+        scene.add(moonGlow);
+
+
+        // ── PROCEDURAL ISLAND ──────────────────────────────────────────────────
+        const ISLAND_CX = 0, ISLAND_CZ = -52; // island centre in world space
+        const islandGroup = new THREE.Group();
+        scene.add(islandGroup);
+
+        // Seed a pseudo-random number generator so it's the same each load
+        let _seed = 42;
+        function rng() { _seed = (_seed * 1664525 + 1013904223) & 0xffffffff; return ((_seed >>> 1) & 0x7fffffff) / 0x7fffffff; }
+
+        // Island base — layered humps of different sizes
+        const islandMat = new THREE.MeshLambertMaterial({ color: 0x2a5c18 });
+        const sandMat = new THREE.MeshLambertMaterial({ color: 0xc8a060 });
+        const rockMat = new THREE.MeshLambertMaterial({ color: 0x504840 });
+
+        // Main sandy beach ring
+        const beachBase = new THREE.Mesh(new THREE.CylinderGeometry(18, 20, 2.2, 20, 1), sandMat);
+        beachBase.position.set(ISLAND_CX, -1.6, ISLAND_CZ);
+        scene.add(beachBase);
+
+        // Grassy central hill — several overlapping bumps
+        const hillData = [
+            { rx: 0, rz: 0, ry: 0, rx2: 12, rz2: 10, h: 5.5 },
+            { rx: -5, rz: 3, ry: 0.4, rx2: 8, rz2: 7, h: 4.2 },
+            { rx: 6, rz: -2, ry: -0.3, rx2: 7, rz2: 9, h: 3.8 },
+            { rx: -3, rz: -5, ry: 0.2, rx2: 5, rz2: 6, h: 3.0 },
+            { rx: 8, rz: 4, ry: 0.1, rx2: 5, rz2: 4, h: 2.5 },
+        ];
+        hillData.forEach(d => {
+            const g = new THREE.SphereGeometry(1, 12, 8);
+            const m = new THREE.Mesh(g, islandMat);
+            m.scale.set(d.rx2, d.h * 0.35, d.rz2);
+            m.position.set(ISLAND_CX + d.rx, -0.2, ISLAND_CZ + d.rz);
+            scene.add(m);
+        });
+
+        // Rocks scattered on island
+        for (let i = 0; i < 12; i++) {
+            const ang = rng() * Math.PI * 2, r = rng() * 14;
+            const s = 0.4 + rng() * 1.2;
+            const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), rockMat);
+            rock.position.set(ISLAND_CX + Math.cos(ang) * r, 0.3, ISLAND_CZ + Math.sin(ang) * r);
+            rock.rotation.set(rng() * 2, rng() * 6, rng() * 2);
+            scene.add(rock);
+        }
+
+        // ── TREES ───────────────────────────────────────────────────────────────
+        function makePalmTree(x, y, z) {
+            const g = new THREE.Group();
+            // Trunk — slightly curved using tapered cylinder
+            const trunk = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.12, 0.22, 3.5, 7),
+                new THREE.MeshLambertMaterial({ color: 0x7a5030 })
+            );
+            trunk.position.y = 1.75;
+            trunk.rotation.z = (rng() - 0.5) * 0.3;
+            g.add(trunk);
+            // Fronds — 7 flat leaf fans radiating out
+            for (let i = 0; i < 7; i++) {
+                const ang = (i / 7) * Math.PI * 2;
+                const leaf = new THREE.Mesh(
+                    new THREE.PlaneGeometry(0.3 + rng() * 0.2, 1.8 + rng() * 0.6),
+                    new THREE.MeshLambertMaterial({ color: 0x3a8020, side: THREE.DoubleSide })
+                );
+                leaf.position.set(Math.cos(ang) * 0.6, 3.6 + rng() * 0.3, Math.sin(ang) * 0.6);
+                leaf.rotation.set(-0.5 - rng() * 0.4, ang, 0.3 + rng() * 0.2);
+                g.add(leaf);
+            }
+            // Coconuts
+            for (let i = 0; i < 3; i++) {
+                const nut = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), new THREE.MeshLambertMaterial({ color: 0x4a3010 }));
+                nut.position.set((rng() - 0.5) * 0.5, 3.2 + rng() * 0.3, (rng() - 0.5) * 0.5);
+                g.add(nut);
+            }
+            g.position.set(x, y, z);
+            scene.add(g);
+        }
+
+        function makePineTree(x, y, z, h) {
+            const g = new THREE.Group();
+            const trunk = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.1, 0.18, h * 0.35, 7),
+                new THREE.MeshLambertMaterial({ color: 0x5a3820 })
+            );
+            trunk.position.y = h * 0.18;
+            g.add(trunk);
+            // Three stacked tiers
+            [0.75, 0.50, 0.30].forEach((scale, idx) => {
+                const tier = new THREE.Mesh(
+                    new THREE.ConeGeometry(h * 0.28 * scale, h * 0.42 * scale, 7),
+                    new THREE.MeshLambertMaterial({ color: idx === 0 ? 0x1a4a18 : idx === 1 ? 0x226622 : 0x2a7a2a })
+                );
+                tier.position.y = h * (0.36 + idx * 0.28);
+                g.add(tier);
+            });
+            g.position.set(x, y, z);
+            scene.add(g);
+        }
+
+        // Place 20 trees randomly on the island
+        for (let i = 0; i < 22; i++) {
+            const ang = rng() * Math.PI * 2;
+            const r = 2 + rng() * 14;
+            const tx = ISLAND_CX + Math.cos(ang) * r;
+            const tz = ISLAND_CZ + Math.sin(ang) * r;
+            const ty = 0.5;
+            if (rng() > 0.4) makePalmTree(tx, ty, tz);
+            else makePineTree(tx, ty, tz, 3 + rng() * 4);
+        }
+
+        // ── ANIMALS (deer-like silhouettes that wander the island) ──────────────
+        const animals = [];
+        function makeAnimal(x, z) {
+            const g = new THREE.Group();
+            const mat = new THREE.MeshLambertMaterial({ color: 0x8a5030 });
+            // Body
+            const body = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), mat);
+            body.scale.set(1.6, 0.8, 0.9); body.position.y = 0.55;
+            g.add(body);
+            // Neck
+            const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.13, 0.4, 6), mat);
+            neck.position.set(0.32, 0.8, 0); neck.rotation.z = -0.5; g.add(neck);
+            // Head
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 6), mat);
+            head.position.set(0.54, 1.0, 0); head.scale.set(1.3, 0.9, 0.9); g.add(head);
+            // Ears
+            [-1, 1].forEach(s => {
+                const ear = new THREE.Mesh(new THREE.ConeGeometry(0.07, 0.2, 5), mat);
+                ear.position.set(0.52, 1.18, s * 0.12); ear.rotation.z = s * 0.4; g.add(ear);
+            });
+            // Legs (4)
+            [[-0.18, -0.2], [-0.18, 0.2], [0.18, -0.2], [0.18, 0.2]].forEach(([lx, lz]) => {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.45, 5), mat);
+                leg.position.set(lx, 0.22, lz); g.add(leg);
+            });
+            // Tail
+            const tail = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), new THREE.MeshLambertMaterial({ color: 0xf0f0e0 }));
+            tail.position.set(-0.4, 0.6, 0); g.add(tail);
+            g.position.set(x, 0.5, z);
+            g.userData = { angle: rng() * Math.PI * 2, speed: 0.003 + rng() * 0.005, wanderTimer: rng() * 180, targetAngle: rng() * Math.PI * 2 };
+            scene.add(g);
+            animals.push(g);
+        }
+        // ── Seagulls (simple wing flap) ─────────────────────────────────────────
+        const seagulls = [];
+        function makeSeagull(x, y, z) {
+            const g = new THREE.Group();
+            const mat = new THREE.MeshLambertMaterial({ color: 0xf0f0f0 });
+            const body = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 5), mat);
+            body.scale.set(2, 0.6, 0.8); g.add(body);
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 5), mat);
+            head.position.set(0.28, 0.06, 0); g.add(head);
+            const beak = new THREE.Mesh(new THREE.ConeGeometry(0.03, 0.14, 5), new THREE.MeshLambertMaterial({ color: 0xf0a020 }));
+            beak.rotation.z = -Math.PI / 2; beak.position.set(0.38, 0.04, 0); g.add(beak);
+            // Wings as flat boxes
+            const wingL = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.04, 0.3), mat);
+            wingL.position.set(0, 0, -0.3); g.add(wingL);
+            const wingR = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.04, 0.3), mat);
+            wingR.position.set(0, 0, 0.3); g.add(wingR);
+            g.userData = {
+                wingL, wingR, phase: rng() * Math.PI * 2,
+                orbitAngle: rng() * Math.PI * 2, orbitR: 6 + rng() * 10,
+                orbitSpeed: 0.004 + rng() * 0.006, orbitY: y
+            };
+            g.position.set(x, y, z);
+            scene.add(g);
+            seagulls.push(g);
+        }
+
+        // Place 5 deer on island
+        for (let i = 0; i < 5; i++) {
+            const ang = rng() * Math.PI * 2, r = 3 + rng() * 10;
+            makeAnimal(ISLAND_CX + Math.cos(ang) * r, ISLAND_CZ + Math.sin(ang) * r);
+        }
+        // Place 6 seagulls orbiting island
+        for (let i = 0; i < 6; i++) {
+            const ang = rng() * Math.PI * 2, r = 8 + rng() * 12;
+            makeSeagull(ISLAND_CX + Math.cos(ang) * r, 3 + rng() * 5, ISLAND_CZ + Math.sin(ang) * r);
+        }
+
+        // ── SURFACE FISH ────────────────────────────────────────────────────────
+        // Build a detailed fish mesh: body, caudal fan, dorsal fin, pectoral fins, eye
+        const surfaceFish = [];
+        const FISH_COLORS = [0x4488ff, 0xff6633, 0xffcc00, 0x44cc88, 0xff44aa, 0x66aaff, 0xee8822, 0xff3333];
+
+        function makeSurfaceFish(color, size) {
+            const g = new THREE.Group();
+            const mat = new THREE.MeshPhongMaterial({ color, shininess: 100 });
+            const matL = new THREE.MeshPhongMaterial({ color, shininess: 80, side: THREE.DoubleSide, transparent: true, opacity: 0.85 });
+
+            // Body — elongated on X axis
+            const body = new THREE.Mesh(new THREE.SphereGeometry(0.22 * size, 12, 8), mat);
+            body.scale.set(2.6, 0.75, 0.65);
+            g.add(body);
+
+            // Belly lighter
+            const belly = new THREE.Mesh(new THREE.SphereGeometry(0.20 * size, 10, 6), new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 60, transparent: true, opacity: 0.3, side: THREE.DoubleSide }));
+            belly.scale.set(2.3, 0.4, 0.6); belly.position.y = -0.09 * size;
+            g.add(belly);
+
+            // Caudal (tail) fin — forked via two rotated triangles
+            [-1, 1].forEach(s => {
+                const tail = new THREE.Mesh(new THREE.ConeGeometry(0.18 * size, 0.38 * size, 4, 1), matL);
+                tail.rotation.set(0, 0, s * (Math.PI / 2 + 0.3));
+                tail.position.set(-0.62 * size, s * 0.10 * size, 0);
+                g.add(tail);
+            });
+
+            // Dorsal fin (on top, slightly behind centre)
+            const dorsal = new THREE.Mesh(new THREE.ConeGeometry(0.1 * size, 0.28 * size, 4, 1), matL);
+            dorsal.rotation.z = -Math.PI / 2;
+            dorsal.position.set(-0.05 * size, 0.2 * size, 0);
+            g.add(dorsal);
+
+            // Anal fin (underneath)
+            const anal = new THREE.Mesh(new THREE.ConeGeometry(0.07 * size, 0.18 * size, 4, 1), matL);
+            anal.rotation.z = Math.PI / 2;
+            anal.position.set(0.0 * size, -0.18 * size, 0);
+            g.add(anal);
+
+            // Pectoral fins — one each side
+            [-1, 1].forEach(s => {
+                const pec = new THREE.Mesh(new THREE.ConeGeometry(0.09 * size, 0.25 * size, 4, 1), matL);
+                pec.rotation.set(0.3 * s, 0, Math.PI / 2 * s);
+                pec.position.set(0.2 * size, -0.04 * size, s * 0.18 * size);
+                g.add(pec);
+            });
+
+            // Eye
+            const eye = new THREE.Mesh(new THREE.SphereGeometry(0.048 * size, 8, 6), new THREE.MeshPhongMaterial({ color: 0x111111, shininess: 200 }));
+            eye.position.set(0.42 * size, 0.06 * size, 0.14 * size);
+            g.add(eye);
+            const eyeShine = new THREE.Mesh(new THREE.SphereGeometry(0.022 * size, 6, 4), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+            eyeShine.position.set(0.44 * size, 0.08 * size, 0.16 * size);
+            g.add(eyeShine);
+
+            return g;
+        }
+
+        for (let i = 0; i < 8; i++) {
+            const fish = makeSurfaceFish(FISH_COLORS[i], 0.7 + rng() * 0.8);
+            const ang = rng() * Math.PI * 2;
+            const r = 3 + rng() * 18;
+            fish.position.set(Math.cos(ang) * r, 0.15, -(Math.sin(ang) * r + 5));
+            fish.userData = {
+                angle: ang, speed: 0.006 + rng() * 0.01,
+                radius: r, baseZ: -(Math.sin(ang) * r + 5),
+                tailPhase: rng() * Math.PI * 2, swimPhase: rng() * Math.PI * 2,
+                depth: -0.05 + rng() * 0.2
+            };
+            scene.add(fish);
+            surfaceFish.push(fish);
+        }
+
+
+
+        // Caught fish mesh (shown when reeling)
+        const caughtFishMesh = new THREE.Group();
+        const caughtBody = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 8), new THREE.MeshPhongMaterial({ color: 0xff6020, shininess: 80 }));
+        caughtBody.scale.set(2, 0.8, 0.8);
+        const caughtTail = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.3, 6), caughtBody.material);
+        caughtTail.rotation.z = Math.PI / 2;
+        caughtTail.position.x = -0.45;
+        caughtFishMesh.add(caughtBody); caughtFishMesh.add(caughtTail);
+        caughtFishMesh.visible = false;
+        scene.add(caughtFishMesh);
+
+        // Ripple rings
+        const ripples = [];
+        function createRipple(x, z) {
+            for (let i = 0; i < 3; i++) {
+                const ring = new THREE.Mesh(
+                    new THREE.RingGeometry(0.1, 0.15, 24),
+                    new THREE.MeshBasicMaterial({ color: 0x88ccff, transparent: true, opacity: 0.6, side: THREE.DoubleSide })
+                );
+                ring.rotation.x = -Math.PI / 2;
+                ring.position.set(x, 0.05, z);
+                ring.userData = { age: -i * 0.4, maxAge: 1.5, maxScale: 3 + i };
+                scene.add(ring);
+                ripples.push(ring);
+            }
+        }
+
+        // === CAST POSITION ===
+        let castX = 0, castZ = -5;
+
+        // Get rod tip in world space: local tip is at (0, 4, 0)
+        const _rodTipLocal = new THREE.Vector3(0, 4, 0);
+
+        function getRodTipWorld() {
+            const tip = _rodTipLocal.clone();
+            rodGroup.localToWorld(tip);
+            return tip;
+        }
+
+        function updateLine() {
+            const tip = getRodTipWorld();
+            const bob = bobberGroup.position.clone();
+
+            // Mid control point: sag in the middle for a natural catenary drape
+            const mid = new THREE.Vector3(
+                tip.x * 0.4 + bob.x * 0.6,
+                Math.min(tip.y, bob.y) - 1.2, // sag downward
+                tip.z * 0.4 + bob.z * 0.6
+            );
+
+            const curve = new THREE.CatmullRomCurve3([tip, mid, bob]);
+            const pts = curve.getPoints(21);
+            lineGeo.setFromPoints(pts);
+            lineGeo.computeBoundingSphere();
+            fishingLine.visible = true;
+        }
+
+        // === UI HELPERS ===
+        function setStatus(msg) { document.getElementById('status').textContent = msg; }
+        function updateStats() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('caught').textContent = caught;
+            document.getElementById('casts').textContent = casts;
+        }
+
+        function addCatchLog(fish) {
+            const log = document.getElementById('catch-log');
+            const entry = document.createElement('div');
+            entry.className = 'catch-entry';
+            entry.textContent = `${fish.name} +${fish.points}pts`;
+            log.insertBefore(entry, log.firstChild);
+            while (log.children.length > 6) log.removeChild(log.lastChild);
+        }
+
+        function showCatchPopup(fish) {
+            document.getElementById('popup-name').textContent = fish.name;
+            document.getElementById('popup-detail').textContent = `${fish.rarity} · ${fish.points} pts`;
+            const popup = document.getElementById('catch-popup');
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 2200);
+        }
+
+        function setButtons(cast, reel, wait) {
+            document.getElementById('btn-cast').disabled = !cast;
+            document.getElementById('btn-reel').disabled = !reel;
+            document.getElementById('btn-wait').disabled = !wait;
+        }
+
+        // === GAME ACTIONS ===
+        function handleCast() {
+            if (gameState !== STATE.IDLE) return;
+            gameState = STATE.CASTING;
+            setStatus('Hold to charge cast...');
+            setButtons(false, false, false);
+            document.getElementById('cast-power').style.display = 'block';
+            castPower = 0;
+            castPowerDir = 1;
+            castPowerInterval = setInterval(() => {
+                castPower += castPowerDir * 2.5;
+                if (castPower >= 100) { castPower = 100; castPowerDir = -1; }
+                if (castPower <= 0) { castPower = 0; castPowerDir = 1; }
+                document.getElementById('cast-power-fill').style.width = castPower + '%';
+            }, 30);
+
+            document.getElementById('btn-cast').textContent = '🎣 Release!';
+            document.getElementById('btn-cast').disabled = false;
+            document.getElementById('btn-cast').onclick = releaseCast;
+        }
+
+        function releaseCast() {
+            clearInterval(castPowerInterval);
+            document.getElementById('cast-power').style.display = 'none';
+            document.getElementById('btn-cast').onclick = handleCast;
+            document.getElementById('btn-cast').textContent = '🎣 Cast';
+
+            const power = castPower / 100;
+            castX = (Math.random() - 0.5) * 7;
+            castZ = -(power * 14 + 5); // negative Z = away from camera into open water
+            targetLineLength = power;
+
+            casts++;
+            updateStats();
+
+            // Animate bobber cast — start from rod tip with arc
+            const startTip = getRodTipWorld();
+            bobberGroup.visible = true;
+            bobberGroup.position.copy(startTip);
+            fishingLine.visible = true;
+            castStartPos.copy(startTip);
+            castArcProgress = 0;
+            castArcActive = true;
+            caughtFishMesh.visible = false;
+            fishOnHook = null;
+
+            gameState = STATE.WAITING;
+
+            // Schedule bite
+            const waitTime = 2500 + Math.random() * 5000;
+            setStatus('Line in the water... wait for a bite');
+            setButtons(false, false, true);
+
+            waitTimer = setTimeout(() => {
+                if (gameState === STATE.WAITING) {
+                    fishOnHook = randomFish();
+                    gameState = STATE.BITE;
+                    biteAlert = true;
+                    setStatus('🐟 BITE! Reel it in!');
+                    setButtons(false, true, false);
+                    // Flash effect
+                    setTimeout(() => biteAlert = false, 3000);
+                }
+            }, waitTime);
+        }
+
+        function handleWait() {
+            if (gameState !== STATE.WAITING) return;
+            clearTimeout(waitTimer);
+            gameState = STATE.IDLE;
+            bobberGroup.visible = false;
+            fishingLine.visible = false;
+            setStatus('Nothing here. Try again.');
+            setButtons(true, false, false);
+        }
+
+        function handleReel() {
+            if (gameState !== STATE.BITE && gameState !== STATE.REELING) return;
+            gameState = STATE.REELING;
+            reelProgress = 0;
+            setStatus('Reeling in...');
+            setButtons(false, false, false);
+
+            if (fishOnHook) {
+                caughtFishMesh.children[0].material.color.setHex(fishOnHook.color);
+                caughtFishMesh.children[1].material.color.setHex(fishOnHook.color);
+                const s = fishOnHook.size;
+                caughtFishMesh.scale.set(s, s, s);
+                caughtFishMesh.visible = true;
+            }
+        }
+
+        // Camera gentle sway
+        let camTime = 0;
+
+        // === ANIMATION LOOP ===
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+            camTime += 0.003;
+
+            // === WATER WAVES — layered sine waves (Gerstner-style) ===
+            // Each wave: { dx, dz, wavelength, amplitude, speed, sharpness }
+            // dx/dz = direction vector (normalized), applied to world X/Z
+            const waves = [
+                { dx: 0.7, dz: 1.0, len: 18, amp: 0.28, spd: 1.1, sharp: 2.2 }, // main swell toward shore
+                { dx: -0.4, dz: 1.0, len: 11, amp: 0.16, spd: 0.9, sharp: 1.8 }, // cross-swell
+                { dx: 1.0, dz: 0.3, len: 7, amp: 0.09, spd: 1.4, sharp: 1.5 }, // short chop
+                { dx: -0.6, dz: 0.8, len: 5, amp: 0.06, spd: 1.8, sharp: 1.2 }, // high-freq ripple
+                { dx: 0.2, dz: 1.0, len: 28, amp: 0.20, spd: 0.6, sharp: 2.5 }, // long background swell
+                { dx: 0.9, dz: -0.3, len: 9, amp: 0.07, spd: 1.3, sharp: 1.4 }, // side chop
+            ];
+
+            for (let i = 0; i < wCount; i++) {
+                const wx = waterOrigX[i]; // world X (local X, plane not shifted)
+                const wz = waterOrigZ[i]; // world Z (local Y before -90° rotation)
+                let h = 0;
+                for (const w of waves) {
+                    const k = (2 * Math.PI) / w.len;
+                    const phase = k * (w.dx * wx + w.dz * wz) - w.spd * t;
+                    // Raised cosine for sharpened crests
+                    h += w.amp * Math.pow((Math.sin(phase) + 1) * 0.5, w.sharp) * 2 - w.amp * 0.5;
+                }
+                // Calm the water directly under the dock (z 5–11, x -3–3)
+                const dockDamp = Math.min(1, Math.max(0,
+                    (Math.abs(wx) > 3.5 || wz < 4 || wz > 12) ? 1 :
+                        Math.max(Math.abs(wx) / 3.5, Math.max(0, wz - 4) / 4, Math.max(0, 12 - wz) / 4)
+                ));
+                waterVerts.setZ(i, h * dockDamp);
+            }
+            waterVerts.needsUpdate = true;
+            waterGeo.computeVertexNormals();
+
+            // ── SURFACE FISH ANIMATION ──────────────────────────────────────
+            for (const fish of surfaceFish) {
+                const ud = fish.userData;
+                ud.angle += ud.speed;
+                // Circular orbit, slight wobble in radius
+                const wobble = Math.sin(t * 0.4 + ud.swimPhase) * 0.8;
+                const rx = Math.cos(ud.angle) * (ud.radius + wobble);
+                const rz = Math.sin(ud.angle) * (ud.radius + wobble) - 5;
+                fish.position.x = rx;
+                fish.position.z = rz;
+                // Gentle bob on water surface
+                fish.position.y = ud.depth + Math.sin(t * 1.4 + ud.swimPhase) * 0.06;
+                // Face direction of travel
+                fish.rotation.y = -ud.angle - Math.PI / 2;
+                // Tail wag — rotate the caudal fin children (indices 2 and 3)
+                const wag = Math.sin(t * 5 + ud.tailPhase) * 0.35;
+                fish.children[2].rotation.z = -Math.PI / 2 + 0.3 + wag;
+                fish.children[3].rotation.z = -Math.PI / 2 - 0.3 + wag;
+                // Gentle body roll
+                fish.rotation.z = Math.sin(t * 1.4 + ud.swimPhase) * 0.06;
+            }
+
+            // ── ANIMAL + SEAGULL ANIMATION ──────────────────────────────────
+            for (const animal of animals) {
+                const ud = animal.userData;
+                ud.wanderTimer--;
+                if (ud.wanderTimer <= 0) {
+                    ud.targetAngle = rng() * Math.PI * 2;
+                    ud.wanderTimer = 120 + rng() * 300;
+                }
+                // Smoothly turn toward target angle
+                let da = ud.targetAngle - ud.angle;
+                if (da > Math.PI) da -= Math.PI * 2;
+                if (da < -Math.PI) da += Math.PI * 2;
+                ud.angle += da * 0.02;
+                // Walk forward
+                const nx = animal.position.x + Math.cos(ud.angle) * ud.speed * 18;
+                const nz = animal.position.z + Math.sin(ud.angle) * ud.speed * 18;
+                // Keep on island
+                const distFromCentre = Math.hypot(nx - ISLAND_CX, nz - ISLAND_CZ);
+                if (distFromCentre < 15) { animal.position.x = nx; animal.position.z = nz; }
+                else { ud.targetAngle = ud.angle + Math.PI; } // turn back toward centre
+                animal.rotation.y = -ud.angle;
+                // Leg bob (legs are children 5-8: body=0,neck=1,head=2,ears=3-4)
+                animal.children[5].rotation.x = Math.sin(t * 4 + ud.angle) * 0.4;
+                animal.children[6].rotation.x = -Math.sin(t * 4 + ud.angle) * 0.4;
+                animal.children[7].rotation.x = -Math.sin(t * 4 + ud.angle) * 0.4;
+                animal.children[8].rotation.x = Math.sin(t * 4 + ud.angle) * 0.4;
+            }
+            for (const bird of seagulls) {
+                const ud = bird.userData;
+                ud.orbitAngle += ud.orbitSpeed;
+                bird.position.x = ISLAND_CX + Math.cos(ud.orbitAngle) * ud.orbitR;
+                bird.position.z = ISLAND_CZ + Math.sin(ud.orbitAngle) * ud.orbitR;
+                bird.position.y = ud.orbitY + Math.sin(t * 0.8 + ud.phase) * 0.5;
+                bird.rotation.y = -ud.orbitAngle + Math.PI / 2;
+                // Wing flap
+                const flap = Math.sin(t * 4 + ud.phase) * 0.5;
+                ud.wingL.rotation.z = flap;
+                ud.wingR.rotation.z = -flap;
+            }
+
+            // Bobber animation
+            if (bobberGroup.visible) {
+                if (castArcActive) {
+                    // Arc the bobber from rod tip to target over ~0.8s (60fps ~48 frames)
+                    castArcProgress = Math.min(castArcProgress + 0.035, 1);
+                    const p = castArcProgress;
+                    const ease = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p; // ease in-out
+                    bobberGroup.position.x = castStartPos.x + (castX - castStartPos.x) * ease;
+                    bobberGroup.position.z = castStartPos.z + (castZ - castStartPos.z) * ease;
+                    // Arc height: parabola peaks in the middle
+                    const arcH = Math.sin(p * Math.PI) * 4;
+                    bobberGroup.position.y = castStartPos.y * (1 - ease) + arcH;
+                    if (castArcProgress >= 1) {
+                        castArcActive = false;
+                        createRipple(castX, castZ);
+                    }
+                } else if (gameState === STATE.WAITING) {
+                    bobberGroup.position.x = castX;
+                    bobberGroup.position.z = castZ;
+                    bobberGroup.position.y = Math.sin(t * 1.8) * 0.05;
+                } else if (gameState === STATE.BITE) {
+                    bobberGroup.position.x = castX;
+                    bobberGroup.position.z = castZ;
+                    bobberGroup.position.y = Math.sin(t * 9) * 0.18 - 0.12;
+                }
+
+                document.getElementById('depth-val').textContent =
+                    (Math.abs(castZ) * 0.25).toFixed(1) + 'm';
+            }
+
+            // Reeling animation
+            if (gameState === STATE.REELING) {
+                reelProgress += 0.012;
+                const lx = castX * (1 - reelProgress);
+                const lz = castZ * (1 - reelProgress);
+                bobberGroup.position.set(lx, Math.sin(reelProgress * Math.PI) * 1.5, lz);
+
+                if (fishOnHook && caughtFishMesh.visible) {
+                    caughtFishMesh.position.set(lx * 0.95, bobberGroup.position.y - 0.3, lz * 0.95);
+                    caughtFishMesh.rotation.y = t * 2;
+                }
+
+                if (reelProgress >= 1) {
+                    // Catch!
+                    bobberGroup.visible = false;
+                    caughtFishMesh.visible = false;
+                    fishingLine.visible = false;
+                    gameState = STATE.CATCH;
+
+                    if (fishOnHook) {
+                        score += fishOnHook.points;
+                        caught++;
+                        updateStats();
+                        addCatchLog(fishOnHook);
+                        showCatchPopup(fishOnHook);
+                        createRipple(castX * 0.1, castZ * 0.1);
+                    }
+
+                    setTimeout(() => {
+                        gameState = STATE.IDLE;
+                        fishOnHook = null;
+                        setStatus('Great catch! Cast again.');
+                        setButtons(true, false, false);
+                    }, 2300);
+                }
+            }
+
+            // Ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                const r = ripples[i];
+                r.userData.age += 0.016;
+                if (r.userData.age < 0) continue;
+                const prog = r.userData.age / r.userData.maxAge;
+                const sc = prog * r.userData.maxScale;
+                r.scale.set(sc, sc, sc);
+                r.material.opacity = 0.5 * (1 - prog);
+                if (prog >= 1) { scene.remove(r); ripples.splice(i, 1); }
+            }
+
+            // Bite visual alert
+            if (biteAlert && gameState === STATE.BITE) {
+                moonLight.intensity = 1.5 + Math.sin(t * 15) * 0.5;
+            } else {
+                moonLight.intensity = 1.5;
+            }
+
+            // Fishing line update — always when line is visible
+            if (fishingLine.visible && bobberGroup.visible) updateLine();
+
+            // Camera subtle movement
+            camera.position.x = Math.sin(camTime) * 0.25;
+            camera.position.y = 5 + Math.sin(camTime * 0.7) * 0.1;
+            camera.lookAt(Math.sin(camTime) * 0.1, 1, -8);
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Space bar to cast/reel
+        window.addEventListener('keydown', e => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (gameState === STATE.IDLE) handleCast();
+                else if (gameState === STATE.CASTING) releaseCast();
+                else if (gameState === STATE.BITE) handleReel();
+                else if (gameState === STATE.WAITING) {
+                    // do nothing - wait
+                }
+            }
+            if (e.code === 'KeyR' && gameState === STATE.BITE) handleReel();
+        });
+
+        setButtons(true, false, false);
+        animate();
+    </script>
+</body>
+
+</html>
