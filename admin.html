@@ -1266,6 +1266,7 @@
     </div>
     <ul>
       <li><a href="index.html">Home</a></li>
+      <li><a href="team.html">Meet the Team</a></li>
       <li><a href="policy.html">Purchase Policy</a></li>
       <li><a href="apply.html">Apply for a Job</a></li>
       <li><a href="admin.html">Admin Panel</a></li>
@@ -1441,6 +1442,44 @@
         </div>
 
         <div id="carList"></div>
+      </div>
+
+      <!-- ── Manage Team Section ── -->
+      <div class="section-card">
+        <h2>Add / Edit Team Member</h2>
+
+        <input type="text" id="memberName" placeholder="Full Name" />
+        <select id="memberRole">
+          <option value="">Select Rank</option>
+          <option value="Owner">Owner</option>
+          <option value="CoOwner">CoOwner</option>
+          <option value="Management">Management</option>
+          <option value="Head Of Sales">Head Of Sales</option>
+          <option value="Sales">Sales</option>
+        </select>
+        <input type="text" id="memberPhone" placeholder="Phone Number (Optional)" />
+
+        <div id="teamImageDropZone" style="border: 3px dashed rgba(42,74,70,0.5); background: linear-gradient(145deg, rgba(42,42,42,0.8), rgba(26,26,26,0.8)); padding: 40px 20px; text-align: center; margin-bottom: 20px; cursor: pointer; border-radius: 15px; transition: all 0.3s ease; position: relative; overflow: hidden;">
+          <div>📸 Click here or drop a photo to upload</div>
+          <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
+        </div>
+        <input type="file" id="teamImageUpload" accept="image/*" style="display:none;" />
+        <img id="teamImagePreview" style="display:none; max-width:100%; max-height:200px; margin-bottom:20px; border-radius:15px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.1);" />
+        <input type="hidden" id="memberImageURL" />
+
+        <textarea id="memberBio" placeholder="Short bio (optional)..." rows="3"></textarea>
+
+        <div style="display: flex; gap: 10px;">
+          <button id="addMemberBtn" style="flex: 1;">Add Team Member</button>
+          <button id="cancelMemberEditBtn"
+            style="flex: 0 0 auto; width: auto; padding: 15px 25px; background: linear-gradient(45deg, #666, #777) !important; display: none;"
+            onclick="clearMemberForm()">Cancel</button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>Current Team Members</h2>
+        <div id="teamList"></div>
       </div>
     </div>
   </main>
@@ -1632,12 +1671,26 @@
       });
     }
 
+    const ALLOWED_MANAGER_EMAIL = 'management@preowned.com';
+
     async function checkAuth() {
       const { data: { user } } = await client.auth.getUser();
       if (user) {
         document.getElementById('staffLogin').style.display = 'none';
         document.getElementById('adminSection').style.display = 'block';
         loadAdminCars();
+        // Only load team management if the user is the manager
+        if (user.email === ALLOWED_MANAGER_EMAIL) {
+          loadTeamMembers();
+        } else {
+          // Hide team management sections for non-managers
+          document.querySelectorAll('.section-card').forEach((card, i) => {
+            const h2 = card.querySelector('h2');
+            if (h2 && (h2.textContent.includes('Team Member') || h2.textContent.includes('Current Team'))) {
+              card.style.display = 'none';
+            }
+          });
+        }
       }
     }
     checkAuth();
@@ -2281,6 +2334,258 @@
         document.getElementById('staffLoginBtn').click();
       }
     });
+
+    // ═══════════════════════════════════════════
+    //  TEAM MEMBER MANAGEMENT
+    // ═══════════════════════════════════════════
+
+    const RANK_ORDER = { 'Owner': 0, 'CoOwner': 1, 'Management': 2, 'Head Of Sales': 3, 'Sales': 4 };
+
+    function getRankOrder(role) {
+      return RANK_ORDER[role] ?? 99;
+    }
+
+    let editingMemberId = null;
+
+    // Team image upload
+    const teamImageDropZone = document.getElementById('teamImageDropZone');
+    const teamImageUpload = document.getElementById('teamImageUpload');
+    const teamImagePreview = document.getElementById('teamImagePreview');
+    const memberImageURL = document.getElementById('memberImageURL');
+
+    if (teamImageDropZone) {
+      teamImageDropZone.onclick = () => teamImageUpload.click();
+
+      teamImageDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        teamImageDropZone.style.borderColor = '#2a4a46';
+      });
+
+      teamImageDropZone.addEventListener('dragleave', () => {
+        teamImageDropZone.style.borderColor = 'rgba(42,74,70,0.5)';
+      });
+
+      teamImageDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        teamImageDropZone.style.borderColor = 'rgba(42,74,70,0.5)';
+        if (e.dataTransfer.files.length) uploadTeamPhoto(e.dataTransfer.files[0]);
+      });
+
+      teamImageUpload.onchange = () => {
+        if (teamImageUpload.files.length) uploadTeamPhoto(teamImageUpload.files[0]);
+      };
+    }
+
+    async function uploadTeamPhoto(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+      teamImageDropZone.style.opacity = '0.5';
+      teamImageDropZone.innerHTML = '<div>⬆️ Uploading...</div>';
+
+      try {
+        const ext = file.name.split('.').pop();
+        const uploadFile = new File([file], `team_${Date.now()}.${ext}`, { type: file.type });
+        const { error } = await client.storage.from('images').upload(uploadFile.name, uploadFile);
+        if (error) throw error;
+
+        const { data: publicData } = client.storage.from('images').getPublicUrl(uploadFile.name);
+        memberImageURL.value = publicData.publicUrl;
+        teamImagePreview.src = publicData.publicUrl;
+        teamImagePreview.style.display = 'block';
+        teamImageDropZone.innerHTML = '<div>✅ Photo uploaded!</div>';
+        showSuccess('Photo uploaded!');
+      } catch (error) {
+        console.error('Team photo upload error:', error);
+        alert('Upload failed: ' + error.message);
+      } finally {
+        setTimeout(() => {
+          teamImageDropZone.style.opacity = '1';
+          teamImageDropZone.innerHTML = `
+            <div>📸 Click here or drop a photo to upload</div>
+            <small style="color: #888; margin-top: 10px; display: block;">Supports JPG, PNG files</small>
+          `;
+        }, 2000);
+      }
+    }
+
+    function clearMemberForm() {
+      document.getElementById('memberName').value = '';
+      document.getElementById('memberRole').value = '';
+      document.getElementById('memberPhone').value = '';
+      document.getElementById('memberBio').value = '';
+      memberImageURL.value = '';
+      teamImagePreview.style.display = 'none';
+      editingMemberId = null;
+      document.getElementById('addMemberBtn').textContent = 'Add Team Member';
+      document.getElementById('cancelMemberEditBtn').style.display = 'none';
+    }
+
+    async function loadTeamMembers() {
+      const teamList = document.getElementById('teamList');
+      if (!teamList) return;
+      teamList.innerHTML = '<div style="text-align:center; padding:40px; color:#888;">Loading team...</div>';
+
+      try {
+        const { data, error } = await client
+          .from('team_members')
+          .select('*')
+          .order('created_at', { ascending: true });
+
+        // Sort by rank hierarchy
+        if (data) data.sort((a, b) => getRankOrder(a.role) - getRankOrder(b.role));
+
+        if (error) throw error;
+        displayTeamMembers(data || []);
+      } catch (error) {
+        console.error('Error loading team:', error);
+        teamList.innerHTML = '<div style="text-align:center; padding:40px; color:#e8455a;">Error loading team members</div>';
+      }
+    }
+
+    function displayTeamMembers(members) {
+      const teamList = document.getElementById('teamList');
+      teamList.innerHTML = '';
+
+      if (!members || members.length === 0) {
+        teamList.innerHTML = `
+          <div class="no-cars-admin">
+            <h3>No Team Members</h3>
+            <p>Add a team member using the form above.</p>
+          </div>
+        `;
+        return;
+      }
+
+      teamList.style.display = 'grid';
+      teamList.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+      teamList.style.gap = '25px';
+
+      members.forEach(member => {
+        const div = document.createElement('div');
+        div.className = 'car';
+        div.dataset.memberId = member.id;
+
+        const imgSrc = member.image || 'https://via.placeholder.com/400x200/333/666?text=No+Photo';
+
+        div.innerHTML = `
+          <img src="${imgSrc}" alt="${member.name}"
+               style="width:100%; max-height:200px; object-fit:cover; border-radius:12px; margin-bottom:15px;"
+               onerror="this.src='https://via.placeholder.com/400x200/333/666?text=Photo+Error'">
+          <div style="padding: 0 5px;">
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#ffc107; font-weight:700; margin-bottom:4px;">${member.role || 'Staff'}</div>
+            <h3 style="margin:0 0 8px 0;">${member.name}</h3>
+            ${member.phone ? `<p style="color:#aaa; font-family:monospace; margin-bottom:8px;">📞 ${member.phone}</p>` : ''}
+            ${member.bio ? `<p style="color:#bbb; font-size:0.9rem; line-height:1.5;">${member.bio}</p>` : ''}
+          </div>
+          <div class="car-actions">
+            <button class="edit-btn team-edit-btn">Edit</button>
+            <button class="delete-btn team-delete-btn">Delete</button>
+          </div>
+        `;
+        teamList.appendChild(div);
+      });
+    }
+
+    // Team list click handler (edit/delete)
+    document.getElementById('teamList')?.addEventListener('click', async (e) => {
+      const card = e.target.closest('.car');
+      if (!card) return;
+      const memberId = parseInt(card.dataset.memberId);
+
+      if (e.target.classList.contains('team-delete-btn')) {
+        if (confirm('Are you sure you want to remove this team member?')) {
+          e.target.classList.add('loading');
+          try {
+            const { error } = await client.from('team_members').delete().eq('id', memberId);
+            if (error) throw error;
+            showSuccess('Team member removed!');
+            loadTeamMembers();
+          } catch (error) {
+            console.error('Delete error:', error);
+            alert('Error removing team member');
+          }
+        }
+      }
+
+      if (e.target.classList.contains('team-edit-btn')) {
+        try {
+          const { data, error } = await client.from('team_members').select('*').eq('id', memberId).single();
+          if (error) throw error;
+
+          if (data) {
+            clearMemberForm();
+            editingMemberId = memberId;
+
+            setTimeout(() => {
+              document.getElementById('memberName').value = data.name || '';
+              document.getElementById('memberRole').value = data.role || '';
+              document.getElementById('memberPhone').value = data.phone || '';
+              document.getElementById('memberBio').value = data.bio || '';
+              if (data.image) {
+                memberImageURL.value = data.image;
+                teamImagePreview.src = data.image;
+                teamImagePreview.style.display = 'block';
+              }
+              document.getElementById('addMemberBtn').textContent = 'Update Team Member';
+              document.getElementById('cancelMemberEditBtn').style.display = 'block';
+            }, 100);
+
+            // Scroll to the team form
+            document.getElementById('memberName').closest('.section-card').scrollIntoView({ behavior: 'smooth' });
+          }
+        } catch (error) {
+          console.error('Edit error:', error);
+          alert('Error loading member data: ' + error.message);
+        }
+      }
+    });
+
+    // Add / Update team member
+    document.getElementById('addMemberBtn').onclick = async () => {
+      const btn = document.getElementById('addMemberBtn');
+      const name = document.getElementById('memberName').value.trim();
+      const role = document.getElementById('memberRole').value;
+      const phone = document.getElementById('memberPhone').value.trim() || null;
+      const bio = document.getElementById('memberBio').value.trim() || null;
+      const image = memberImageURL.value || null;
+      const display_order = getRankOrder(role);
+
+      if (!name || !role) {
+        alert('Please fill in name and select a rank');
+        return;
+      }
+
+      const member = { name, role, phone, bio, image, display_order };
+
+      btn.classList.add('loading');
+      const originalText = btn.textContent;
+      btn.textContent = editingMemberId ? 'Updating...' : 'Adding...';
+
+      try {
+        if (editingMemberId) {
+          const { error } = await client.from('team_members').update(member).eq('id', editingMemberId);
+          if (error) throw error;
+          showSuccess('Team member updated!');
+        } else {
+          const { error } = await client.from('team_members').insert([member]);
+          if (error) throw error;
+          showSuccess('Team member added!');
+        }
+        clearMemberForm();
+        await loadTeamMembers();
+      } catch (error) {
+        console.error('Save error:', error);
+        alert('Error saving team member: ' + error.message);
+      } finally {
+        btn.classList.remove('loading');
+        btn.textContent = originalText;
+      }
+    };
+
+    // We'll call loadTeamMembers after cars are loaded
+    // const origCheckAuth = checkAuth; // This line was commented out in the original instruction, keeping it commented.
 
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('navMenu');
