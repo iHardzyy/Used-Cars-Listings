@@ -1367,6 +1367,20 @@
           <option value="6+ Seats">6+ Seats</option>
         </select>
 
+        <select id="carStrikes">
+          <option value="0">Strike Points: 0</option>
+          <option value="1">Strike Points: 1</option>
+          <option value="2">Strike Points: 2</option>
+          <option value="3">Strike Points: 3</option>
+          <option value="4">Strike Points: 4</option>
+          <option value="5">Strike Points: 5</option>
+          <option value="6">Strike Points: 6</option>
+          <option value="7">Strike Points: 7</option>
+          <option value="8">Strike Points: 8</option>
+          <option value="9">Strike Points: 9</option>
+          <option value="10">Strike Points: 10</option>
+        </select>
+
         <div class="tags-section">
           <label>Vehicle Tags</label>
           <div class="tags-grid">
@@ -1607,6 +1621,15 @@
             <div class="car-detail-row">
               <span class="car-detail-label">Seating:</span>
               <span>${car.seating}</span>
+            </div>
+          `;
+        }
+
+        if (car.strikes > 0) {
+          detailsHtml += `
+            <div class="car-detail-row">
+              <span class="car-detail-label">Strikes:</span>
+              <span style="color: ${car.strikes >= 7 ? '#dc3545' : car.strikes >= 4 ? '#ffc107' : '#eee'};">${car.strikes} / 10</span>
             </div>
           `;
         }
@@ -2041,6 +2064,7 @@
       document.getElementById('carClass').value = 'C';
       document.getElementById('carUpgradedTo').value = '';
       document.getElementById('carSeating').value = '';
+      document.getElementById('carStrikes').value = '0';
       document.getElementById('carDescription').value = '';
       showPreview('');
       setSelectedTags([]);
@@ -2178,6 +2202,7 @@
               document.getElementById('carClass').value = data.class || 'C';
               document.getElementById('carUpgradedTo').value = data.upgraded_to || '';
               document.getElementById('carSeating').value = data.seating || '';
+              document.getElementById('carStrikes').value = data.strikes || 0;
               document.getElementById('carDescription').value = data.description || '';
               showPreview(data.image);
               setSelectedTags(data.tags || []);
@@ -2205,6 +2230,7 @@
       const carClass = document.getElementById('carClass').value;
       const upgradedTo = document.getElementById('carUpgradedTo').value;
       const seating = document.getElementById('carSeating').value;
+      const strikes = parseInt(document.getElementById('carStrikes').value) || 0;
       const description = document.getElementById('carDescription').value.trim();
       const image = document.getElementById('carImageURL').value;
       const tags = getSelectedTags();
@@ -2230,7 +2256,8 @@
         seating: seating || null,
         description,
         tags: tags.length > 0 ? tags : null,
-        suspension: suspension || null
+        suspension: suspension || null,
+        strikes: strikes
       };
 
       console.log('Saving car data:', car);

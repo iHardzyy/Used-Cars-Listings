@@ -879,6 +879,37 @@
             color: #4fd1c5;
         }
 
+        .strikes-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        .strikes-low {
+            background: rgba(40, 167, 69, 0.2);
+            color: #34ce57;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .strikes-mid {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .strikes-high {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
         .staff-info {
             display: flex;
             justify-content: center;
@@ -1412,7 +1443,10 @@
                             <div class="car-badges">${badgesHtml}</div>
                         </div>
                         ${priceHtml}
-                        <div class="view-details-hint">&#128269; Click to view details</div>
+                        <div class="view-details-hint">
+                            &#128269; Click to view details
+                            ${car.strikes > 0 ? `<span class="strikes-badge ${car.strikes >= 7 ? 'strikes-high' : car.strikes >= 4 ? 'strikes-mid' : 'strikes-low'}">⚠ ${car.strikes} Strike${car.strikes !== 1 ? 's' : ''}</span>` : ''}
+                        </div>
                     </div>
                 `;
                     carList.appendChild(div);
@@ -1458,6 +1492,7 @@
                 if (car.upgraded_to) specs.push({ label: 'Upgraded To', value: car.upgraded_to });
                 if (car.suspension) specs.push({ label: 'Suspension', value: `Level ${car.suspension}` });
                 if (car.seating) specs.push({ label: 'Seating', value: car.seating });
+                if (car.strikes > 0) specs.push({ label: 'Strikes', value: `${car.strikes} / 10` });
                 document.getElementById('modalSpecs').innerHTML = specs.map(s => `
                 <div class="car-modal-spec">
                     <div class="car-modal-spec-label">${s.label}</div>
